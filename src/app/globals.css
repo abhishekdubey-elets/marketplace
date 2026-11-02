@@ -124,6 +124,12 @@
   button:not(:disabled), [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+  /* Grid items default to min-width:auto, which lets wide content (charts, tables,
+     action rows) push a grid past the viewport on mobile. Zero-specificity so any
+     explicit min-w-* utility still wins. */
+  :where(.grid) > * {
+    min-width: 0;
+  }
 }
 
 @layer components {

@@ -79,7 +79,7 @@ export function RadioCards<T extends string>({
 }) {
   const cols = { 1: "", 2: "sm:grid-cols-2", 3: "sm:grid-cols-2 lg:grid-cols-3", 4: "sm:grid-cols-2 lg:grid-cols-4" }[columns];
   return (
-    <RG.Root value={value} onValueChange={(v) => onValueChange(v as T)} className={cn("grid gap-2.5", cols)}>
+    <RG.Root value={value ?? ""} onValueChange={(v) => onValueChange(v as T)} className={cn("grid gap-2.5", cols)}>
       {options.map((o) => (
         <RG.Item
           key={o.value}
