@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { uid, useStore } from "@/lib/store";
+import { useShallow } from "zustand/react/shallow";
 import { profileCompletion } from "@/lib/hooks";
 import type { CaseStudy, CompanySize, Deployment, Provider, ProviderDocument, Solution } from "@/lib/types";
 import { COMPLIANCE_OPTIONS, DEPLOYMENT_LABELS, SIZE_LABELS } from "@/lib/data/taxonomy";
@@ -386,9 +387,9 @@ function BrandStep({ d, set, e }: StepProps) {
 }
 
 function ExpertiseStep({ d, set, e }: StepProps) {
-  const industries = useStore((s) => s.industries.filter((i) => i.active));
-  const categories = useStore((s) => s.categories.filter((c) => c.active));
-  const services = useStore((s) => s.serviceCategories.filter((c) => c.active));
+  const industries = useStore(useShallow((s) => s.industries.filter((i) => i.active)));
+  const categories = useStore(useShallow((s) => s.categories.filter((c) => c.active)));
+  const services = useStore(useShallow((s) => s.serviceCategories.filter((c) => c.active)));
   const toggle = (arr: string[], v: string) => (arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
   return (
     <div className="space-y-7">
@@ -492,7 +493,7 @@ function SolutionsStep({ d, set, e }: StepProps) {
 
 function CapabilitiesStep({ d, set, e }: StepProps) {
   const vocab = useCapabilityVocabulary();
-  const regions = useStore((s) => s.regions.filter((r) => r.active));
+  const regions = useStore(useShallow((s) => s.regions.filter((r) => r.active)));
   const toggleRegion = (id: string) => {
     if (id === "pan-india") return set({ regions: d.regions.includes("pan-india") ? [] : ["pan-india"] });
     const next = d.regions.filter((r) => r !== "pan-india");

@@ -26,6 +26,7 @@ import {
 import { toast } from "sonner";
 import { cn, formatDate } from "@/lib/utils";
 import { useStore } from "@/lib/store";
+import { useShallow } from "zustand/react/shallow";
 import { useUser } from "@/components/providers";
 import { profileCompletion, useLookups } from "@/lib/hooks";
 import type { CompanySize, Provider } from "@/lib/types";
@@ -335,9 +336,9 @@ function ControlRow({ icon, title, value, tone, body, href }: { icon: React.Reac
 function EditSheet({ section, provider, onClose, onSave }: { section: Section; provider: Provider; onClose: () => void; onSave: (p: Partial<Provider>) => void }) {
   const [d, setD] = React.useState<Provider>(provider);
   const [err, setErr] = React.useState<Record<string, string>>({});
-  const industries = useStore((s) => s.industries.filter((i) => i.active));
-  const categories = useStore((s) => s.categories.filter((c) => c.active));
-  const regions = useStore((s) => s.regions.filter((r) => r.active));
+  const industries = useStore(useShallow((s) => s.industries.filter((i) => i.active)));
+  const categories = useStore(useShallow((s) => s.categories.filter((c) => c.active)));
+  const regions = useStore(useShallow((s) => s.regions.filter((r) => r.active)));
   const vocab = useCapabilityVocabulary();
   const set = (p: Partial<Provider>) => setD((x) => ({ ...x, ...p }));
   const toggle = (arr: string[], v: string) => (arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);

@@ -5,6 +5,7 @@ import { BookOpen, Check, Package, Pencil, Plus, Trash2, Wrench } from "lucide-r
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { uid, useStore } from "@/lib/store";
+import { useShallow } from "zustand/react/shallow";
 import { useLookups } from "@/lib/hooks";
 import type { CaseStudy, Deployment, Solution } from "@/lib/types";
 import { DEPLOYMENT_LABELS } from "@/lib/data/taxonomy";
@@ -22,7 +23,7 @@ import { TagInput, useCurrentProvider } from "./common";
 export function ProviderSolutions() {
   const provider = useCurrentProvider();
   const L = useLookups();
-  const serviceCategories = useStore((s) => s.serviceCategories.filter((c) => c.active));
+  const serviceCategories = useStore(useShallow((s) => s.serviceCategories.filter((c) => c.active)));
   const upsertSolution = useStore((s) => s.upsertSolution);
   const removeSolution = useStore((s) => s.removeSolution);
   const upsertCase = useStore((s) => s.upsertCaseStudy);
@@ -261,7 +262,7 @@ export function ProviderSolutions() {
 }
 
 function SolutionSheet({ initial, isNew, onClose, onSave }: { initial: Solution; isNew: boolean; onClose: () => void; onSave: (s: Solution) => void }) {
-  const categories = useStore((s) => s.categories.filter((c) => c.active));
+  const categories = useStore(useShallow((s) => s.categories.filter((c) => c.active)));
   const [s, setS] = React.useState(initial);
   const [err, setErr] = React.useState<Record<string, string>>({});
   const save = () => {
