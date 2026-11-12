@@ -21,7 +21,7 @@ export type Op = UpsertOp | DeleteOp;
 export const isDbConfigured = () => Boolean(process.env.DATABASE_URL);
 
 let _sql: ReturnType<typeof neon> | null = null;
-function sql() {
+export function sql() {
   if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is not set");
   return (_sql ??= neon(process.env.DATABASE_URL));
 }
@@ -41,8 +41,24 @@ export function ensureReady(): Promise<void> {
       updated_at timestamptz not null default now(),
       primary key (collection, id)
     )`;
+    await q`create table if not exists marketplace.users (
+      id text primary key,
+      email text not null unique,
+      password_hash text not null,
+      name text not null,
+      title text not null default '',
+      role text not null check (role in ('buyer', 'provider')),
+      org_id text not null,
+      initials text not null,
+      created_at timestamptz not null default now()
+    )`;
     const [{ n }] = (await q`select count(*)::int as n from marketplace.records`) as { n: number }[];
     if (n === 0) await insertSeed();
+    else {
+      // databases seeded before the members collection existed: add the demo members once
+      const [{ m }] = (await q`select count(*)::int as m from marketplace.records where collection = 'members'`) as { m: number }[];
+      if (m === 0) await insertSeed(["members"]);
+    }
   })().catch((e) => {
     ready = null; // let the next request retry
     throw e;
@@ -50,19 +66,19 @@ export function ensureReady(): Promise<void> {
   return ready;
 }
 
-function seedRows() {
+function seedRows(only?: Collection[]) {
   const s = seed();
   const rows: { c: Collection; id: string; d: unknown; o: number }[] = [];
-  for (const c of SHARED_COLLECTIONS) (s[c] as { id: string }[]).forEach((d, i) => rows.push({ c, id: d.id, d, o: i }));
-  rows.push({ c: "content", id: "site", d: s.content, o: 0 });
+  for (const c of SHARED_COLLECTIONS) if (!only || only.includes(c)) (s[c] as { id: string }[]).forEach((d, i) => rows.push({ c, id: d.id, d, o: i }));
+  if (!only || only.includes("content")) rows.push({ c: "content", id: "site", d: s.content, o: 0 });
   return rows;
 }
 
-async function insertSeed() {
+async function insertSeed(only?: Collection[]) {
   await sql()`
     insert into marketplace.records (collection, id, data, ord)
     select r->>'c', r->>'id', r->'d', (r->>'o')::double precision
-    from jsonb_array_elements(${JSON.stringify(seedRows())}::jsonb) r
+    from jsonb_array_elements(${JSON.stringify(seedRows(only))}::jsonb) r
     on conflict (collection, id) do nothing`;
 }
 
@@ -85,11 +101,16 @@ export async function readAll(only?: readonly Collection[]): Promise<Partial<Pic
 /** Apply a batch of upserts/deletes atomically. New rows are placed at the start or end of their collection. */
 export async function applyOps(ops: Op[]) {
   await ensureReady();
-  const ups = ops.filter((o): o is UpsertOp => o.op === "upsert").map((o) => ({ c: o.c, id: o.id, d: o.d, pos: o.pos ?? "end" }));
+  const ups = ops.filter((o): o is UpsertOp => o.op === "upsert").map((o) => ({ c: o.c, id: o.id, d: o.d, pos: o.pos ?? ("end" as const) }));
   const dels = ops.filter((o): o is DeleteOp => o.op === "delete").map((o) => ({ c: o.c, id: o.id }));
   const q = sql();
-  await q.transaction([
-    q`
+  await q.transaction([upsertQuery(ups), deleteQuery(dels)]);
+}
+
+/** Insert/update records; new rows go to the start or end of their collection. Usable inside sql().transaction([...]). */
+export function upsertQuery(ups: { c: Collection; id: string; d: unknown; pos?: "start" | "end" }[]) {
+  const q = sql();
+  return q`
       insert into marketplace.records (collection, id, data, ord)
       select o->>'c', o->>'id', o->'d',
         case when o->>'pos' = 'start'
@@ -97,12 +118,14 @@ export async function applyOps(ops: Op[]) {
           else coalesce((select max(r.ord) from marketplace.records r where r.collection = o->>'c'), 0) + k
         end
       from jsonb_array_elements(${JSON.stringify(ups)}::jsonb) with ordinality as t(o, k)
-      on conflict (collection, id) do update set data = excluded.data, updated_at = now()`,
-    q`
+      on conflict (collection, id) do update set data = excluded.data, updated_at = now()`;
+}
+
+export function deleteQuery(dels: { c: Collection; id: string }[]) {
+  return sql()`
       delete from marketplace.records r
       using jsonb_array_elements(${JSON.stringify(dels)}::jsonb) o
-      where r.collection = o->>'c' and r.id = o->>'id'`,
-  ]);
+      where r.collection = o->>'c' and r.id = o->>'id'`;
 }
 
 /** Wipe and reload the starting dataset (admin "Reset demo data"). */

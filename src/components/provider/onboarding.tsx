@@ -113,6 +113,20 @@ export function ProviderOnboarding() {
     if (initial.restored) toast.info("Restored your saved draft");
   }, [initial.restored]);
 
+  // The provider record can arrive after first render (e.g. shared data loading for a brand-new account).
+  React.useEffect(() => {
+    if (draft || !provider) return;
+    try {
+      const raw = localStorage.getItem(`elets-onboarding-draft-${provider.id}`);
+      if (raw) {
+        setDraft(JSON.parse(raw) as Provider);
+        toast.info("Restored your saved draft");
+        return;
+      }
+    } catch {}
+    setDraft(provider);
+  }, [draft, provider]);
+
   // autosave draft
   React.useEffect(() => {
     if (!draft || !key) return;

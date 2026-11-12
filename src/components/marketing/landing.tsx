@@ -98,7 +98,7 @@ function Hero() {
                 </Link>
               </Button>
               <Button size="lg" variant="secondary" asChild>
-                <Link href="/login?role=provider">List Your Company</Link>
+                <Link href="/signup?role=provider">List Your Company</Link>
               </Button>
               <Button size="lg" variant="ghost" asChild className="text-ink-2">
                 <Link href="/pro">
@@ -590,7 +590,7 @@ function FinalCta() {
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button size="lg" asChild>
-                  <Link href="/login?role=provider">
+                  <Link href="/signup?role=provider">
                     List your company <ArrowRight />
                   </Link>
                 </Button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { uid, useStore } from "../store";
+import { actorId, uid, useStore } from "../store";
 import type { BuyerOrg } from "../types";
 
 /**
@@ -46,7 +46,7 @@ export function updateOwnOrg(orgId: string, patch: Partial<Pick<BuyerOrg, "name"
   const changed = (Object.keys(patch) as (keyof typeof patch)[]).filter((k) => patch[k] !== undefined && patch[k] !== b[k]);
   if (!changed.length) return;
   useStore.setState({ buyers: s.buyers.map((x) => (x.id === orgId ? { ...x, ...patch } : x)) });
-  s.log("u-buyer", "Updated organisation details", "buyer", orgId, changed.join(", "));
+  s.log(actorId("u-buyer"), "Updated organisation details", "buyer", orgId, changed.join(", "));
 }
 
 export function cancelMeeting(id: string) {

@@ -25,7 +25,7 @@ import { useLookups } from "@/lib/hooks";
 import { scoreMatch, toMatchable } from "@/lib/matching";
 import { REQUIREMENT_STAGES, PRO_MODULES } from "@/lib/types";
 import { OPP_STAGE_LABEL, OPP_STAGE_TONE, STAGE_LABEL, STAGE_SHORT } from "@/lib/labels";
-import { person } from "@/lib/people";
+import { person, isForUser } from "@/lib/people";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -75,7 +75,7 @@ export default function BuyerDashboard() {
     .sort((a, b) => a.at.localeCompare(b.at))
     .slice(0, 5);
   const eng = engagements.find((e) => e.buyerId === orgId && e.status === "active");
-  const feed = notifications.filter((n) => n.audience === "buyer" && (n.userId === null || n.userId === user.id)).slice(0, 6);
+  const feed = notifications.filter((n) => n.audience === "buyer" && isForUser(n, user)).slice(0, 6);
   const news = announcements.filter((a) => a.active && (a.audience === "all" || a.audience === "buyer"));
 
   const stageData = REQUIREMENT_STAGES.map((s) => ({ name: STAGE_LABEL[s], value: reqs.filter((r) => r.stage === s).length, color: STAGE_COLORS[s] })).filter((d) => d.value > 0);

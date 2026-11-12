@@ -403,18 +403,7 @@ export function ProviderProfileView({ provider, mode }: { provider: Provider; mo
                   </Button>
                 </>
               ) : (
-                <>
-                  <div className="flex items-start gap-3 rounded-xl bg-subtle p-3 ring-1 ring-inset ring-line">
-                    <Lock className="mt-0.5 size-4 shrink-0 text-ink-4" />
-                    <p className="text-[13px] leading-relaxed text-ink-3">Contact details are shared through an Elets-facilitated introduction. Sign in as a buyer to request one.</p>
-                  </div>
-                  <Button className="mt-4 w-full" asChild>
-                    <Link href={`/login?role=buyer&next=/buyer/providers/${provider.slug}`}>Sign in to connect</Link>
-                  </Button>
-                  <Button variant="ghost" className="mt-2 w-full" asChild>
-                    <Link href="/pro">Get managed support with Elets Pro</Link>
-                  </Button>
-                </>
+                <PublicContactActions slug={provider.slug} role={session?.role ?? null} />
               )}
             </CardContent>
           </Card>
@@ -509,5 +498,54 @@ export function ProviderNotFound({ backHref }: { backHref: string }) {
         }
       />
     </div>
+  );
+}
+
+/** Contact card actions on the public profile, depending on who is looking. */
+function PublicContactActions({ slug, role }: { slug: string; role: "buyer" | "provider" | "admin" | null }) {
+  const next = encodeURIComponent(`/buyer/providers/${slug}`);
+  if (role === "buyer") {
+    return (
+      <>
+        <p className="text-[13px] leading-relaxed text-ink-3">Introductions are facilitated by Elets so both sides have context before the first conversation.</p>
+        <Button className="mt-4 w-full" asChild>
+          <Link href={`/buyer/providers/${slug}`}>
+            Request an introduction <ArrowRight />
+          </Link>
+        </Button>
+      </>
+    );
+  }
+  if (role) {
+    return (
+      <>
+        <div className="flex items-start gap-3 rounded-xl bg-subtle p-3 ring-1 ring-inset ring-line">
+          <Lock className="mt-0.5 size-4 shrink-0 text-ink-4" />
+          <p className="text-[13px] leading-relaxed text-ink-3">
+            You're signed in as {role === "admin" ? "Elets operations" : "a solution provider"}. Introductions are requested by buyer organisations.
+          </p>
+        </div>
+        <Button variant="secondary" className="mt-4 w-full" asChild>
+          <Link href={`/login?role=buyer&next=${next}`}>Switch to a buyer account</Link>
+        </Button>
+      </>
+    );
+  }
+  return (
+    <>
+      <div className="flex items-start gap-3 rounded-xl bg-subtle p-3 ring-1 ring-inset ring-line">
+        <Lock className="mt-0.5 size-4 shrink-0 text-ink-4" />
+        <p className="text-[13px] leading-relaxed text-ink-3">Contact details are shared through an Elets-facilitated introduction. Sign in or create a free buyer account to request one.</p>
+      </div>
+      <Button className="mt-4 w-full" asChild>
+        <Link href={`/login?role=buyer&next=${next}`}>Sign in to connect</Link>
+      </Button>
+      <Button variant="secondary" className="mt-2 w-full" asChild>
+        <Link href={`/signup?role=buyer&next=${next}`}>Create a buyer account</Link>
+      </Button>
+      <Button variant="ghost" className="mt-2 w-full" asChild>
+        <Link href="/pro">Get managed support with Elets Pro</Link>
+      </Button>
+    </>
   );
 }

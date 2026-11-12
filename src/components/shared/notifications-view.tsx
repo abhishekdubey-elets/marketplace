@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Segmented } from "@/components/ui/controls";
 import { Select } from "@/components/ui/select";
 import { NOTIF_ICON } from "@/components/shell/topbar";
+import { isForUser } from "@/lib/people";
 
 const TYPE_LABEL: Record<NotificationType, string> = {
   requirement_submitted: "Requirement submitted",
@@ -36,7 +37,7 @@ export function NotificationsView() {
   const [filter, setFilter] = React.useState<"all" | "unread">("all");
   const [type, setType] = React.useState<string>("any");
 
-  const mine = all.filter((n) => n.audience === user.role && (n.userId === null || n.userId === user.id));
+  const mine = all.filter((n) => n.audience === user.role && isForUser(n, user));
   const types = Array.from(new Set(mine.map((n) => n.type)));
   const list = mine.filter((n) => (filter === "all" || !n.read) && (type === "any" || n.type === type));
   const unread = mine.filter((n) => !n.read).length;

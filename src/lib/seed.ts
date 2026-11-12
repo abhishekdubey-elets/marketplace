@@ -4,6 +4,7 @@
  * before shared data arrives.
  */
 import type {
+  User,
   Announcement,
   AuditEntry,
   BuyerOrg,
@@ -30,7 +31,7 @@ import type {
   Thread,
   VerificationStatus,
 } from "./types";
-import { CATEGORIES, INDUSTRIES, REGIONS, SERVICE_CATEGORIES } from "./data/taxonomy";
+import { CATEGORIES, INDUSTRIES, REGIONS, SERVICE_CATEGORIES, USERS } from "./data/taxonomy";
 import { PROVIDERS } from "./data/providers";
 import { BUYERS, REQUIREMENTS } from "./data/buyers";
 import { PRO_ENGAGEMENTS } from "./data/pro";
@@ -55,7 +56,11 @@ export interface ProRequest {
   status: "new" | "contacted" | "converted";
 }
 
+/** Public profile of a signed-up user, used to show names in history, notes and messages. Never includes email. */
+export type Member = Omit<User, "email">;
+
 export interface DataState {
+  members: Member[];
   providers: Provider[];
   buyers: BuyerOrg[];
   requirements: Requirement[];
@@ -81,6 +86,7 @@ export interface DataState {
 }
 
 export const seed = (): DataState => ({
+  members: USERS.map(({ email: _email, ...m }) => m),
   providers: PROVIDERS,
   buyers: BUYERS,
   requirements: REQUIREMENTS,
@@ -109,6 +115,7 @@ export const seed = (): DataState => ({
 
 /** Collections shared between all users and stored in the database. */
 export const SHARED_COLLECTIONS = [
+  "members",
   "providers",
   "buyers",
   "requirements",

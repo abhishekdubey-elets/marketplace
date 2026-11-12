@@ -32,6 +32,7 @@ import { Avatar, Kbd } from "@/components/ui/misc";
 import { Button } from "@/components/ui/button";
 import { Dropdown, DropdownContent, DropdownItem, DropdownLabel, DropdownSeparator, DropdownTrigger, Popover, PopoverContent, PopoverTrigger, Tooltip } from "@/components/ui/overlay";
 import { SEGMENT_LABEL, PORTAL_LABEL } from "./nav";
+import { isForUser } from "@/lib/people";
 
 export const NOTIF_ICON: Record<NotificationType, React.ElementType> = {
   requirement_submitted: ClipboardList,
@@ -87,7 +88,7 @@ function NotificationBell({ role, user }: { role: Role; user: User }) {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [tab, setTab] = React.useState<"all" | "unread">("all");
-  const mine = all.filter((n) => n.audience === role && (n.userId === null || n.userId === user.id));
+  const mine = all.filter((n) => n.audience === role && isForUser(n, user));
   const unread = mine.filter((n) => !n.read).length;
   const list = (tab === "unread" ? mine.filter((n) => !n.read) : mine).slice(0, 8);
 

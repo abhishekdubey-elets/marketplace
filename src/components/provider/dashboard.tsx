@@ -32,6 +32,7 @@ import { EmptyState, PageHeader, ProviderLogo, ScoreRing, StatCard, Verification
 import { AreaTrend, Funnel, Sparkline, SERIES } from "@/components/ui/charts";
 import { NOTIF_ICON } from "@/components/shell/topbar";
 import { MONTHS_12, PROVIDER_MATCH_LABEL, buyerLabel, useCurrentProvider, useProviderOpportunities } from "./common";
+import { isForUser } from "@/lib/people";
 
 export function ProviderDashboard() {
   const user = useUser();
@@ -55,7 +56,7 @@ export function ProviderDashboard() {
     .filter((m) => m.providerId === provider.id && (m.status === "scheduled" || m.status === "requested"))
     .sort((a, b) => a.at.localeCompare(b.at))
     .slice(0, 4);
-  const activity = notifications.filter((n) => n.audience === "provider" && (n.userId === null || n.userId === user.id)).slice(0, 6);
+  const activity = notifications.filter((n) => n.audience === "provider" && isForUser(n, user)).slice(0, 6);
   const news = announcements.filter((a) => a.active && (a.audience === "all" || a.audience === "provider"));
   const views = provider.profileViewsTrend;
   const lastMonth = views.at(-1) ?? 0;

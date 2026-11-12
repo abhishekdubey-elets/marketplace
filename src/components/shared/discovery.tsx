@@ -106,7 +106,8 @@ export function DiscoveryView({ basePath, profileHref }: { basePath: string; pro
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlKey]);
 
-  const listed = React.useMemo(() => providers.filter((p) => p.accountStatus === "active"), [providers]);
+  // new sign-ups stay out of the directory until their profile lists at least one technology category
+  const listed = React.useMemo(() => providers.filter((p) => p.accountStatus === "active" && p.categories.length > 0), [providers]);
 
   const haystack = React.useCallback(
     (p: Provider) =>

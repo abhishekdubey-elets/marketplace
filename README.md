@@ -33,6 +33,15 @@ Production build: `npm run build && npm start`.
 
 The login page also has one-click **Continue as demo …** buttons, and the user menu can switch portals. Passwords can be overridden with `DEMO_*_PASSWORD`, and one-click sign-in can be turned off with `DISABLE_DEMO_LOGIN=true`.
 
+### Self-service accounts
+
+When `DATABASE_URL` is set, buyers and solution providers can create their own accounts at `/signup`. Elets operations accounts are not self-service.
+
+- **Storage**: accounts live in `marketplace.users` with scrypt-hashed passwords. Sign-up also creates the organisation record (a buyer org, or an unverified provider profile that's kept out of matching) and notifies Elets operations.
+- **New providers**: they start in onboarding and stay out of the public directory until their profile lists a technology category.
+- **Notifications**: these are addressed to an organisation (`userId: "org:<orgId>"`), so every account in that organisation sees updates about its requirements and profile.
+- **Not built yet**: email verification, password reset and rate limiting.
+
 ## Routes
 
 **Public:** `/` landing · `/solutions` provider discovery · `/providers/[slug]` public company profile · `/pro` Elets Pro · `/login`

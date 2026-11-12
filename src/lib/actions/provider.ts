@@ -1,6 +1,6 @@
 "use client";
 
-import { uid, useStore } from "../store";
+import { actorId, uid, useStore } from "../store";
 import type { ProviderDocument } from "../types";
 
 // Provider-side mutations not covered by the core store. Each maps to a write on
@@ -15,7 +15,7 @@ export function uploadProviderDocument(providerId: string, docId: string, fileNa
     ...p,
     documents: p.documents.map((d) => (d.id === docId ? { ...d, name: fileName || d.name, status: "under_review", uploadedAt: today() } : d)),
   }));
-  s.log("u-provider", "Uploaded verification document", "provider", providerId, fileName ?? docId);
+  s.log(actorId("u-provider"), "Uploaded verification document", "provider", providerId, fileName ?? docId);
   s.notify({ audience: "admin", userId: null, type: "document_uploaded", title: "Verification document uploaded", body: `${s.providers.find((p) => p.id === providerId)?.name} uploaded ${fileName ?? "a document"}.`, href: `/admin/providers/${providerId}` });
 }
 
@@ -25,7 +25,7 @@ export function addProviderDocument(providerId: string, name: string, kind: Prov
     ...p,
     documents: [...p.documents, { id: uid("d"), name, kind, status: "under_review", uploadedAt: today() }],
   }));
-  s.log("u-provider", "Added supporting document", "provider", providerId, name);
+  s.log(actorId("u-provider"), "Added supporting document", "provider", providerId, name);
 }
 
 export function removeProviderDocument(providerId: string, docId: string) {

@@ -3,7 +3,8 @@
 import * as React from "react";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/overlay";
-import { useHydration, useStore } from "@/lib/store";
+import { setActor, useHydration, useStore } from "@/lib/store";
+import { setMembers } from "@/lib/people";
 import { reloadForSession, startSync } from "@/lib/sync";
 import type { User } from "@/lib/types";
 
@@ -22,6 +23,10 @@ export function useUser(): User {
 
 function StoreHydrator({ userId }: { userId: string | null }) {
   const setHydrated = useHydration((s) => s.setHydrated);
+  // who is acting (for audit/history), and names of signed-up members for display
+  setActor(userId);
+  const members = useStore((s) => s.members);
+  setMembers(members);
   const firstUser = React.useRef<string | null | undefined>(undefined);
   React.useEffect(() => {
     // local personal data first, then the shared database (if configured) on top

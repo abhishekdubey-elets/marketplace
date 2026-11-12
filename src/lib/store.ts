@@ -50,6 +50,14 @@ let seq = 0;
 // time + counter + random so ids created by different users at once don't collide
 export const uid = (prefix: string) => `${prefix}-${Date.now().toString(36)}${(seq++).toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
+/** The signed-in user, so actions log who actually did them (falls back to the demo user ids). */
+let currentActorId: string | null = null;
+export const setActor = (id: string | null) => {
+  currentActorId = id;
+};
+const actor = (fallback: string) => currentActorId ?? fallback;
+export const actorId = actor;
+
 /** Set by src/lib/sync.ts once shared data comes from the database: then only personal keys are kept locally. */
 export const persistMode = { personalOnly: false };
 const now = () => new Date().toISOString();
@@ -183,7 +191,7 @@ export const useStore = create<Store>()(
             id,
             code,
             stage: "submitted",
-            history: [{ stage: "submitted", at, by: "buyer", note: "Requirement submitted by buyer." }],
+            history: [{ stage: "submitted", at, by: actor("buyer"), note: "Requirement submitted by buyer." }],
             createdAt: at.slice(0, 10),
             updatedAt: at,
             internalNotes: [],
@@ -193,8 +201,8 @@ export const useStore = create<Store>()(
           set((s) => ({ requirements: [r, ...s.requirements] }));
           const buyer = get().buyers.find((b) => b.id === input.buyerId);
           notify({ audience: "admin", userId: null, type: "requirement_submitted", title: "New requirement submitted", body: `${buyer?.name ?? "A buyer"} submitted ${code} — ${input.title}.`, href: `/admin/requirements/${id}` });
-          notify({ audience: "buyer", userId: "u-buyer", type: "requirement_submitted", title: "Requirement received", body: `${code} was submitted. Elets will review it shortly.`, href: `/buyer/requirements/${id}` });
-          log("u-buyer", "Submitted requirement", "requirement", id, `${code} — ${input.title}`);
+          notify({ audience: "buyer", userId: `org:${input.buyerId}`, type: "requirement_submitted", title: "Requirement received", body: `${code} was submitted. Elets will review it shortly.`, href: `/buyer/requirements/${id}` });
+          log(actor("u-buyer"), "Submitted requirement", "requirement", id, `${code} — ${input.title}`);
           if (input.proRequested) {
             set((s) => ({ proRequests: [{ id: uid("pr"), buyerId: input.buyerId, requirementId: id, services: ["Full Elets Pro engagement"], note: "Requested with requirement submission.", at, status: "new" }, ...s.proRequests] }));
           }
@@ -226,7 +234,7 @@ export const useStore = create<Store>()(
           const r = req(m.requirementId);
           const p = prov(m.providerId);
           notify({ audience: "admin", userId: null, type: "intro_requested", title: "Introduction requested", body: `Buyer requested an introduction to ${p?.name} for ${r?.code}.`, href: `/admin/requirements/${m.requirementId}` });
-          log("u-buyer", "Requested introduction", "match", matchId, `${p?.name} for ${r?.code}`);
+          log(actor("u-buyer"), "Requested introduction", "match", matchId, `${p?.name} for ${r?.code}`);
         },
         scheduleMeeting: (m) => {
           const id = uid("mt");
@@ -241,7 +249,7 @@ export const useStore = create<Store>()(
             requirements: r.requirementId ? s.requirements.map((x) => (x.id === r.requirementId ? { ...x, proRequested: true } : x)) : s.requirements,
           }));
           notify({ audience: "admin", userId: null, type: "pro_updated", title: "Elets Pro assistance requested", body: `${get().buyers.find((b) => b.id === r.buyerId)?.name} requested: ${r.services.join(", ")}.`, href: "/admin/pro" });
-          log("u-buyer", "Requested Elets Pro assistance", "engagement", null, r.services.join(", "));
+          log(actor("u-buyer"), "Requested Elets Pro assistance", "engagement", null, r.services.join(", "));
         },
 
         // ------------------------------------------------------------ provider
@@ -255,13 +263,13 @@ export const useStore = create<Store>()(
           set((s) => ({ matches: s.matches.map((x) => (x.id === matchId ? { ...x, providerInterest: interest, updatedAt: now() } : x)) }));
           if (m && interest === "interested") {
             notify({ audience: "admin", userId: null, type: "new_opportunity", title: "Provider interest received", body: `${prov(m.providerId)?.name} expressed interest in ${req(m.requirementId)?.code}.`, href: `/admin/requirements/${m.requirementId}` });
-            log("u-provider", "Expressed interest", "match", matchId, `${prov(m.providerId)?.name} → ${req(m.requirementId)?.code}`);
+            log(actor("u-provider"), "Expressed interest", "match", matchId, `${prov(m.providerId)?.name} → ${req(m.requirementId)?.code}`);
           }
         },
         requestVerification: (pid) => {
           patchProvider(pid, (p) => ({ ...p, verification: "pending", documents: p.documents.map((d) => (d.status === "requested" ? { ...d, status: "under_review", uploadedAt: now().slice(0, 10) } : d)) }));
           notify({ audience: "admin", userId: null, type: "document_uploaded", title: "Verification requested", body: `${prov(pid)?.name} submitted their profile for verification.`, href: "/admin/providers" });
-          log("u-provider", "Requested verification", "provider", pid, prov(pid)?.name ?? "");
+          log(actor("u-provider"), "Requested verification", "provider", pid, prov(pid)?.name ?? "");
         },
 
         // ------------------------------------------------------------ admin
@@ -273,7 +281,7 @@ export const useStore = create<Store>()(
             requirements: s.requirements.map((x) => (x.id === id ? { ...x, stage, updatedAt: at, history: [...x.history, { stage, at, by: actorId, note }] } : x)),
           }));
           log(actorId, "Changed requirement status", "requirement", id, `${STAGE_LABEL[r.stage]} → ${STAGE_LABEL[stage]}`);
-          notify({ audience: "buyer", userId: "u-buyer", type: "requirement_reviewed", title: `${r.code} moved to ${STAGE_LABEL[stage]}`, body: note || r.title, href: `/buyer/requirements/${id}` });
+          notify({ audience: "buyer", userId: `org:${r.buyerId}`, type: "requirement_reviewed", title: `${r.code} moved to ${STAGE_LABEL[stage]}`, body: note || r.title, href: `/buyer/requirements/${id}` });
         },
         updateRequirement: (id, patch, actorId, detail) => {
           set((s) => ({ requirements: s.requirements.map((x) => (x.id === id ? { ...x, ...patch, updatedAt: now() } : x)) }));
@@ -299,7 +307,7 @@ export const useStore = create<Store>()(
           if (m) {
             log(actorId, decision === "approved" ? "Approved match" : "Removed match", "match", matchId, `${prov(m.providerId)?.name} for ${req(m.requirementId)?.code}`);
             if (decision === "approved") {
-              notify({ audience: "provider", userId: m.providerId === "p-nimbus" ? "u-provider" : null, type: "new_opportunity", title: "New matched opportunity", body: `You were matched to ${req(m.requirementId)?.code} — ${req(m.requirementId)?.title}.`, href: `/provider/opportunities/${m.requirementId}` });
+              notify({ audience: "provider", userId: `org:${m.providerId}`, type: "new_opportunity", title: "New matched opportunity", body: `You were matched to ${req(m.requirementId)?.code} — ${req(m.requirementId)?.title}.`, href: `/provider/opportunities/${m.requirementId}` });
             }
           }
         },
@@ -339,8 +347,8 @@ export const useStore = create<Store>()(
                 ],
           }));
           if (r && ["matching", "shortlisted", "submitted", "under_review"].includes(r.stage)) get().setRequirementStage(r.id, "introduced", actorId, `Introduced to ${p?.name}.`);
-          notify({ audience: "buyer", userId: "u-buyer", type: "intro_requested", title: "Introduction made", body: `Elets introduced you to ${p?.name} for ${r?.code}.`, href: `/buyer/requirements/${m.requirementId}` });
-          notify({ audience: "provider", userId: m.providerId === "p-nimbus" ? "u-provider" : null, type: "intro_requested", title: "Introduction made", body: `Elets introduced you to ${get().buyers.find((b) => b.id === r?.buyerId)?.name} for ${r?.code}.`, href: "/provider/leads" });
+          notify({ audience: "buyer", userId: r ? `org:${r.buyerId}` : null, type: "intro_requested", title: "Introduction made", body: `Elets introduced you to ${p?.name} for ${r?.code}.`, href: `/buyer/requirements/${m.requirementId}` });
+          notify({ audience: "provider", userId: `org:${m.providerId}`, type: "intro_requested", title: "Introduction made", body: `Elets introduced you to ${get().buyers.find((b) => b.id === r?.buyerId)?.name} for ${r?.code}.`, href: "/provider/leads" });
           log(actorId, "Made introduction", "opportunity", matchId, `${p?.name} ↔ ${r?.code}`);
         },
         setVerification: (pid, status, actorId, note) => {
@@ -352,7 +360,7 @@ export const useStore = create<Store>()(
           }));
           log(actorId, `Set verification: ${status.replace("_", " ")}`, "provider", pid, note ?? prov(pid)?.name ?? "");
           if (status === "verified")
-            notify({ audience: "provider", userId: pid === "p-nimbus" ? "u-provider" : null, type: "verification_approved", title: "Verification approved", body: "Your company profile is now verified.", href: "/provider/verification" });
+            notify({ audience: "provider", userId: `org:${pid}`, type: "verification_approved", title: "Verification approved", body: "Your company profile is now verified.", href: "/provider/verification" });
         },
         setMatchingEligible: (pid, eligible, actorId) => {
           patchProvider(pid, (p) => ({ ...p, matchingEligible: eligible }));
@@ -411,7 +419,7 @@ export const useStore = create<Store>()(
           };
           set((s) => ({ engagements: [eng, ...s.engagements] }));
           log(actorId, "Created Pro engagement", "engagement", id, `${code} — ${e.title}`);
-          notify({ audience: "buyer", userId: e.buyerId === "b-sahyadri" ? "u-buyer" : null, type: "pro_updated", title: "Elets Pro engagement created", body: `${code} — ${e.title}. Your relationship manager will be in touch.`, href: `/buyer/pro/${id}` });
+          notify({ audience: "buyer", userId: `org:${e.buyerId}`, type: "pro_updated", title: "Elets Pro engagement created", body: `${code} — ${e.title}. Your relationship manager will be in touch.`, href: `/buyer/pro/${id}` });
           return id;
         },
         updateEngagement: (id, fn, actorId, auditAction) => {

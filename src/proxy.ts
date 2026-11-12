@@ -14,7 +14,12 @@ export async function proxy(request: NextRequest) {
   const portal = PORTALS.find((p) => pathname === p.prefix || pathname.startsWith(p.prefix + "/"));
   const session = await verifySession(request.cookies.get(SESSION_COOKIE)?.value);
 
-  if (pathname === "/login" && session) {
+  if (pathname === "/login" && request.nextUrl.searchParams.has("expired")) {
+    const res = NextResponse.next();
+    res.cookies.delete(SESSION_COOKIE);
+    return res;
+  }
+  if ((pathname === "/login" || pathname === "/signup") && session) {
     // Signed in under a different role (e.g. a provider following a buyer-only
     // "Sign in to connect" link): show the login page so they can switch.
     const wanted = request.nextUrl.searchParams.get("role");
@@ -38,5 +43,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/buyer/:path*", "/provider/:path*", "/admin/:path*", "/login"],
+  matcher: ["/buyer/:path*", "/provider/:path*", "/admin/:path*", "/login", "/signup"],
 };

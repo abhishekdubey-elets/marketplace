@@ -11,6 +11,7 @@ import { Logo, LogoMark } from "@/components/brand";
 import { Tooltip } from "@/components/ui/overlay";
 import { NAV, PORTAL_LABEL, type NavItem } from "./nav";
 import { TEAM } from "@/lib/data/taxonomy";
+import { isForUser } from "@/lib/people";
 
 function useBadgeCounts(role: Role, user: User) {
   const notifications = useStore((s) => s.notifications);
@@ -22,7 +23,7 @@ function useBadgeCounts(role: Role, user: User) {
   return React.useMemo(() => {
     const mine = (uid: string) => (role === "admin" ? true : uid === user.id);
     return {
-      notifications: notifications.filter((n) => n.audience === role && !n.read && (n.userId === null || n.userId === user.id)).length,
+      notifications: notifications.filter((n) => n.audience === role && !n.read && isForUser(n, user)).length,
       messages: threads.filter((t) => t.unreadBy.includes(user.id) && t.participants.some(mine)).length,
       pendingVerifications: providers.filter((p) => p.verification === "pending" || p.verification === "unverified").length,
       newRequirements: requirements.filter((r) => r.stage === "submitted").length,
