@@ -2,6 +2,7 @@
 
 import { actorId, uid, useStore } from "../store";
 import type { ProviderDocument } from "../types";
+import { defaultContactId } from "../team";
 
 // Provider-side mutations not covered by the core store. Each maps to a write on
 // provider_documents / opportunity_notes in /supabase/schema.sql.
@@ -40,7 +41,7 @@ export function addLeadNote(opportunityId: string, authorId: string, text: strin
 export function requestListingChange(providerId: string, userId: string, packageName: string) {
   const s = useStore.getState();
   s.createThread(
-    { subject: `Listing package enquiry — ${packageName}`, participants: [userId, "t-neha"], context: { kind: "verification", id: providerId } },
+    { subject: `Listing package enquiry — ${packageName}`, participants: [userId, defaultContactId()], context: { kind: "verification", id: providerId } },
     userId,
     `We'd like to know more about the ${packageName} listing package. We understand listing packages affect visibility only and have no effect on match scores.`,
   );

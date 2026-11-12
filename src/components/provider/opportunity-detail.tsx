@@ -36,6 +36,7 @@ import { Modal } from "@/components/ui/overlay";
 import { EmptyState, OrgAvatar } from "@/components/ui/misc";
 import { IntegrityNote, MatchExplanation, MatchScoreBlock, StageBadge } from "@/components/shared/domain";
 import { PROVIDER_MATCH_LABEL, buyerLabel, interestBadge, useCurrentProvider, useProviderOpportunities } from "./common";
+import { defaultContactId } from "@/lib/team";
 
 const ORDER = ["approved", "shortlisted", "intro_requested", "introduced"] as const;
 
@@ -77,7 +78,7 @@ export function ProviderOpportunityDetail() {
 
   const { requirement: r, match: m, result } = o;
   const introduced = m.status === "introduced";
-  const rmId = r.assignedTo ?? "t-neha";
+  const rmId = r.assignedTo ?? defaultContactId();
   const rm = person(rmId);
   const statusIdx = ORDER.indexOf(m.status as (typeof ORDER)[number]);
   const myMeetings = meetings.filter((x) => x.requirementId === r.id && x.providerId === provider.id);

@@ -506,6 +506,29 @@ export interface Announcement {
   at: string;
 }
 
+/** One plan on the public pricing page (editable in Operations > Content > Pricing). */
+export interface PricingPlan {
+  id: string;
+  group: "buyers" | "providers" | "pro";
+  name: string;
+  /** Shown as written, e.g. "Free" or "₹25,000". Blank shows "Contact us". */
+  price: string;
+  /** e.g. "per year"; optional */
+  period: string;
+  description: string;
+  features: string[];
+  ctaLabel: string;
+  ctaHref: string;
+  highlight?: boolean;
+}
+
+export interface PricingContent {
+  headline: string;
+  subtext: string;
+  note: string;
+  plans: PricingPlan[];
+}
+
 export interface SiteContent {
   heroHeadline: string;
   heroSubtext: string;
@@ -514,6 +537,8 @@ export interface SiteContent {
   sections: Record<string, boolean>;
   proHeadline: string;
   proSubtext: string;
+  /** Pricing page; falls back to DEFAULT_PRICING (src/lib/pricing.ts) when not yet edited */
+  pricing?: PricingContent;
 }
 
 export interface SavedSearch {

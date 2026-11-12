@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MapPin } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { LogoMark } from "@/components/brand";
 import { SAMPLE_DATA } from "@/lib/seed";
 
@@ -11,12 +11,13 @@ const COLUMNS = [
       { label: "Technology categories", href: "/#categories" },
       { label: "Industry verticals", href: "/#industries" },
       { label: "How it works", href: "/#how" },
+      { label: "Pricing", href: "/pricing" },
     ],
   },
   {
     title: "For organisations",
     links: [
-      { label: "Post a requirement", href: "/login?role=buyer&next=/buyer/requirements/new" },
+      { label: "Post a requirement", href: "/signup?role=buyer&next=/buyer/requirements/new" },
       { label: "Elets Pro — managed solutions", href: "/pro" },
       { label: "Buyer sign in", href: "/login?role=buyer" },
     ],
@@ -24,7 +25,7 @@ const COLUMNS = [
   {
     title: "For providers",
     links: [
-      { label: "List your company", href: "/login?role=provider" },
+      { label: "List your company", href: "/signup?role=provider" },
       { label: "Get verified", href: "/login?role=provider&next=/provider/verification" },
       { label: "Provider sign in", href: "/login?role=provider" },
     ],
@@ -50,6 +51,18 @@ export function SiteFooter() {
               providers.
             </p>
             <ul className="mt-6 space-y-2.5 text-sm">
+              <li className="flex items-center gap-2.5">
+                <Mail className="size-4 text-navy-400" />
+                <a href="mailto:info@elets.in" className="transition hover:text-white">
+                  info@elets.in
+                </a>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Phone className="size-4 text-navy-400" />
+                <a href="tel:+919910998068" className="transition hover:text-white">
+                  +91 99109 98068
+                </a>
+              </li>
               <li className="flex items-center gap-2.5">
                 <MapPin className="size-4 text-navy-400" />
                 <span>India</span>

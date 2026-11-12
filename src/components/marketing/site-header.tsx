@@ -17,6 +17,7 @@ const LINKS = [
   { label: "Elets Pro", href: "/pro", pro: true },
   { label: "How it works", href: "/#how" },
   { label: "Industries", href: "/#industries" },
+  { label: "Pricing", href: "/pricing" },
 ];
 
 export function SiteHeader() {

@@ -27,6 +27,11 @@ export function teamMember(id: string | null | undefined): TeamMember | undefine
   return useStore.getState().team.find((t) => t.id === id);
 }
 
+/** Who receives a message when nobody is assigned: the first active team member, else the shared "Elets team" inbox id. */
+export function defaultContactId(): string {
+  return useStore.getState().team.find(isActive)?.id ?? "elets";
+}
+
 /** Suggest a relationship manager: someone covering one of these industries, else the first active member. */
 export function suggestRm(team: TeamMember[], industryIds: string[]): TeamMember | undefined {
   const active = team.filter(isActive);

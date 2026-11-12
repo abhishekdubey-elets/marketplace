@@ -37,6 +37,7 @@ export function person(id: string | null | undefined): Person {
   if (t) return { id, name: t.name, title: t.title, initials: t.initials, kind: "team" };
   const u = USERS.find((x) => x.id === id) ?? members.get(id);
   if (u) return { id, name: u.name, title: u.title, initials: u.initials, kind: u.role === "admin" ? "team" : u.role };
+  if (id === "elets") return { id, name: "Elets team", title: "Elets Solution Marketplace", initials: "E", kind: "team" };
   if (id === "buyer") return { id, name: "Buyer", title: "Buyer organisation", initials: "B", kind: "buyer" };
   return { id, name: "Elets System", title: "Automated", initials: "E", kind: "system" };
 }

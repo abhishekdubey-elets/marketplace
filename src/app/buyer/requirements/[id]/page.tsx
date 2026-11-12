@@ -44,7 +44,7 @@ import { Avatar, EmptyState, PageSkeleton, ProviderLogo, ScoreRing, Verification
 import { DynIcon } from "@/components/ui/icon";
 import { IntegrityNote, MatchExplanation, StageBadge, StageHistory, StageTracker } from "@/components/shared/domain";
 import { ScheduleMeetingModal } from "@/components/buyer/schedule-meeting";
-import { teamMember } from "@/lib/team";
+import { defaultContactId, teamMember } from "@/lib/team";
 
 export default function Page() {
   return (
@@ -501,7 +501,7 @@ function RequirementMessages({ requirementId, code, rmId }: { requirementId: str
   const createThread = useStore((s) => s.createThread);
   const [text, setText] = React.useState("");
   const thread = threads[0];
-  const to = rmId ?? "t-neha";
+  const to = rmId ?? defaultContactId();
 
   const submit = () => {
     if (!text.trim()) return;

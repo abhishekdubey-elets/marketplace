@@ -5,7 +5,7 @@ import { ArrowDown, ArrowUp, Eye, Megaphone, Pencil, Plus, RotateCcw, Save, Spar
 import { toast } from "sonner";
 import { useStore } from "@/lib/store";
 import { useUser } from "@/components/providers";
-import type { Announcement, SiteContent } from "@/lib/types";
+import type { Announcement, SiteContent, PricingContent, PricingPlan } from "@/lib/types";
 import { cn, formatDate } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { EmptyState, PageHeader, ProviderLogo, SectionLabel } from "@/components/ui/misc";
@@ -17,6 +17,7 @@ import { Field, Input, Textarea } from "@/components/ui/input";
 import { Modal, Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/overlay";
 import { DynIcon } from "@/components/ui/icon";
 import { LogoMark } from "@/components/brand";
+import { pricingOf } from "@/lib/pricing";
 
 const SECTION_LABELS: Record<string, string> = {
   ecosystem: "Trusted industry ecosystem",
@@ -71,7 +72,9 @@ export function ContentManager() {
               disabled={!dirty}
               onClick={() => {
                 if (!d.heroHeadline.trim()) return toast.error("Hero headline cannot be empty");
-                const patch = Object.fromEntries(Object.entries(d).filter(([k, v]) => JSON.stringify(v) !== JSON.stringify(content[k as keyof SiteContent]))) as Partial<SiteContent>;
+                // drop blank "what's included" lines before saving
+                const next = d.pricing ? { ...d, pricing: { ...d.pricing, plans: d.pricing.plans.map((p) => ({ ...p, features: p.features.map((x) => x.trim()).filter(Boolean) })) } } : d;
+                const patch = Object.fromEntries(Object.entries(next).filter(([k, v]) => JSON.stringify(v) !== JSON.stringify(content[k as keyof SiteContent]))) as Partial<SiteContent>;
                 updateContent(patch, user.id);
                 toast.success("Content published", { description: "Changes are live on the public site." });
               }}
@@ -89,6 +92,7 @@ export function ContentManager() {
             <TabsTrigger value="home">Homepage</TabsTrigger>
             <TabsTrigger value="featured">Featured</TabsTrigger>
             <TabsTrigger value="pro">Elets Pro</TabsTrigger>
+            <TabsTrigger value="pricing">Pricing</TabsTrigger>
             <TabsTrigger value="ann" count={announcements.filter((a) => a.active).length}>
               Announcements
             </TabsTrigger>
@@ -191,6 +195,10 @@ export function ContentManager() {
                 </Field>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="pricing" className="space-y-5">
+            <PricingEditor value={pricingOf(d)} onChange={(pricing) => setD({ ...d, pricing })} />
           </TabsContent>
 
           <TabsContent value="ann">
@@ -365,5 +373,78 @@ function AnnouncementModal({ value, onClose, onSave }: { value: Partial<Announce
         </Field>
       </div>
     </Modal>
+  );
+}
+
+/** Pricing page editor: copy, prices and plan details. Saved with "Publish changes". */
+function PricingEditor({ value, onChange }: { value: PricingContent; onChange: (v: PricingContent) => void }) {
+  const setPlan = (id: string, patch: Partial<PricingPlan>) => onChange({ ...value, plans: value.plans.map((p) => (p.id === id ? { ...p, ...patch } : p)) });
+  const GROUP_LABEL: Record<PricingPlan["group"], string> = { buyers: "For organisations", pro: "For organisations", providers: "For technology providers" };
+  return (
+    <>
+      <Card>
+        <CardHeader
+          title="Pricing page"
+          description="Shown at /pricing. Leave a price blank to show “Contact us”."
+          action={
+            <Button size="sm" variant="secondary" asChild>
+              <a href="/pricing" target="_blank" rel="noreferrer">
+                <Eye /> View page
+              </a>
+            </Button>
+          }
+        />
+        <CardContent className="space-y-4">
+          <Field label="Headline">
+            <Input value={value.headline} onChange={(e) => onChange({ ...value, headline: e.target.value })} />
+          </Field>
+          <Field label="Supporting text">
+            <Textarea value={value.subtext} rows={3} onChange={(e) => onChange({ ...value, subtext: e.target.value })} />
+          </Field>
+          <Field label="Note under provider plans" optional>
+            <Textarea value={value.note} rows={2} onChange={(e) => onChange({ ...value, note: e.target.value })} />
+          </Field>
+        </CardContent>
+      </Card>
+      {value.plans.map((p) => (
+        <Card key={p.id}>
+          <CardHeader
+            title={p.name || "Untitled plan"}
+            description={GROUP_LABEL[p.group]}
+            action={
+              <label className="flex items-center gap-2 text-xs text-ink-3">
+                Highlight
+                <Switch checked={!!p.highlight} onCheckedChange={(v) => setPlan(p.id, { highlight: v })} aria-label={`Highlight ${p.name}`} />
+              </label>
+            }
+          />
+          <CardContent className="grid gap-4 sm:grid-cols-2">
+            <Field label="Plan name">
+              <Input value={p.name} onChange={(e) => setPlan(p.id, { name: e.target.value })} />
+            </Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Price" hint="e.g. Free, ₹25,000">
+                <Input value={p.price} placeholder="Contact us" onChange={(e) => setPlan(p.id, { price: e.target.value })} />
+              </Field>
+              <Field label="Period" optional hint="e.g. per year">
+                <Input value={p.period} onChange={(e) => setPlan(p.id, { period: e.target.value })} />
+              </Field>
+            </div>
+            <Field label="Description" className="sm:col-span-2">
+              <Textarea value={p.description} rows={2} onChange={(e) => setPlan(p.id, { description: e.target.value })} />
+            </Field>
+            <Field label="What's included" hint="One item per line" className="sm:col-span-2">
+              <Textarea value={p.features.join("\n")} rows={Math.max(3, p.features.length)} onChange={(e) => setPlan(p.id, { features: e.target.value.split("\n") })} />
+            </Field>
+            <Field label="Button label">
+              <Input value={p.ctaLabel} onChange={(e) => setPlan(p.id, { ctaLabel: e.target.value })} />
+            </Field>
+            <Field label="Button link" hint="A page like /signup, or mailto:, tel:, https://">
+              <Input value={p.ctaHref} onChange={(e) => setPlan(p.id, { ctaHref: e.target.value })} />
+            </Field>
+          </CardContent>
+        </Card>
+      ))}
+    </>
   );
 }

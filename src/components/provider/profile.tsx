@@ -302,7 +302,7 @@ export function ProviderProfile() {
                 className="w-full"
                 onClick={() => {
                   requestListingChange(provider.id, user.id, provider.listing === "premium" ? "Premium" : "Featured");
-                  toast.success("Enquiry sent to Elets", { description: "Neha Sharma will follow up in Messages." });
+                  toast.success("Enquiry sent to Elets", { description: "The Elets team will follow up in Messages." });
                 }}
               >
                 Enquire about listing packages
