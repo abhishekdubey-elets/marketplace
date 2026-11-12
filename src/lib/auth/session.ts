@@ -58,3 +58,11 @@ export async function verifySession(token: string | undefined | null): Promise<S
 }
 
 export const ROLE_HOME: Record<Role, string> = { buyer: "/buyer", provider: "/provider", admin: "/admin" };
+
+/** Where to send a user after sign-in: `next` if it is inside their own portal, otherwise their portal home. */
+export function safeNext(role: Role, next?: string | null): string {
+  const home = ROLE_HOME[role];
+  if (!next || !next.startsWith("/") || next.startsWith("//") || next.includes("\\")) return home;
+  const path = next.split(/[?#]/)[0];
+  return path === home || path.startsWith(home + "/") ? next : home;
+}

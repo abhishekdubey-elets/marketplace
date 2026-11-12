@@ -50,7 +50,7 @@ export function LoginForm() {
 
   const demo = async (r: Role) => {
     setLoading(r);
-    const res = await fetch("/api/auth/demo", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ role: r }) });
+    const res = await fetch("/api/auth/demo", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ role: r, next }) });
     const j = await res.json();
     if (!res.ok) {
       setLoading(null);

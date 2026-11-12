@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { ROLE_HOME, SESSION_COOKIE, verifySession } from "@/lib/auth/session";
+import { ROLE_HOME, SESSION_COOKIE, safeNext, verifySession } from "@/lib/auth/session";
 import type { Role } from "@/lib/types";
 
 // Role-based route protection. Each portal prefix requires the matching role.
@@ -15,7 +15,11 @@ export async function proxy(request: NextRequest) {
   const session = await verifySession(request.cookies.get(SESSION_COOKIE)?.value);
 
   if (pathname === "/login" && session) {
-    return NextResponse.redirect(new URL(ROLE_HOME[session.role], request.url));
+    // Signed in under a different role (e.g. a provider following a buyer-only
+    // "Sign in to connect" link): show the login page so they can switch.
+    const wanted = request.nextUrl.searchParams.get("role");
+    if (wanted && wanted !== session.role) return NextResponse.next();
+    return NextResponse.redirect(new URL(safeNext(session.role, request.nextUrl.searchParams.get("next")), request.url));
   }
   if (!portal) return NextResponse.next();
 
