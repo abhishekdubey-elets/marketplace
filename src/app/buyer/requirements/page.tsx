@@ -22,9 +22,11 @@ import { Avatar, EmptyState, PageHeader } from "@/components/ui/misc";
 import { DynIcon } from "@/components/ui/icon";
 import { StageBadge } from "@/components/shared/domain";
 import { Input } from "@/components/ui/input";
+import { useBuyerPlan } from "@/lib/use-plan";
 
 export default function RequirementsPage() {
   const user = useUser();
+  const premium = useBuyerPlan() === "premium";
   const router = useRouter();
   const L = useLookups();
   const requirements = useStore((s) => s.requirements);
@@ -170,11 +172,13 @@ export default function RequirementsPage() {
                     <p className="mt-3 font-mono text-[11px] text-ink-4">{r.code}</p>
                     <p className="mt-0.5 line-clamp-2 text-[15px] font-semibold leading-snug tracking-tight text-ink group-hover:text-brand-700">{r.title}</p>
                     <p className="mt-2 line-clamp-2 text-[13px] text-ink-3">{r.problem}</p>
-                    <div className="mt-4 grid grid-cols-8 gap-1">
-                      {REQUIREMENT_STAGES.map((s, i) => (
-                        <span key={s} className={cn("h-1.5 rounded-full", i <= idx ? "bg-brand-500" : "bg-navy-100")} />
-                      ))}
-                    </div>
+                    {premium && (
+                      <div className="mt-4 grid grid-cols-8 gap-1">
+                        {REQUIREMENT_STAGES.map((s, i) => (
+                          <span key={s} className={cn("h-1.5 rounded-full", i <= idx ? "bg-brand-500" : "bg-navy-100")} />
+                        ))}
+                      </div>
+                    )}
                     <div className="mt-4 flex items-center justify-between border-t border-line pt-3 text-xs text-ink-3">
                       <span>{BUDGET_LABELS[r.budget]}</span>
                       <span>{matchCount(r.id)} matches · {formatDate(r.createdAt, { year: false })}</span>

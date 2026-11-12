@@ -336,8 +336,8 @@ export const useStore = create<Store>()(
           const summary = fresh.length
             ? `Matched automatically with ${fresh.length} provider${fresh.length === 1 ? "" : "s"}.`
             : "Matching ran automatically. No suitable providers yet; new matches appear as providers join.";
-          if (r.stage === "submitted" || r.stage === "under_review") get().setRequirementStage(requirementId, "matching", actorId, summary);
-          else if (fresh.length) notify({ audience: "buyer", userId: `org:${r.buyerId}`, type: "requirement_reviewed", title: `New matches for ${r.code}`, body: summary, href: `/buyer/requirements/${requirementId}?tab=matches` });
+          // Free requirements stay "Submitted": the stage progress is the Premium, team-run journey.
+          if (fresh.length || !r.autoMatchedAt) notify({ audience: "buyer", userId: `org:${r.buyerId}`, type: "requirement_reviewed", title: fresh.length ? `New matches for ${r.code}` : `${r.code} submitted`, body: summary, href: `/buyer/requirements/${requirementId}?tab=matches` });
           if (fresh.length || !r.autoMatchedAt) log(actorId, "Matched automatically", "requirement", requirementId, `${fresh.length} provider suggestions shared with the buyer (Free plan)`);
           return fresh.length;
         },

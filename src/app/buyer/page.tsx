@@ -34,6 +34,7 @@ import { Donut, Legend, SERIES } from "@/components/ui/charts";
 import { Progress } from "@/components/ui/controls";
 import { StageBadge } from "@/components/shared/domain";
 import { NOTIF_ICON } from "@/components/shell/topbar";
+import { useBuyerPlan } from "@/lib/use-plan";
 
 const STAGE_COLORS: Record<string, string> = {
   submitted: "#94a6cc",
@@ -48,6 +49,7 @@ const STAGE_COLORS: Record<string, string> = {
 
 export default function BuyerDashboard() {
   const user = useUser();
+  const premium = useBuyerPlan() === "premium";
   const L = useLookups();
   const orgId = user.orgId!;
   const buyer = useStore((s) => s.buyers.find((b) => b.id === orgId));
@@ -169,11 +171,15 @@ export default function BuyerDashboard() {
                     <StageBadge stage={r.stage} />
                   </div>
                   <div className="mt-2.5 flex items-center gap-3">
-                    <div className="grid flex-1 grid-cols-8 gap-1" aria-label={`Stage ${idx + 1} of 8`}>
-                      {REQUIREMENT_STAGES.map((s, i) => (
-                        <span key={s} title={STAGE_SHORT[s]} className={cn("h-1.5 rounded-full", i < idx ? "bg-brand-500" : i === idx ? "bg-brand-500/60 animate-pulse" : "bg-navy-100")} />
-                      ))}
-                    </div>
+                    {premium ? (
+                      <div className="grid flex-1 grid-cols-8 gap-1" aria-label={`Stage ${idx + 1} of 8`}>
+                        {REQUIREMENT_STAGES.map((s, i) => (
+                          <span key={s} title={STAGE_SHORT[s]} className={cn("h-1.5 rounded-full", i < idx ? "bg-brand-500" : i === idx ? "bg-brand-500/60 animate-pulse" : "bg-navy-100")} />
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="flex-1" />
+                    )}
                     <span className="w-28 shrink-0 text-right text-[11px] text-ink-3">{n ? `${n} providers matched` : `Updated ${timeAgo(r.updatedAt)}`}</span>
                   </div>
                 </Link>

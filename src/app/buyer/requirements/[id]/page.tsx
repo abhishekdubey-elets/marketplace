@@ -69,19 +69,21 @@ function RequirementDetail() {
   const categories = useStore((s) => s.categories);
   const engagements = useStore((s) => s.engagements);
   const proRequests = useStore((s) => s.proRequests);
-  const [tab, setTab] = React.useState(params.get("tab") ?? "overview");
+  const [tabPick, setTab] = React.useState<string | null>(params.get("tab"));
   const [proOpen, setProOpen] = React.useState(false);
   const [meetOpen, setMeetOpen] = React.useState(false);
   const [meetProvider, setMeetProvider] = React.useState<string | undefined>();
   const { premium, gate } = usePremiumGate();
+  // Free buyers land on their matches; Premium buyers on the overview and progress.
+  const tab = tabPick ?? (premium ? "overview" : "matches");
   const autoMatch = useStore((s) => s.autoMatch);
-  const hasAnyMatch = matches.some((m) => m.requirementId === id);
+  const hasSharedMatch = matches.some((m) => m.requirementId === id && m.status !== "suggested" && m.status !== "rejected");
 
   // Free plan: matching runs automatically. Covers requirements posted before
   // automatic matching existed, or while the buyer was on another plan.
   React.useEffect(() => {
-    if (req && !premium && !req.autoMatchedAt && !hasAnyMatch && req.stage !== "completed") autoMatch(req.id, user.id);
-  }, [req, premium, hasAnyMatch, autoMatch, user.id]);
+    if (req && !premium && !req.autoMatchedAt && !hasSharedMatch && req.stage !== "completed") autoMatch(req.id, user.id);
+  }, [req, premium, hasSharedMatch, autoMatch, user.id]);
 
   const visible = React.useMemo(() => {
     if (!req) return [];
@@ -167,9 +169,11 @@ function RequirementDetail() {
         </div>
       </div>
 
-      <Card className="px-5 py-5">
-        <StageTracker requirement={req} />
-      </Card>
+      {premium && (
+        <Card className="px-5 py-5">
+          <StageTracker requirement={req} />
+        </Card>
+      )}
 
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
@@ -296,7 +300,19 @@ function RequirementDetail() {
                       </Button>
                     </>
                   ) : (
-                    <p className="text-[13px] leading-relaxed text-ink-3">A relationship manager will be assigned once Elets reviews your requirement.</p>
+                    <p className="text-[13px] leading-relaxed text-ink-3">
+                      {premium ? (
+                        "A relationship manager will be assigned once Elets reviews your requirement."
+                      ) : (
+                        <>
+                          Questions about this requirement go to the Elets team in Messages. A dedicated relationship manager is part of{" "}
+                          <Link href={`/buyer/upgrade?requirement=${req.id}`} className="font-medium text-brand-600 hover:underline">
+                            Premium
+                          </Link>
+                          .
+                        </>
+                      )}
+                    </p>
                   )}
                 </CardContent>
               </Card>
