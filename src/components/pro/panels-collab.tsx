@@ -27,7 +27,6 @@ import { cn, daysUntil, formatDate, formatDateTime, formatTime, weekday } from "
 import { useStore, uid } from "@/lib/store";
 import { PRO_MODULES, type Meeting, type MeetingNote, type ProMilestone, type ProModuleKey, type ProTask } from "@/lib/types";
 import { person } from "@/lib/people";
-import { TEAM } from "@/lib/data/taxonomy";
 import { useLookups } from "@/lib/hooks";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,6 +38,8 @@ import { Select } from "@/components/ui/select";
 import { Segmented } from "@/components/ui/controls";
 import { AssigneeAvatar, MODULE_NAME, MODULE_SHORT, evaluationTotals } from "./shared";
 import type { PanelProps } from "./panels-overview";
+import { useTeam } from "@/lib/team";
+import { useShallow } from "zustand/react/shallow";
 
 const MODULE_OPTIONS = PRO_MODULES.map((m) => ({ value: m.key, label: m.name }));
 const lines = (s: string) =>
@@ -493,6 +494,8 @@ const COLUMNS: { key: ProTask["status"]; label: string; icon: React.ElementType;
 const PRIORITY: Record<ProTask["priority"], string> = { high: "bg-red-50 text-red-700 ring-red-100", medium: "bg-amber-50 text-amber-800 ring-amber-100", low: "bg-navy-50 text-ink-3 ring-navy-100" };
 
 export function TasksPanel({ engagement: e, mode, actorId }: PanelProps) {
+  const team = useTeam();
+  const buyerMembers = useStore(useShallow((s) => s.members.filter((m) => m.orgId === e.buyerId)));
   const update = useStore((s) => s.updateEngagement);
   const [open, setOpen] = React.useState(false);
   const [mine, setMine] = React.useState<"all" | "mine">("all");
@@ -518,7 +521,10 @@ export function TasksPanel({ engagement: e, mode, actorId }: PanelProps) {
     setD({ ...d, title: "", due: "" });
   };
 
-  const assignees = [...TEAM.filter((t) => t.id !== "t-neha" || e.rmId === "t-neha").map((t) => ({ value: t.id, label: `${t.name} — Elets` })), { value: "u-buyer", label: "Buyer contact" }];
+  const assignees = [
+    ...team.map((t) => ({ value: t.id, label: `${t.name} — Elets` })),
+    ...buyerMembers.map((m) => ({ value: m.id, label: `${m.name} — buyer` })),
+  ];
 
   return (
     <div className="space-y-4">

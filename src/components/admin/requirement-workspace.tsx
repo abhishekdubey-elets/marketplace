@@ -31,7 +31,7 @@ import { person } from "@/lib/people";
 import { MATCH_DIMENSIONS, REQUIREMENT_STAGES, type Match, type Requirement, type RequirementStage } from "@/lib/types";
 import { MATCH_STATUS_LABEL, MATCH_STATUS_TONE, STAGE_LABEL } from "@/lib/labels";
 import { DIMENSION_META, isMatchEligible, scoreMatch, toMatchable } from "@/lib/matching";
-import { BUDGET_LABELS, COMPLIANCE_OPTIONS, DEPLOYMENT_LABELS, SCALE_LABELS, TEAM, TIMELINE_LABELS } from "@/lib/data/taxonomy";
+import { BUDGET_LABELS, COMPLIANCE_OPTIONS, DEPLOYMENT_LABELS, SCALE_LABELS, TIMELINE_LABELS } from "@/lib/data/taxonomy";
 import { cn, formatDate, formatDateTime, timeAgo } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, EmptyState, OrgAvatar, PageHeader, ProviderLogo, ScoreRing, SectionLabel, VerificationBadge } from "@/components/ui/misc";
@@ -42,9 +42,10 @@ import { Select } from "@/components/ui/select";
 import { Field, Input, Textarea } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger, Tooltip } from "@/components/ui/overlay";
 import { IntegrityNote, MatchExplanation, StageBadge, StageHistory, StageTracker } from "@/components/shared/domain";
-import { TEAM_OPTIONS } from "./common";
+import { useTeamOptions } from "./common";
 
 export function RequirementWorkspace() {
+  const teamOptions = useTeamOptions();
   const { id } = useParams<{ id: string }>();
   const user = useUser();
   const L = useLookups();
@@ -132,10 +133,10 @@ export function RequirementWorkspace() {
                   value={req.assignedTo ?? undefined}
                   placeholder="Unassigned"
                   onValueChange={(v) => {
-                    updateRequirement(req.id, { assignedTo: v }, user.id, `Assigned to ${TEAM.find((t) => t.id === v)?.name}`);
+                    updateRequirement(req.id, { assignedTo: v }, user.id, `Assigned to ${person(v).name}`);
                     toast.success("Relationship manager assigned");
                   }}
-                  options={TEAM_OPTIONS}
+                  options={teamOptions}
                 />
               </Field>
               <Field label="Priority">

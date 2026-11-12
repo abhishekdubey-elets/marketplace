@@ -32,7 +32,7 @@ import { scoreMatch, toMatchable } from "@/lib/matching";
 import type { Match, MatchResult, Provider } from "@/lib/types";
 import { PRO_MODULES } from "@/lib/types";
 import { MATCH_STATUS_LABEL, MATCH_STATUS_TONE } from "@/lib/labels";
-import { BUDGET_LABELS, DEPLOYMENT_LABELS, SCALE_LABELS, TEAM, TIMELINE_LABELS } from "@/lib/data/taxonomy";
+import { BUDGET_LABELS, DEPLOYMENT_LABELS, SCALE_LABELS, TIMELINE_LABELS } from "@/lib/data/taxonomy";
 import { person } from "@/lib/people";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -44,6 +44,7 @@ import { Avatar, EmptyState, PageSkeleton, ProviderLogo, ScoreRing, Verification
 import { DynIcon } from "@/components/ui/icon";
 import { IntegrityNote, MatchExplanation, StageBadge, StageHistory, StageTracker } from "@/components/shared/domain";
 import { ScheduleMeetingModal } from "@/components/buyer/schedule-meeting";
+import { teamMember } from "@/lib/team";
 
 export default function Page() {
   return (
@@ -97,7 +98,7 @@ function RequirementDetail() {
   const pending = matches.filter((m) => m.requirementId === req.id && m.status === "suggested").length;
   const eng = engagements.find((e) => e.requirementId === req.id);
   const proPending = proRequests.some((r) => r.requirementId === req.id && r.status !== "converted");
-  const rm = req.assignedTo ? TEAM.find((t) => t.id === req.assignedTo) : null;
+  const rm = req.assignedTo ? teamMember(req.assignedTo) : null;
 
   return (
     <div className="space-y-6">

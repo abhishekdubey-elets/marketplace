@@ -44,6 +44,15 @@ There is no demo operations account. Operations staff are real accounts in `mark
 - **Hidden from everyone else**: `/admin/*` and the internal `/ops-login` route return a plain 404, so the portal isn't discoverable. The public `/login` treats operations credentials as wrong.
 - **The real protection** is the password. The hidden path only keeps the page out of sight.
 
+### Elets team
+
+Relationship managers, analysts and operations staff are managed on **Operations → Elets team** (`/admin/team`) and stored in the shared `team` collection.
+
+- **Where team members appear**: active members can be assigned requirements, Pro engagements, opportunities and tasks, and they show as "Your Elets contact" to buyers and providers. A buyer's contact is whoever manages their latest requirement, otherwise someone covering their sector.
+- **Deactivating**: an inactive member keeps their history but can't be assigned new work.
+- **Sign-ins**: from a member's menu, **Create operations sign-in** makes them an operations account, with their team id as the user id, and shows a generated password once. You can also **Reset password** or **Remove sign-in** there, and removing a sign-in takes effect immediately.
+- **Account owners**: accounts created with `scripts/create-admin.mjs` are owners. Other operations users can't remove, reset or deactivate them from the Team page.
+
 ### Self-service accounts
 
 When `DATABASE_URL` is set, buyers and solution providers can create their own accounts at `/signup`. Elets operations accounts are not self-service.

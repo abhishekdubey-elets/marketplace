@@ -10,7 +10,6 @@ import { useStore } from "@/lib/store";
 import { useUser } from "@/components/providers";
 import { person } from "@/lib/people";
 import { useLookups } from "@/lib/hooks";
-import { TEAM, USERS } from "@/lib/data/taxonomy";
 import type { Thread } from "@/lib/types";
 import { Avatar, EmptyState, PageHeader } from "@/components/ui/misc";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,7 @@ import { Field, Input, Textarea } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Modal } from "@/components/ui/overlay";
 import { Badge } from "@/components/ui/badge";
+import { useTeam } from "@/lib/team";
 
 const CONTEXT_LABEL: Record<Thread["context"]["kind"], string> = {
   requirement: "Requirement",
@@ -36,6 +36,8 @@ export function MessagesView() {
   const createThread = useStore((s) => s.createThread);
   const L = useLookups();
   const isAdmin = user.role === "admin";
+  const team = useTeam();
+  const members = useStore((s) => s.members);
 
   const mine = React.useMemo(
     () =>
@@ -208,8 +210,8 @@ export function MessagesView() {
         }}
         recipients={
           isAdmin
-            ? USERS.filter((u) => u.role !== "admin").map((u) => ({ value: u.id, label: `${u.name} — ${u.role === "buyer" ? L.buyer(u.orgId!)?.name : L.provider(u.orgId!)?.name}` }))
-            : TEAM.map((t) => ({ value: t.id, label: `${t.name} — ${t.title}` }))
+            ? members.filter((u) => u.role !== "admin" && u.orgId).map((u) => ({ value: u.id, label: `${u.name} — ${u.role === "buyer" ? L.buyer(u.orgId!)?.name : L.provider(u.orgId!)?.name}` }))
+            : team.map((t) => ({ value: t.id, label: `${t.name} — ${t.title}` }))
         }
       />
     </div>

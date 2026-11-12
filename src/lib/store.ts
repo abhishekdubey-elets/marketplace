@@ -24,6 +24,7 @@ import type {
   SavedSearch,
   ServiceCategory,
   SiteContent,
+  TeamMember,
   Solution,
   TechCategory,
   Thread,
@@ -128,6 +129,9 @@ export interface Actions {
   upsertServiceCategory: (s: ServiceCategory, actorId: string) => void;
   updateContent: (patch: Partial<SiteContent>, actorId: string) => void;
   upsertAnnouncement: (a: Announcement, actorId: string) => void;
+
+  // Elets team
+  upsertTeamMember: (t: TeamMember, actorId: string, auditAction?: string) => void;
 }
 
 export type Store = DataState & Actions;
@@ -458,6 +462,10 @@ export const useStore = create<Store>()(
         updateContent: (patch, actorId) => {
           set((s) => ({ content: { ...s.content, ...patch } }));
           log(actorId, "Updated site content", "content", null, Object.keys(patch).join(", "));
+        },
+        upsertTeamMember: (t, actorId, auditAction) => {
+          set((s) => ({ team: upsert(s.team, t) }));
+          log(actorId, auditAction ?? "Updated team member", "team", t.id, t.name);
         },
         upsertAnnouncement: (a, actorId) => {
           set((s) => ({ announcements: upsert(s.announcements, a) }));

@@ -22,7 +22,14 @@ export interface TeamMember {
   email: string;
   phone: string;
   initials: string;
+  /** Industry ids this person looks after; used to suggest a relationship manager */
   focus: string[];
+  /** Inactive members keep their history but can't be assigned new work (default: active) */
+  active?: boolean;
+  /** Has an Elets operations sign-in (user id = team member id) */
+  hasLogin?: boolean;
+  /** Account owner: sign-in is managed only with scripts/create-admin.mjs */
+  owner?: boolean;
 }
 
 // ---------------------------------------------------------------- taxonomy
@@ -484,7 +491,7 @@ export interface AuditEntry {
   id: string;
   actorId: string;
   action: string;
-  entity: "provider" | "buyer" | "requirement" | "match" | "opportunity" | "engagement" | "category" | "content" | "system";
+  entity: "provider" | "buyer" | "requirement" | "match" | "opportunity" | "engagement" | "category" | "content" | "team" | "system";
   entityId: string | null;
   detail: string;
   at: string;

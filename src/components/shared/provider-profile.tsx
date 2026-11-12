@@ -32,7 +32,7 @@ import type { Provider } from "@/lib/types";
 import { useSession } from "@/components/providers";
 import { useLookups } from "@/lib/hooks";
 import { scoreMatch, toMatchable } from "@/lib/matching";
-import { DEPLOYMENT_LABELS, SIZE_LABELS, TEAM } from "@/lib/data/taxonomy";
+import { DEPLOYMENT_LABELS, SIZE_LABELS } from "@/lib/data/taxonomy";
 import { LISTING_LABEL } from "@/lib/labels";
 import { requestIntroForProvider } from "@/lib/actions/buyer";
 import { Button } from "@/components/ui/button";
@@ -43,6 +43,7 @@ import { Select } from "@/components/ui/select";
 import { Modal, Tabs, TabsContent, TabsList, TabsTrigger, Tooltip } from "@/components/ui/overlay";
 import { Avatar, EmptyState, ProviderLogo, ScorePill, VerificationBadge } from "@/components/ui/misc";
 import { DynIcon } from "@/components/ui/icon";
+import { suggestRm, useTeam } from "@/lib/team";
 
 export function ProviderProfileView({ provider, mode }: { provider: Provider; mode: "public" | "buyer" }) {
   const session = useSession();
@@ -56,6 +57,7 @@ export function ProviderProfileView({ provider, mode }: { provider: Provider; mo
   const requirements = useStore((s) => s.requirements);
   const matches = useStore((s) => s.matches);
   const categories = useStore((s) => s.categories);
+  const team = useTeam();
   const serviceCategories = useStore((s) => s.serviceCategories);
   const industries = useStore((s) => s.industries);
   const [introOpen, setIntroOpen] = React.useState(false);
@@ -73,7 +75,7 @@ export function ProviderProfileView({ provider, mode }: { provider: Provider; mo
     .sort((a, b) => b.m.score - a.m.score)
     .slice(0, 3);
   const existingIntros = matches.filter((m) => m.providerId === provider.id && myReqs.some((r) => r.id === m.requirementId) && ["intro_requested", "introduced"].includes(m.status));
-  const rm = TEAM.find((t) => t.focus.some((f) => provider.industries.includes(f))) ?? TEAM[4];
+  const rm = suggestRm(team, provider.industries);
 
   const facts = [
     { icon: MapPin, label: "Headquarters", value: provider.hq },
@@ -381,6 +383,7 @@ export function ProviderProfileView({ provider, mode }: { provider: Provider; mo
               {buyer ? (
                 <>
                   <p className="text-[13px] leading-relaxed text-ink-3">Introductions are facilitated by Elets so both sides have context before the first conversation.</p>
+                  {rm && (
                   <div className="mt-4 flex items-center gap-3 rounded-xl bg-subtle p-3 ring-1 ring-inset ring-line">
                     <Avatar initials={rm.initials} />
                     <div className="min-w-0">
@@ -388,6 +391,7 @@ export function ProviderProfileView({ provider, mode }: { provider: Provider; mo
                       <p className="truncate text-xs text-ink-3">{rm.title}</p>
                     </div>
                   </div>
+                  )}
                   <div className="mt-3 rounded-xl border border-line p-3 text-[13px]">
                     <p className="font-medium text-ink">{provider.contact.name}</p>
                     <p className="text-xs text-ink-3">{provider.contact.title}</p>

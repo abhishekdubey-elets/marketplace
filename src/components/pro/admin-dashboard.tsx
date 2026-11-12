@@ -9,7 +9,6 @@ import { useStore, type ProRequest } from "@/lib/store";
 import { useLookups } from "@/lib/hooks";
 import { useUser } from "@/components/providers";
 import { PRO_MODULES, type ProEngagement } from "@/lib/types";
-import { TEAM } from "@/lib/data/taxonomy";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,8 +20,11 @@ import { Segmented, Progress } from "@/components/ui/controls";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { Bars } from "@/components/ui/charts";
 import { AssigneeAvatar, EngagementStatusBadge, MODULE_DESCRIPTION, MODULE_ICON, MODULE_NAME, WorkflowConfigSheet, currentModule, engagementProgress, teamMember } from "./shared";
+import { suggestRm, useTeam } from "@/lib/team";
+import { person } from "@/lib/people";
 
 export function AdminProDashboard() {
+  const team = useTeam();
   const user = useUser();
   const router = useRouter();
   const engagements = useStore((s) => s.engagements);
@@ -263,7 +265,7 @@ export function AdminProDashboard() {
           <CardHeader icon={<Users />} title="Relationship manager workload" />
           <CardContent>
             <ul className="space-y-3">
-              {TEAM.map((t) => {
+              {team.map((t) => {
                 const mine = engagements.filter((e) => e.rmId === t.id && e.status !== "completed");
                 const tasks = engagements.flatMap((e) => e.tasks).filter((x) => x.assigneeId === t.id && x.status !== "done").length;
                 const load = Math.min(100, mine.length * 30 + tasks * 6);
@@ -377,17 +379,18 @@ function CreateEngagementModal({
   const buyers = useStore((s) => s.buyers);
   const requirements = useStore((s) => s.requirements);
   const create = useStore((s) => s.createEngagement);
-  const [d, setD] = React.useState({ buyerId: "", requirementId: "none", title: "", rmId: "t-ananya", targetDate: "" });
+  const team = useTeam();
+  const [d, setD] = React.useState({ buyerId: "", requirementId: "none", title: "", rmId: team[0]?.id ?? actorId, targetDate: "" });
   const [err, setErr] = React.useState<Record<string, string>>({});
 
   React.useEffect(() => {
     if (!open) return;
     const req = prefill.requirementId ? requirements.find((r) => r.id === prefill.requirementId) : undefined;
     const buyer = buyers.find((b) => b.id === prefill.buyerId);
-    const rm = TEAM.find((t) => buyer && t.focus.includes(buyer.industryId))?.id ?? "t-ananya";
+    const rm = suggestRm(team, buyer ? [buyer.industryId] : [])?.id ?? actorId;
     setD({ buyerId: prefill.buyerId ?? "", requirementId: prefill.requirementId ?? "none", title: req ? `${req.title}` : "", rmId: rm, targetDate: "" });
     setErr({});
-  }, [open, prefill, requirements, buyers]);
+  }, [open, prefill, requirements, buyers, team, actorId]);
 
   const reqs = requirements.filter((r) => r.buyerId === d.buyerId);
 
@@ -400,7 +403,7 @@ function CreateEngagementModal({
     setErr(x);
     if (Object.keys(x).length) return;
     const id = create({ title: d.title.trim(), buyerId: d.buyerId, requirementId: d.requirementId === "none" ? null : d.requirementId, rmId: d.rmId, targetDate: d.targetDate }, actorId);
-    toast.success("Engagement created", { description: `${TEAM.find((t) => t.id === d.rmId)?.name} assigned as relationship manager` });
+    toast.success("Engagement created", { description: `${person(d.rmId).name} assigned as relationship manager` });
     onOpenChange(false);
     onCreated(id);
   };
@@ -431,7 +434,7 @@ function CreateEngagementModal({
             placeholder="Select buyer"
             onValueChange={(v) => {
               const b = buyers.find((x) => x.id === v);
-              const rm = TEAM.find((t) => b && t.focus.includes(b.industryId))?.id ?? d.rmId;
+              const rm = suggestRm(team, b ? [b.industryId] : [])?.id ?? d.rmId;
               setD({ ...d, buyerId: v, requirementId: "none", rmId: rm });
             }}
             options={buyers.map((b) => ({ value: b.id, label: b.name }))}
@@ -451,7 +454,7 @@ function CreateEngagementModal({
           <Input value={d.title} invalid={!!err.title} onChange={(ev) => setD({ ...d, title: ev.target.value })} placeholder="e.g. HIS vendor selection" />
         </Field>
         <Field label="Relationship manager">
-          <Select value={d.rmId} onValueChange={(v) => setD({ ...d, rmId: v })} options={TEAM.map((t) => ({ value: t.id, label: t.name }))} />
+          <Select value={d.rmId} onValueChange={(v) => setD({ ...d, rmId: v })} options={team.length ? team.map((t) => ({ value: t.id, label: t.name })) : [{ value: actorId, label: "Me" }]} />
         </Field>
         <Field label="Target date" error={err.targetDate}>
           <Input type="date" value={d.targetDate} invalid={!!err.targetDate} onChange={(ev) => setD({ ...d, targetDate: ev.target.value })} />

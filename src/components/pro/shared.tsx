@@ -19,7 +19,6 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { PRO_MODULES, type ModuleState, type ProEngagement, type ProModuleKey } from "@/lib/types";
-import { TEAM } from "@/lib/data/taxonomy";
 import { useStore } from "@/lib/store";
 import type { Tone } from "@/lib/labels";
 import { Badge } from "@/components/ui/badge";
@@ -119,9 +118,8 @@ export function evaluationTotals(e: ProEngagement) {
   ) as Record<string, { total: number; coverage: number; scored: number; of: number; technical: number | null; commercial: number | null }>;
 }
 
-export function teamMember(id: string) {
-  return TEAM.find((t) => t.id === id);
-}
+import { teamMember } from "@/lib/team";
+export { teamMember };
 
 export function EngagementStatusBadge({ status }: { status: ProEngagement["status"] }) {
   return (

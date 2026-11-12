@@ -9,7 +9,6 @@ import { useUser } from "@/components/providers";
 import { useLookups } from "@/lib/hooks";
 import { REQUIREMENT_STAGES, type Requirement, type RequirementStage } from "@/lib/types";
 import { STAGE_LABEL } from "@/lib/labels";
-import { TEAM } from "@/lib/data/taxonomy";
 import { cn, formatDate, timeAgo } from "@/lib/utils";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { PageHeader, StatCard } from "@/components/ui/misc";
@@ -19,11 +18,13 @@ import { Select } from "@/components/ui/select";
 import { Segmented } from "@/components/ui/controls";
 import { Tooltip } from "@/components/ui/overlay";
 import { StageBadge } from "@/components/shared/domain";
-import { downloadCsv, FilterSelect, TEAM_OPTIONS } from "./common";
+import { downloadCsv, FilterSelect, useTeamOptions } from "./common";
+import { person } from "@/lib/people";
 
 const PRIORITY_TONE = { high: "red", medium: "amber", low: "neutral" } as const;
 
 export function RequirementsList() {
+  const teamOptions = useTeamOptions();
   const user = useUser();
   const router = useRouter();
   const params = useSearchParams();
@@ -108,10 +109,10 @@ export function RequirementsList() {
             value={r.assignedTo ?? undefined}
             placeholder="Unassigned"
             onValueChange={(v) => {
-              updateRequirement(r.id, { assignedTo: v }, user.id, `Assigned to ${TEAM.find((t) => t.id === v)?.name}`);
-              toast.success("Relationship manager assigned", { description: `${r.code} → ${TEAM.find((t) => t.id === v)?.name}` });
+              updateRequirement(r.id, { assignedTo: v }, user.id, `Assigned to ${person(v).name}`);
+              toast.success("Relationship manager assigned", { description: `${r.code} → ${person(v).name}` });
             }}
-            options={TEAM_OPTIONS}
+            options={teamOptions}
           />
         </div>
       ),
@@ -156,7 +157,7 @@ export function RequirementsList() {
             onClick={() => {
               downloadCsv("elets-requirements.csv", [
                 ["Code", "Title", "Buyer", "Category", "Stage", "Priority", "RM", "Created"],
-                ...rows.map((r) => [r.code, r.title, L.buyer(r.buyerId)?.name ?? "", L.categoryName(r.categoryId), STAGE_LABEL[r.stage], r.priority, TEAM.find((t) => t.id === r.assignedTo)?.name ?? "Unassigned", r.createdAt]),
+                ...rows.map((r) => [r.code, r.title, L.buyer(r.buyerId)?.name ?? "", L.categoryName(r.categoryId), STAGE_LABEL[r.stage], r.priority, r.assignedTo ? person(r.assignedTo).name : "Unassigned", r.createdAt]),
               ]);
               toast.success("Export started", { description: `${rows.length} requirements` });
             }}
@@ -189,7 +190,7 @@ export function RequirementsList() {
           <>
             <FilterSelect label="Stages" value={stage} onChange={setStageF} options={REQUIREMENT_STAGES.map((s) => ({ value: s, label: STAGE_LABEL[s] }))} />
             <FilterSelect label="Priorities" value={priority} onChange={setPriority} options={[{ value: "high", label: "High" }, { value: "medium", label: "Medium" }, { value: "low", label: "Low" }]} />
-            <FilterSelect label="Managers" value={rm} onChange={setRm} options={[{ value: "none", label: "Unassigned" }, ...TEAM_OPTIONS]} />
+            <FilterSelect label="Managers" value={rm} onChange={setRm} options={[{ value: "none", label: "Unassigned" }, ...teamOptions]} />
             <FilterSelect label="Industries" value={industry} onChange={setIndustry} options={industries.map((i) => ({ value: i.id, label: i.name }))} />
           </>
         }

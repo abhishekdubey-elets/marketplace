@@ -23,6 +23,7 @@ const ENTITY: Record<AuditEntry["entity"], { label: string; tone: Tone }> = {
   engagement: { label: "Elets Pro", tone: "green" },
   category: { label: "Taxonomy", tone: "neutral" },
   content: { label: "Content", tone: "neutral" },
+  team: { label: "Team", tone: "neutral" },
   system: { label: "System", tone: "neutral" },
 };
 

@@ -55,6 +55,8 @@ export function ensureReady(): Promise<void> {
     // role constraint (re)defined separately so existing tables pick up the 'admin' role
     await q`alter table marketplace.users drop constraint if exists users_role_check`;
     await q`alter table marketplace.users add constraint users_role_check check (role in ('buyer', 'provider', 'admin'))`;
+    // owners (created with scripts/create-admin.mjs) can't be removed or reset from the Team page
+    await q`alter table marketplace.users add column if not exists owner boolean not null default false`;
     const [{ n }] = (await q`select count(*)::int as n from marketplace.records`) as { n: number }[];
     if (n === 0) await insertSeed();
   })().catch((e) => {

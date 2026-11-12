@@ -10,8 +10,8 @@ import type { Role, User } from "@/lib/types";
 import { Logo, LogoMark } from "@/components/brand";
 import { Tooltip } from "@/components/ui/overlay";
 import { NAV, PORTAL_LABEL, type NavItem } from "./nav";
-import { TEAM } from "@/lib/data/taxonomy";
 import { isForUser } from "@/lib/people";
+import { suggestRm, useTeam } from "@/lib/team";
 
 function useBadgeCounts(role: Role, user: User) {
   const notifications = useStore((s) => s.notifications);
@@ -93,8 +93,25 @@ export function SidebarNav({ role, user, collapsed, onNavigate }: { role: Role; 
   );
 }
 
-function SidebarFooter({ role, collapsed }: { role: Role; collapsed: boolean }) {
-  const rm = TEAM.find((t) => t.id === (role === "buyer" ? "t-priya" : role === "provider" ? "t-neha" : ""));
+/** A buyer's or provider's Elets contact: whoever manages their latest requirement, else a team member covering their sector. */
+function useMyEletsContact(role: Role, user: User) {
+  const team = useTeam();
+  const requirements = useStore((s) => s.requirements);
+  const buyers = useStore((s) => s.buyers);
+  const providers = useStore((s) => s.providers);
+  if (role === "admin" || !user.orgId) return undefined;
+  if (role === "buyer") {
+    const assigned = requirements
+      .filter((r) => r.buyerId === user.orgId && r.assignedTo)
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0]?.assignedTo;
+    const byId = assigned ? team.find((t) => t.id === assigned) : undefined;
+    return byId ?? suggestRm(team, [buyers.find((b) => b.id === user.orgId)?.industryId ?? ""]);
+  }
+  return suggestRm(team, providers.find((p) => p.id === user.orgId)?.industries ?? []);
+}
+
+function SidebarFooter({ role, user, collapsed }: { role: Role; user: User; collapsed: boolean }) {
+  const rm = useMyEletsContact(role, user);
   if (collapsed) return null;
   if (role === "admin")
     return (
@@ -152,7 +169,7 @@ export function Sidebar({ role, user, collapsed, onToggle }: { role: Role; user:
         <SidebarNav role={role} user={user} collapsed={collapsed} />
       </div>
       <div className={cn("space-y-2 border-t border-line p-3")}>
-        <SidebarFooter role={role} collapsed={collapsed} />
+        <SidebarFooter role={role} user={user} collapsed={collapsed} />
         <button
           onClick={onToggle}
           className={cn("flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-medium text-ink-3 transition hover:bg-white hover:text-ink", collapsed && "justify-center px-0")}

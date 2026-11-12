@@ -6,7 +6,6 @@ import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { LISTING_LABEL } from "@/lib/labels";
 import type { ListingPackage, Provider } from "@/lib/types";
-import { TEAM } from "@/lib/data/taxonomy";
 import { SAMPLE_DATA } from "@/lib/seed";
 
 /** Shown on figures that come from the fictional sample dataset; hidden for real data. */
@@ -58,7 +57,7 @@ export function EligibilityBadge({ provider }: { provider: Pick<Provider, "match
   );
 }
 
-export const TEAM_OPTIONS = TEAM.map((t) => ({ value: t.id, label: t.name }));
+export { useTeamOptions } from "@/lib/team";
 
 export function downloadCsv(filename: string, rows: (string | number)[][]) {
   const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");

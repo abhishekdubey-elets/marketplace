@@ -23,7 +23,6 @@ import { useStore } from "@/lib/store";
 import { useUser } from "@/components/providers";
 import { useLookups } from "@/lib/hooks";
 import { person } from "@/lib/people";
-import { TEAM } from "@/lib/data/taxonomy";
 import { OPPORTUNITY_STAGES, REQUIREMENT_STAGES } from "@/lib/types";
 import { OPP_STAGE_LABEL, STAGE_SHORT } from "@/lib/labels";
 import { cn, daysUntil, formatDate, timeAgo } from "@/lib/utils";
@@ -34,6 +33,7 @@ import { Badge } from "@/components/ui/badge";
 import { AreaTrend, Bars, Donut, Funnel, Legend, SERIES } from "@/components/ui/charts";
 import { Dropdown, DropdownContent, DropdownItem, DropdownLabel, DropdownTrigger } from "@/components/ui/overlay";
 import { DEMO_TAG, monthKey, monthLabel, monthRange } from "./common";
+import { useTeam } from "@/lib/team";
 
 const VERIF_COLORS = { verified: "#14ae9f", pending: "#e8a33d", docs_requested: "#f0c27a", unverified: "#94a6cc", rejected: "#e5484d" } as const;
 
@@ -42,6 +42,7 @@ export function AdminDashboard() {
   const L = useLookups();
   const providers = useStore((s) => s.providers);
   const requirements = useStore((s) => s.requirements);
+  const team = useTeam();
   const matches = useStore((s) => s.matches);
   const opportunities = useStore((s) => s.opportunities);
   const engagements = useStore((s) => s.engagements);
@@ -82,7 +83,7 @@ export function AdminDashboard() {
   const newPro = proRequests.filter((r) => r.status === "new");
   const suggestedReqs = Array.from(new Set(suggested.map((m) => m.requirementId)));
 
-  const workload = TEAM.map((t) => ({
+  const workload = team.map((t) => ({
     member: t,
     reqs: requirements.filter((r) => r.assignedTo === t.id && r.stage !== "completed").length,
     eng: engagements.filter((e) => e.rmId === t.id && e.status === "active").length,
@@ -147,7 +148,12 @@ export function AdminDashboard() {
                     </DropdownTrigger>
                     <DropdownContent>
                       <DropdownLabel>Assign relationship manager</DropdownLabel>
-                      {TEAM.map((t) => (
+                      {team.length === 0 && (
+                        <DropdownItem disabled onSelect={() => {}}>
+                          Add people on the Team page first
+                        </DropdownItem>
+                      )}
+                      {team.map((t) => (
                         <DropdownItem
                           key={t.id}
                           onSelect={() => {

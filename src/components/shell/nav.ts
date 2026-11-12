@@ -24,8 +24,7 @@ import {
   Users,
   UserCircle,
   Workflow,
-  type LucideIcon,
-} from "lucide-react";
+  type LucideIcon, UserCog } from "lucide-react";
 import type { Role } from "@/lib/types";
 
 export interface NavItem {
@@ -119,6 +118,7 @@ export const NAV: Record<Role, NavGroup[]> = {
       items: [
         { label: "Providers", href: "/admin/providers", icon: Briefcase, badge: "pendingVerifications" },
         { label: "Buyers", href: "/admin/buyers", icon: Users },
+        { label: "Elets team", href: "/admin/team", icon: UserCog },
       ],
     },
     {
@@ -150,6 +150,7 @@ export const SEGMENT_LABEL: Record<string, string> = {
   buyer: "Buyer",
   provider: "Provider",
   admin: "Operations",
+  team: "Team",
   requirements: "Requirements",
   new: "New requirement",
   discover: "Explore providers",

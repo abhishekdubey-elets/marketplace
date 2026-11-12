@@ -5,6 +5,7 @@
  */
 import type {
   User,
+  TeamMember,
   Announcement,
   AuditEntry,
   BuyerOrg,
@@ -31,7 +32,7 @@ import type {
   Thread,
   VerificationStatus,
 } from "./types";
-import { CATEGORIES, INDUSTRIES, REGIONS, SERVICE_CATEGORIES, USERS } from "./data/taxonomy";
+import { CATEGORIES, INDUSTRIES, REGIONS, SERVICE_CATEGORIES, TEAM, USERS } from "./data/taxonomy";
 import { PROVIDERS } from "./data/providers";
 import { BUYERS, REQUIREMENTS } from "./data/buyers";
 import { PRO_ENGAGEMENTS } from "./data/pro";
@@ -61,6 +62,8 @@ export type Member = Omit<User, "email">;
 
 export interface DataState {
   members: Member[];
+  /** Elets team: relationship managers, analysts and operations staff */
+  team: TeamMember[];
   providers: Provider[];
   buyers: BuyerOrg[];
   requirements: Requirement[];
@@ -98,6 +101,7 @@ export const seed = (): DataState => (SAMPLE_DATA ? sampleSeed() : starterSeed()
 /** Reference lists and site copy only: what a real deployment starts with. */
 export const starterSeed = (): DataState => ({
   members: [],
+  team: [],
   providers: [],
   buyers: [],
   requirements: [],
@@ -124,6 +128,7 @@ export const starterSeed = (): DataState => ({
 /** The full fictional demo dataset. */
 export const sampleSeed = (): DataState => ({
   members: USERS.map(({ email: _email, ...m }) => m),
+  team: TEAM,
   providers: PROVIDERS,
   buyers: BUYERS,
   requirements: REQUIREMENTS,
@@ -153,6 +158,7 @@ export const sampleSeed = (): DataState => ({
 /** Collections shared between all users and stored in the database. */
 export const SHARED_COLLECTIONS = [
   "members",
+  "team",
   "providers",
   "buyers",
   "requirements",

@@ -68,6 +68,7 @@ await sql`create table if not exists marketplace.users (
   created_at timestamptz not null default now())`;
 await sql`alter table marketplace.users drop constraint if exists users_role_check`;
 await sql`alter table marketplace.users add constraint users_role_check check (role in ('buyer', 'provider', 'admin'))`;
+await sql`alter table marketplace.users add column if not exists owner boolean not null default false`;
 
 const [existing] = await sql`select id, role from marketplace.users where email = ${email}`;
 if (existing && existing.role !== "admin") {
@@ -77,14 +78,21 @@ if (existing && existing.role !== "admin") {
 const id = existing?.id ?? `u-${randomBytes(5).toString("hex")}`;
 
 await sql.transaction([
-  sql`insert into marketplace.users (id, email, password_hash, name, title, role, org_id, initials)
-      values (${id}, ${email}, ${hash}, ${name}, ${title}, 'admin', '', ${initials})
-      on conflict (email) do update set password_hash = excluded.password_hash, name = excluded.name, title = excluded.title`,
+  // accounts created here are owners: the Team page can't remove or reset them
+  sql`insert into marketplace.users (id, email, password_hash, name, title, role, org_id, initials, owner)
+      values (${id}, ${email}, ${hash}, ${name}, ${title}, 'admin', '', ${initials}, true)
+      on conflict (email) do update set password_hash = excluded.password_hash, name = excluded.name, title = excluded.title, owner = true`,
   // public profile so the name shows in history, notes and the audit log
   sql`insert into marketplace.records (collection, id, data, ord)
       values ('members', ${id}, ${JSON.stringify({ id, name, role: "admin", title, orgId: null, initials })}::jsonb,
               coalesce((select max(ord) from marketplace.records where collection = 'members'), 0) + 1)
       on conflict (collection, id) do update set data = excluded.data, updated_at = now()`,
+  // Elets team entry (Team page); keeps phone/sectors if it already exists
+  sql`insert into marketplace.records (collection, id, data, ord)
+      values ('team', ${id}, ${JSON.stringify({ id, name, title, email, phone: "", initials, focus: [], active: true, hasLogin: true, owner: true })}::jsonb,
+              coalesce((select max(ord) from marketplace.records where collection = 'team'), 0) + 1)
+      on conflict (collection, id) do update
+        set data = marketplace.records.data || ${JSON.stringify({ name, title, email, initials, active: true, hasLogin: true, owner: true })}::jsonb, updated_at = now()`,
 ]);
 
 console.log(`${existing ? "Updated" : "Created"} operations account ${email} (${id}).`);

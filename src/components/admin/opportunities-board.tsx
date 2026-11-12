@@ -11,7 +11,6 @@ import { person } from "@/lib/people";
 import { OPPORTUNITY_STAGES, type Opportunity, type OpportunityStage } from "@/lib/types";
 import { OPP_STAGE_LABEL, OPP_STAGE_TONE } from "@/lib/labels";
 import { scoreMatch, toMatchable } from "@/lib/matching";
-import { TEAM } from "@/lib/data/taxonomy";
 import { cn, daysUntil, formatDate, timeAgo } from "@/lib/utils";
 import { Avatar, OrgAvatar, PageHeader, ProviderLogo, ScorePill, SectionLabel, StatCard } from "@/components/ui/misc";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +20,7 @@ import { Select } from "@/components/ui/select";
 import { Field, Input, Textarea } from "@/components/ui/input";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { Dropdown, DropdownContent, DropdownItem, DropdownLabel, DropdownTrigger, Sheet } from "@/components/ui/overlay";
-import { FilterSelect, TEAM_OPTIONS } from "./common";
+import { FilterSelect, useTeamOptions } from "./common";
 
 const DOT: Record<OpportunityStage, string> = {
   introduction: "bg-ink-4",
@@ -34,6 +33,7 @@ const DOT: Record<OpportunityStage, string> = {
 };
 
 export function OpportunitiesBoard() {
+  const teamOptions = useTeamOptions();
   const user = useUser();
   const L = useLookups();
   const opportunities = useStore((s) => s.opportunities);
@@ -79,7 +79,7 @@ export function OpportunitiesBoard() {
         <StatCard label="Closed — not selected" value={lost} icon={<Target />} accent="navy" />
       </div>
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <FilterSelect label="Owners" value={owner} onChange={setOwner} options={TEAM_OPTIONS} />
+        <FilterSelect label="Owners" value={owner} onChange={setOwner} options={teamOptions} />
         <span className="text-xs text-ink-3">{rows.length} opportunities</span>
       </div>
 
@@ -226,6 +226,7 @@ function OppCard({
 }
 
 function OpportunitySheet({ id, onClose }: { id: string | null; onClose: () => void }) {
+  const teamOptions = useTeamOptions();
   const user = useUser();
   const L = useLookups();
   const o = useStore((s) => s.opportunities.find((x) => x.id === id));
@@ -312,10 +313,10 @@ function OpportunitySheet({ id, onClose }: { id: string | null; onClose: () => v
               <Select
                 value={o.ownerId}
                 onValueChange={(v) => {
-                  update(o.id, { ownerId: v }, user.id, `Owner set to ${TEAM.find((t) => t.id === v)?.name}`);
-                  toast.success("Owner assigned", { description: TEAM.find((t) => t.id === v)?.name });
+                  update(o.id, { ownerId: v }, user.id, `Owner set to ${person(v).name}`);
+                  toast.success("Owner assigned", { description: person(v).name });
                 }}
-                options={TEAM_OPTIONS}
+                options={teamOptions}
               />
             </Field>
           </div>

@@ -1,8 +1,15 @@
 import { TEAM, USERS } from "./data/taxonomy";
-import type { Notification, User } from "./types";
+import type { Notification, TeamMember, User } from "./types";
 
 type MemberLike = Pick<User, "id" | "name" | "title" | "initials" | "role">;
 const members = new Map<string, MemberLike>();
+const team = new Map<string, TeamMember>();
+
+/** The managed Elets team (shared "team" collection), so assignee and author names resolve. */
+export function setTeam(list: TeamMember[]) {
+  team.clear();
+  for (const t of list) team.set(t.id, t);
+}
 
 /** Signed-up users (from the shared "members" collection), so their names resolve like the demo users. */
 export function setMembers(list: MemberLike[]) {
@@ -26,7 +33,7 @@ export interface Person {
 /** Resolves any actor id used in history, notes, messages and the audit log. */
 export function person(id: string | null | undefined): Person {
   if (!id) return { id: "unassigned", name: "Unassigned", title: "", initials: "–", kind: "system" };
-  const t = TEAM.find((x) => x.id === id);
+  const t = team.get(id) ?? TEAM.find((x) => x.id === id);
   if (t) return { id, name: t.name, title: t.title, initials: t.initials, kind: "team" };
   const u = USERS.find((x) => x.id === id) ?? members.get(id);
   if (u) return { id, name: u.name, title: u.title, initials: u.initials, kind: u.role === "admin" ? "team" : u.role };
