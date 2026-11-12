@@ -47,11 +47,14 @@ export function ensureReady(): Promise<void> {
       password_hash text not null,
       name text not null,
       title text not null default '',
-      role text not null check (role in ('buyer', 'provider')),
+      role text not null,
       org_id text not null,
       initials text not null,
       created_at timestamptz not null default now()
     )`;
+    // role constraint (re)defined separately so existing tables pick up the 'admin' role
+    await q`alter table marketplace.users drop constraint if exists users_role_check`;
+    await q`alter table marketplace.users add constraint users_role_check check (role in ('buyer', 'provider', 'admin'))`;
     const [{ n }] = (await q`select count(*)::int as n from marketplace.records`) as { n: number }[];
     if (n === 0) await insertSeed();
     else {

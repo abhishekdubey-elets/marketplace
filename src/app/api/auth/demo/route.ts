@@ -4,7 +4,7 @@ import { DEMO_ACCOUNTS } from "@/lib/auth/demo-accounts";
 import { safeNext, SESSION_COOKIE, SESSION_MAX_AGE, signSession } from "@/lib/auth/session";
 
 // One-click demo sign-in for presentations. Disable by setting DISABLE_DEMO_LOGIN=true.
-const Body = z.object({ role: z.enum(["buyer", "provider", "admin"]), next: z.string().optional() });
+const Body = z.object({ role: z.enum(["buyer", "provider"]), next: z.string().optional() });
 
 export async function POST(req: Request) {
   if (process.env.DISABLE_DEMO_LOGIN === "true") return NextResponse.json({ error: "Demo sign-in is disabled." }, { status: 403 });

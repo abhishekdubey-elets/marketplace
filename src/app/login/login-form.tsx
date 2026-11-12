@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, Briefcase, Building2, Eye, EyeOff, Lock, Mail, ShieldCheck } from "lucide-react";
+import { ArrowRight, Briefcase, Building2, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,6 @@ import type { Role } from "@/lib/types";
 const ROLES: { role: Role; label: string; who: string; icon: React.ElementType }[] = [
   { role: "buyer", label: "Buyer", who: "Hospital group CIO", icon: Building2 },
   { role: "provider", label: "Solution provider", who: "Cloud services company", icon: Briefcase },
-  { role: "admin", label: "Elets operations", who: "Marketplace operations", icon: ShieldCheck },
 ];
 
 export function LoginForm() {

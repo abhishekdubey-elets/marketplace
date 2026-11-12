@@ -216,11 +216,11 @@ function UserMenu({ role, user }: { role: Role; user: User }) {
         </DropdownItem>
         <DropdownSeparator />
         <DropdownLabel>Demo — switch portal</DropdownLabel>
-        {(["buyer", "provider", "admin"] as Role[])
+        {(["buyer", "provider"] as Role[])
           .filter((r) => r !== role)
           .map((r) => (
             <DropdownItem key={r} icon={<Users />} onSelect={() => switchTo(r)}>
-              View as {r === "admin" ? "Elets operations" : r}
+              View as demo {r}
             </DropdownItem>
           ))}
         {(role === "admin" || !isDbMode()) && (

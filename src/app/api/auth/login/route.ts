@@ -19,7 +19,8 @@ export async function POST(req: Request) {
   } else {
     try {
       const user = await authenticate(email, password);
-      if (user) account = { userId: user.id, role: user.role };
+      // operations accounts sign in only at the unlisted ops path; here they look like any wrong password
+      if (user && user.role !== "admin") account = { userId: user.id, role: user.role };
     } catch (e) {
       console.error("[auth/login] lookup failed", e);
       return NextResponse.json({ error: "Sign-in is temporarily unavailable. Try again shortly." }, { status: 503 });

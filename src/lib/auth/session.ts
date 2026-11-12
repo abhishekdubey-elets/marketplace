@@ -51,6 +51,8 @@ export async function verifySession(token: string | undefined | null): Promise<S
   try {
     const s = JSON.parse(fromB64url(payload)) as Session;
     if (s.exp < Math.floor(Date.now() / 1000)) return null;
+    // the retired demo operations account: its old cookies must not grant access
+    if (s.userId === "u-admin") return null;
     return s;
   } catch {
     return null;

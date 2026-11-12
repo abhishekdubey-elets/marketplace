@@ -7,7 +7,7 @@ export async function getCurrentUser() {
   const jar = await cookies();
   const s = await verifySession(jar.get(SESSION_COOKIE)?.value);
   if (!s) return null;
-  const demo = USERS.find((u) => u.id === s.userId);
+  const demo = USERS.find((u) => u.id === s.userId && u.role !== "admin");
   if (demo) return demo;
   try {
     return await findUserById(s.userId);

@@ -29,9 +29,16 @@ Production build: `npm run build && npm start`.
 |---|---|---|---|
 | Buyer | `buyer@elets.demo` | `Buyer@2026` | Dr. Kavita Menon, CIO, Sahyadri Multi-Speciality Hospital Group |
 | Solution provider | `provider@elets.demo` | `Provider@2026` | Arjun Iyer, Nimbus Stack Technologies |
-| Elets operations | `admin@elets.demo` | `Admin@2026` | Neha Sharma, Head of Marketplace Operations |
 
-The login page also has one-click **Continue as demo …** buttons, and the user menu can switch portals. Passwords can be overridden with `DEMO_*_PASSWORD`, and one-click sign-in can be turned off with `DISABLE_DEMO_LOGIN=true`.
+The login page also has one-click **Continue as demo …** buttons, and the user menu can switch between the buyer and provider demos. Passwords can be overridden with `DEMO_BUYER_PASSWORD` / `DEMO_PROVIDER_PASSWORD`, and one-click sign-in can be turned off with `DISABLE_DEMO_LOGIN=true`.
+
+### Elets operations accounts
+
+There is no demo operations account. Operations staff are real accounts in `marketplace.users` with the `admin` role. They sign in only at an unlisted path set by `OPS_LOGIN_PATH`, and nothing in the app links to it.
+
+- **Creating an account or resetting a password**: run `node scripts/create-admin.mjs --email you@example.com --name "Full Name"`. It reads `DATABASE_URL` from the environment or `.env.local`, and if you leave out `--password` it prints a generated password once.
+- **Hidden from everyone else**: `/admin/*` and the internal `/ops-login` route return a plain 404, so the portal isn't discoverable. The public `/login` treats operations credentials as wrong.
+- **The real protection** is the password. The hidden path only keeps the page out of sight.
 
 ### Self-service accounts
 

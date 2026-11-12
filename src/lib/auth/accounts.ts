@@ -25,8 +25,9 @@ export async function verifyPassword(pw: string, stored: string) {
   return timingSafeEqual(expected, actual);
 }
 
-type Row = { id: string; email: string; password_hash: string; name: string; title: string; role: "buyer" | "provider"; org_id: string; initials: string };
-const toUser = (r: Row): User => ({ id: r.id, name: r.name, email: r.email, role: r.role, title: r.title, orgId: r.org_id, initials: r.initials });
+type Row = { id: string; email: string; password_hash: string; name: string; title: string; role: "buyer" | "provider" | "admin"; org_id: string; initials: string };
+// Elets operations users have no organisation (stored as '')
+const toUser = (r: Row): User => ({ id: r.id, name: r.name, email: r.email, role: r.role, title: r.title, orgId: r.org_id || null, initials: r.initials });
 
 export async function findUserById(id: string): Promise<User | null> {
   if (!isDbConfigured()) return null;
