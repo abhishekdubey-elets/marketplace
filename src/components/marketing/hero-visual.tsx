@@ -2,18 +2,24 @@
 
 import * as React from "react";
 import { BadgeCheck, Check, ClipboardList, ShieldCheck, Sparkles } from "lucide-react";
-import { useStore } from "@/lib/store";
 import { DIMENSION_META, rankProviders } from "@/lib/matching";
 import { MATCH_DIMENSIONS, PRO_MODULES } from "@/lib/types";
 import { ProviderLogo, ScoreRing } from "@/components/ui/misc";
-import { BUDGET_LABELS, TIMELINE_LABELS } from "@/lib/data/taxonomy";
+import { BUDGET_LABELS, CATEGORIES, TIMELINE_LABELS } from "@/lib/data/taxonomy";
+import { PROVIDERS } from "@/lib/data/providers";
+import { REQUIREMENTS } from "@/lib/data/buyers";
 import { cn } from "@/lib/utils";
 
-/** Stylised "match console" built from live demo data and the real matching engine. */
+/**
+ * Stylised "match console" for the homepage, run through the real matching engine
+ * on a bundled fictional example (not marketplace data, and nothing links to it).
+ */
+const EXAMPLE_REQUIREMENT = REQUIREMENTS.find((r) => r.id === "r-141") ?? REQUIREMENTS[0];
+
 export function HeroVisual() {
-  const requirement = useStore((s) => s.requirements.find((r) => r.id === "r-141") ?? s.requirements[0]);
-  const providers = useStore((s) => s.providers);
-  const categories = useStore((s) => s.categories);
+  const requirement = EXAMPLE_REQUIREMENT;
+  const providers = PROVIDERS;
+  const categories = CATEGORIES;
   const ranked = React.useMemo(() => (requirement ? rankProviders(requirement, providers, categories).slice(0, 3) : []), [requirement, providers, categories]);
   const [active, setActive] = React.useState(0);
 
@@ -37,7 +43,7 @@ export function HeroVisual() {
           <span className="size-2.5 rounded-full bg-[#ff5f57]/80" />
           <span className="size-2.5 rounded-full bg-[#febc2e]/80" />
           <span className="size-2.5 rounded-full bg-[#28c840]/80" />
-          <span className="ml-3 truncate font-mono text-[11px] text-ink-4">elets / matching / {requirement.code}</span>
+          <span className="ml-3 truncate font-mono text-[11px] text-ink-4">elets / matching / illustrative example</span>
           <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-accent-50 px-2 py-0.5 text-[10px] font-semibold text-accent-700">
             <span className="size-1.5 animate-pulse rounded-full bg-accent-500" /> Live
           </span>

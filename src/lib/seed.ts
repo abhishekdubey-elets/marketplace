@@ -85,7 +85,44 @@ export interface DataState {
   savedSearches: SavedSearch[];
 }
 
-export const seed = (): DataState => ({
+/**
+ * Sample organisations, people and activity (the original demo dataset) are
+ * included only when NEXT_PUBLIC_SAMPLE_DATA=true, e.g. for a local demo. By
+ * default the marketplace starts empty apart from reference lists and site copy.
+ * The same flag enables the demo buyer/provider sign-ins.
+ */
+export const SAMPLE_DATA = process.env.NEXT_PUBLIC_SAMPLE_DATA === "true";
+
+export const seed = (): DataState => (SAMPLE_DATA ? sampleSeed() : starterSeed());
+
+/** Reference lists and site copy only: what a real deployment starts with. */
+export const starterSeed = (): DataState => ({
+  members: [],
+  providers: [],
+  buyers: [],
+  requirements: [],
+  matches: [],
+  opportunities: [],
+  meetings: [],
+  engagements: [],
+  proRequests: [],
+  notifications: [],
+  threads: [],
+  audit: [],
+  categories: CATEGORIES,
+  industries: INDUSTRIES,
+  regions: REGIONS,
+  serviceCategories: SERVICE_CATEGORIES,
+  content: { ...SITE_CONTENT, featuredProviderIds: [] },
+  announcements: [],
+  favourites: [],
+  compare: [],
+  recentlyViewed: [],
+  savedSearches: [],
+});
+
+/** The full fictional demo dataset. */
+export const sampleSeed = (): DataState => ({
   members: USERS.map(({ email: _email, ...m }) => m),
   providers: PROVIDERS,
   buyers: BUYERS,

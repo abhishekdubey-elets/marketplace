@@ -8,7 +8,7 @@ export function AuthLayout({ children, wide = false }: { children: React.ReactNo
       <div className="flex flex-col px-5 py-6 sm:px-10">
         <Logo />
         <div className={`mx-auto flex w-full flex-1 flex-col justify-center py-10 ${wide ? "max-w-[520px]" : "max-w-[420px]"}`}>{children}</div>
-        <p className="text-center text-xs text-ink-4">Pilot environment · Sample organisations and people shown in the demo accounts are fictional.</p>
+        <p className="text-center text-xs text-ink-4">© Elets Solution Marketplace</p>
       </div>
 
       <div className="relative hidden overflow-hidden bg-navy-950 lg:block">

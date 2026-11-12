@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { DimensionBar, ProviderLogo, ScoreRing, VerificationBadge } from "@/components/ui/misc";
 import { Tooltip } from "@/components/ui/overlay";
 import { SIZE_LABELS } from "@/lib/data/taxonomy";
+import { SAMPLE_DATA } from "@/lib/seed";
 
 // ------------------------------------------------------------------ requirement stages
 
@@ -86,7 +87,7 @@ export function IntegrityNote({ className }: { className?: string }) {
       <ShieldCheck className="mt-0.5 size-4 shrink-0" />
       <p>
         <span className="font-semibold">Integrity principle:</span> match scores are computed only from capability, experience and compliance data. Paid listing packages are excluded from the
-        matching engine and never influence rankings. Scores shown are illustrative demo values.
+        matching engine and never influence rankings.{SAMPLE_DATA ? " Scores shown are illustrative demo values." : ""}
       </p>
     </div>
   );

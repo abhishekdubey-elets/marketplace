@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/lib/types";
+import { SAMPLE_DATA } from "@/lib/seed";
 
 const ROLES: { role: Role; label: string; who: string; icon: React.ElementType }[] = [
   { role: "buyer", label: "Buyer", who: "Hospital group CIO", icon: Building2 },
@@ -97,6 +98,8 @@ export function LoginForm() {
         </Link>
       </p>
 
+      {SAMPLE_DATA && (
+        <>
       <div className="my-6 flex items-center gap-3 text-xs text-ink-4">
         <span className="h-px flex-1 bg-line" /> or explore with a demo account <span className="h-px flex-1 bg-line" />
       </div>
@@ -120,6 +123,8 @@ export function LoginForm() {
           </button>
         ))}
       </div>
+        </>
+      )}
     </div>
   );
 }

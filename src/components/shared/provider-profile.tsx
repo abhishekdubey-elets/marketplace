@@ -522,7 +522,7 @@ function PublicContactActions({ slug, role }: { slug: string; role: "buyer" | "p
         <div className="flex items-start gap-3 rounded-xl bg-subtle p-3 ring-1 ring-inset ring-line">
           <Lock className="mt-0.5 size-4 shrink-0 text-ink-4" />
           <p className="text-[13px] leading-relaxed text-ink-3">
-            You're signed in as {role === "admin" ? "Elets operations" : "a solution provider"}. Introductions are requested by buyer organisations.
+            You&apos;re signed in as {role === "admin" ? "Elets operations" : "a solution provider"}. Introductions are requested by buyer organisations.
           </p>
         </div>
         <Button variant="secondary" className="mt-4 w-full" asChild>

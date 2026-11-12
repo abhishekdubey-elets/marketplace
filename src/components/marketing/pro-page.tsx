@@ -24,6 +24,8 @@ import { Button } from "@/components/ui/button";
 import { ProviderLogo } from "@/components/ui/misc";
 import { Reveal, SectionHeading } from "./reveal";
 import { PRO_MODULE_COPY, PRO_MODULE_ICONS } from "./pro-modules";
+import { PRO_ENGAGEMENTS } from "@/lib/data/pro";
+import { PROVIDERS } from "@/lib/data/providers";
 
 const CONTAINER = "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8";
 const REQUEST_HREF = "/login?role=buyer&next=/buyer/pro";
@@ -100,8 +102,9 @@ function ProHero() {
 }
 
 function WorkspacePreview() {
-  const engagement = useStore((s) => s.engagements.find((e) => e.id === "e-004") ?? s.engagements[0]);
-  const providers = useStore((s) => s.providers);
+  // bundled fictional example for illustration, not marketplace data
+  const engagement = PRO_ENGAGEMENTS.find((e) => e.id === "e-004") ?? PRO_ENGAGEMENTS[0];
+  const providers = PROVIDERS;
   if (!engagement) return null;
   const totals = Object.entries(engagement.scores)
     .map(([pid, sc]) => {
@@ -121,7 +124,7 @@ function WorkspacePreview() {
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[13px] font-semibold">{engagement.title}</p>
-            <p className="font-mono text-[10px] text-ink-4">{engagement.code} · Demo engagement</p>
+            <p className="font-mono text-[10px] text-ink-4">Illustrative example</p>
           </div>
           <span className="hidden rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 sm:inline">Active</span>
         </div>

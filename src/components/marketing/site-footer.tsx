@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { LogoMark } from "@/components/brand";
+import { SAMPLE_DATA } from "@/lib/seed";
 
 const COLUMNS = [
   {
@@ -50,16 +51,6 @@ export function SiteFooter() {
             </p>
             <ul className="mt-6 space-y-2.5 text-sm">
               <li className="flex items-center gap-2.5">
-                <Mail className="size-4 text-navy-400" />
-                <a href="mailto:marketplace@elets.example" className="transition hover:text-white">
-                  marketplace@elets.example
-                </a>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <Phone className="size-4 text-navy-400" />
-                <span>+91 00000 00000 (demo placeholder)</span>
-              </li>
-              <li className="flex items-center gap-2.5">
                 <MapPin className="size-4 text-navy-400" />
                 <span>India</span>
               </li>
@@ -84,10 +75,12 @@ export function SiteFooter() {
         </div>
         <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Elets Solution Marketplace. All rights reserved.</p>
-          <p className="inline-flex items-center gap-2">
-            <span className="size-1.5 rounded-full bg-amber-400" />
-            Demo environment — all organisations, people and data shown are fictional.
-          </p>
+          {SAMPLE_DATA && (
+            <p className="inline-flex items-center gap-2">
+              <span className="size-1.5 rounded-full bg-amber-400" />
+              Demo environment — all organisations, people and data shown are fictional.
+            </p>
+          )}
         </div>
       </div>
     </footer>

@@ -7,8 +7,10 @@ import { cn } from "@/lib/utils";
 import { LISTING_LABEL } from "@/lib/labels";
 import type { ListingPackage, Provider } from "@/lib/types";
 import { TEAM } from "@/lib/data/taxonomy";
+import { SAMPLE_DATA } from "@/lib/seed";
 
-export const DEMO_TAG = (
+/** Shown on figures that come from the fictional sample dataset; hidden for real data. */
+export const DEMO_TAG = !SAMPLE_DATA ? null : (
   <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-800">
     Demo data
   </span>

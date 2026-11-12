@@ -23,7 +23,11 @@ npm run dev                   # http://localhost:3000
 
 Production build: `npm run build && npm start`.
 
-## Demo accounts
+## Sample data and demo accounts
+
+The marketplace starts empty: only reference lists (technology categories, industries, regions and service types) and the site copy are loaded. Organisations and activity come from real sign-ups. The homepage and Elets Pro page illustrations use a bundled fictional example, which is labelled as one and never stored.
+
+To bring back the full fictional demo dataset and the demo sign-ins below, for example for a local presentation, set `NEXT_PUBLIC_SAMPLE_DATA=true`. Use this with an empty database or with no `DATABASE_URL`, because sample data is only written into an empty `marketplace` schema.
 
 | Portal | Email | Password | Persona |
 |---|---|---|---|
@@ -98,7 +102,7 @@ supabase/schema.sql     tables, enums, RLS policies, audit triggers, storage buc
 |---|---|
 | Navigation, layouts, responsive shell, global search, filters, sorting, tables, charts, modals, sheets, toasts | **Functional** |
 | Role-based sign-in and protected routes | **Functional, demo-grade**: three server-side demo accounts and an HMAC-signed httpOnly cookie. There is no user database, sign-up, password reset or MFA. |
-| Requirement wizard, matching, shortlisting, introductions, stage changes, verification decisions, Pro workspace edits, categories, content, messages, notifications | **Functional and shared**: with `DATABASE_URL` set, changes are saved to Neon and everyone sees them (other open browsers pick them up within ~20 s). Favourites, compare and recently viewed stay per-browser. Without a database, everything persists in that browser's localStorage only. *Reset demo data* (Elets operations only) restores the starting dataset for everyone. |
+| Requirement wizard, matching, shortlisting, introductions, stage changes, verification decisions, Pro workspace edits, categories, content, messages, notifications | **Functional and shared**: with `DATABASE_URL` set, changes are saved to Neon and everyone sees them (other open browsers pick them up within ~20 s). Favourites, compare and recently viewed stay per-browser. Without a database, everything persists in that browser's localStorage only. Shared data can't be reset from the UI. |
 | File uploads (logos, requirement attachments, diligence/RFP documents) | **Simulated**: file names and sizes are recorded, but no file is stored |
 | Email / external notifications, calendar invites | **Simulated**: in-app notifications only |
 | Supabase database, auth and storage | **Defined, not connected**: run `supabase/schema.sql` to create them; the store actions still need migrating |

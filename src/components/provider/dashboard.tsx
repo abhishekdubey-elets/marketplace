@@ -33,6 +33,7 @@ import { AreaTrend, Funnel, Sparkline, SERIES } from "@/components/ui/charts";
 import { NOTIF_ICON } from "@/components/shell/topbar";
 import { MONTHS_12, PROVIDER_MATCH_LABEL, buyerLabel, useCurrentProvider, useProviderOpportunities } from "./common";
 import { isForUser } from "@/lib/people";
+import { SAMPLE_DATA } from "@/lib/seed";
 
 export function ProviderDashboard() {
   const user = useUser();
@@ -125,7 +126,7 @@ export function ProviderDashboard() {
               {delta >= 0 ? "+" : ""}
               {delta}%
             </span>{" "}
-            <span className="text-ink-3">vs last month · demo data</span>
+            <span className="text-ink-3">vs last month{SAMPLE_DATA ? " · demo data" : ""}</span>
           </p>
         </div>
         <StatCard label="Relevant opportunities" value={opps.length} icon={<Target />} hint={`${fresh.length} awaiting your response`} href="/provider/opportunities" />
@@ -184,7 +185,7 @@ export function ProviderDashboard() {
 
           <div className="grid gap-6 lg:grid-cols-5">
             <Card className="lg:col-span-3">
-              <CardHeader title="Profile views" description="Last 12 months · illustrative demo data" />
+              <CardHeader title="Profile views" description={SAMPLE_DATA ? "Last 12 months · illustrative demo data" : "Last 12 months · tracking not yet enabled"} />
               <CardContent>
                 <AreaTrend data={views.map((v, i) => ({ month: MONTHS_12[i], views: v }))} x="month" series={[{ key: "views", label: "Profile views" }]} height={210} />
               </CardContent>

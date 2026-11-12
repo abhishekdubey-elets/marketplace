@@ -2,7 +2,7 @@
 
 import { toast } from "sonner";
 import { persistMode, useHydration, useStore } from "./store";
-import { PERSONAL_KEYS, seed, SHARED_COLLECTIONS, type DataState, type SharedCollection } from "./seed";
+import { SHARED_COLLECTIONS, type DataState, type SharedCollection } from "./seed";
 
 /**
  * Keeps the client store in step with the shared Neon database.
@@ -171,24 +171,9 @@ export async function reloadForSession() {
   useHydration.setState({ hydrated: true });
 }
 
-/** Admin "Reset demo data": restores the starting dataset for everyone (DB) or this browser (no DB). */
-export async function resetDemoData(): Promise<{ ok: boolean; scope: "everyone" | "browser"; error?: string }> {
-  const s = seed();
-  const personal = Object.fromEntries(PERSONAL_KEYS.map((k) => [k, s[k]])) as Partial<DataState>;
-  if (!dbMode) {
-    useStore.getState().resetDemo();
-    return { ok: true, scope: "browser" };
-  }
-  pending.clear();
-  await inflight;
-  const res = await fetch("/api/data/reset", { method: "POST" });
-  if (!res.ok) return { ok: false, scope: "everyone", error: (await res.json().catch(() => null))?.error ?? "Reset failed." };
-  applyingRemote = true;
-  try {
-    useStore.setState(personal);
-  } finally {
-    applyingRemote = false;
-  }
-  await refresh(true);
-  return { ok: true, scope: "everyone" };
+/** "Reset demo data" for the no-database mode only: clears this browser's copy. Shared data is never reset from the UI. */
+export function resetLocalData() {
+  if (dbMode) return false;
+  useStore.getState().resetDemo();
+  return true;
 }

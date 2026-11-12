@@ -25,7 +25,8 @@ import {
 import { toast } from "sonner";
 import { cn, timeAgo } from "@/lib/utils";
 import { useStore } from "@/lib/store";
-import { isDbMode, resetDemoData } from "@/lib/sync";
+import { isDbMode, resetLocalData } from "@/lib/sync";
+import { SAMPLE_DATA } from "@/lib/seed";
 import type { NotificationType, Role, User } from "@/lib/types";
 import { useLookups } from "@/lib/hooks";
 import { Avatar, Kbd } from "@/components/ui/misc";
@@ -214,27 +215,28 @@ function UserMenu({ role, user }: { role: Role; user: User }) {
         <DropdownItem icon={<MessagesSquare />} onSelect={() => router.push(`/${role}/messages`)}>
           Messages
         </DropdownItem>
-        <DropdownSeparator />
-        <DropdownLabel>Demo — switch portal</DropdownLabel>
-        {(["buyer", "provider"] as Role[])
-          .filter((r) => r !== role)
-          .map((r) => (
-            <DropdownItem key={r} icon={<Users />} onSelect={() => switchTo(r)}>
-              View as demo {r}
-            </DropdownItem>
-          ))}
-        {(role === "admin" || !isDbMode()) && (
-          <DropdownItem
-            icon={<RotateCcw />}
-            onSelect={async () => {
-              if (isDbMode() && !window.confirm("Reset all marketplace data for everyone to the starting demo dataset? This can't be undone.")) return;
-              const r = await resetDemoData();
-              if (!r.ok) return toast.error(r.error ?? "Reset failed");
-              toast.success("Demo data reset", { description: r.scope === "everyone" ? "Shared data was restored for all users." : "All changes in this browser were cleared." });
-            }}
-          >
-            Reset demo data
-          </DropdownItem>
+        {SAMPLE_DATA && (
+          <>
+            <DropdownSeparator />
+            <DropdownLabel>Demo — switch portal</DropdownLabel>
+            {(["buyer", "provider"] as Role[])
+              .filter((r) => r !== role)
+              .map((r) => (
+                <DropdownItem key={r} icon={<Users />} onSelect={() => switchTo(r)}>
+                  View as demo {r}
+                </DropdownItem>
+              ))}
+            {!isDbMode() && (
+              <DropdownItem
+                icon={<RotateCcw />}
+                onSelect={() => {
+                  if (resetLocalData()) toast.success("Demo data reset", { description: "All changes in this browser were cleared." });
+                }}
+              >
+                Reset demo data
+              </DropdownItem>
+            )}
+          </>
         )}
         <DropdownSeparator />
         <DropdownItem icon={<LogOut />} danger onSelect={signOut}>
@@ -266,11 +268,13 @@ export function Topbar({ role, user, onSearch, onMenu }: { role: Role; user: Use
           </span>
         </button>
         <span className="mx-1 hidden h-5 w-px bg-line sm:block" />
-        <Tooltip content="Demo environment — all organisations and data are fictional">
-          <span className="hidden cursor-default items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-800 md:inline-flex">
-            <span className="size-1.5 rounded-full bg-amber-500" /> Demo data
-          </span>
-        </Tooltip>
+        {SAMPLE_DATA && (
+          <Tooltip content="Demo environment — all organisations and data are fictional">
+            <span className="hidden cursor-default items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-[11px] font-semibold text-amber-800 md:inline-flex">
+              <span className="size-1.5 rounded-full bg-amber-500" /> Demo data
+            </span>
+          </Tooltip>
+        )}
         <Tooltip content="Messages">
           <Link href={`/${role}/messages`} className="hidden size-9 place-items-center rounded-lg text-ink-3 transition hover:bg-navy-50 hover:text-ink sm:grid" aria-label="Messages">
             <MessagesSquare className="size-[18px]" />

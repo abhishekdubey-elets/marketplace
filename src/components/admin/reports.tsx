@@ -135,7 +135,7 @@ export function Reports() {
     <div>
       <PageHeader
         title="Reports & analytics"
-        description="Platform performance across providers, requirements, matching, opportunities and Elets Pro. All figures are computed from demo data."
+        description="Platform performance across providers, requirements, matching, opportunities and Elets Pro. All figures are computed live from marketplace data."
         actions={
           <>
             <Segmented value={range} onChange={setRange} options={[{ value: "30", label: "30 days" }, { value: "90", label: "90 days" }, { value: "all", label: "All time" }]} />

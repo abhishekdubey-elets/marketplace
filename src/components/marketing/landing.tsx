@@ -268,7 +268,7 @@ function Categories() {
                 </div>
                 <p className="mt-4 text-[15px] font-semibold leading-snug text-ink">{c.name}</p>
                 <p className="mt-1.5 line-clamp-2 flex-1 text-[13px] leading-relaxed text-ink-3">{c.description}</p>
-                <p className="mt-4 text-xs font-medium text-ink-4">{count(c.id)} providers listed</p>
+                <p className="mt-4 text-xs font-medium text-ink-4">{count(c.id) ? `${count(c.id)} provider${count(c.id) === 1 ? "" : "s"} listed` : "Open for listings"}</p>
               </Link>
             </Reveal>
           ))}
@@ -300,7 +300,14 @@ function Categories() {
 function Providers() {
   const content = useStore((s) => s.content);
   const providers = useStore((s) => s.providers);
-  const list = content.featuredProviderIds.map((id) => providers.find((p) => p.id === id)).filter((p): p is NonNullable<typeof p> => !!p && p.accountStatus === "active");
+  const featured = content.featuredProviderIds.map((id) => providers.find((p) => p.id === id)).filter((p): p is NonNullable<typeof p> => !!p && p.accountStatus === "active");
+  // nothing curated yet: show the newest verified, listed providers
+  const list = featured.length
+    ? featured
+    : providers
+        .filter((p) => p.accountStatus === "active" && p.verification === "verified" && p.categories.length > 0)
+        .sort((a, b) => b.joinedAt.localeCompare(a.joinedAt))
+        .slice(0, 6);
   return (
     <section id="providers" className="py-20 sm:py-28">
       <div className={CONTAINER}>
@@ -322,6 +329,19 @@ function Providers() {
               <ProviderCard provider={p} href={`/providers/${p.slug}`} showActions={false} className="h-full" />
             </Reveal>
           ))}
+          {list.length === 0 && (
+            <div className="rounded-2xl border border-dashed border-line-strong bg-white p-6 sm:col-span-2 lg:col-span-3">
+              <p className="text-[15px] font-semibold text-ink">Provider listings are now open</p>
+              <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-ink-3">
+                Technology companies can list their solutions and apply for Elets verification. Verified providers appear here and in matching for buyer requirements.
+              </p>
+              <Button className="mt-4" asChild>
+                <Link href="/signup?role=provider">
+                  List your company <ArrowRight />
+                </Link>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </section>
@@ -510,7 +530,6 @@ function WhyElets() {
 
 function Verticals() {
   const industries = useStore((s) => s.industries).filter((i) => i.active);
-  const requirements = useStore((s) => s.requirements);
   return (
     <section id="industries" className="scroll-mt-20 border-t border-line bg-canvas py-20 sm:py-24">
       <div className={CONTAINER}>
@@ -535,7 +554,6 @@ function Verticals() {
                     <ArrowUpRight className="size-4 shrink-0 text-ink-4 transition group-hover:text-brand-600" />
                   </span>
                   <span className="mt-1 block text-[13px] leading-relaxed text-ink-3">{ind.description}</span>
-                  <span className="mt-3 block text-xs text-ink-4">{requirements.filter((r) => r.industryId === ind.id).length} demo requirements on the platform</span>
                 </span>
               </Link>
             </Reveal>

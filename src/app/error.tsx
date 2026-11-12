@@ -17,7 +17,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
           <TriangleAlert className="size-5" />
         </div>
         <h1 className="mt-5 text-xl font-semibold tracking-tight text-ink">Something went wrong</h1>
-        <p className="mt-2 text-sm leading-relaxed text-ink-3">An unexpected error occurred while loading this page. You can try again — your demo data is kept in this browser.</p>
+        <p className="mt-2 text-sm leading-relaxed text-ink-3">An unexpected error occurred while loading this page. You can try again — changes you&apos;ve already saved are kept.</p>
         {error.digest && <p className="mt-3 font-mono text-[11px] text-ink-4">Reference: {error.digest}</p>}
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <Button onClick={reset}>

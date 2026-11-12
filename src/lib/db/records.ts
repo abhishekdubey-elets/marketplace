@@ -57,11 +57,6 @@ export function ensureReady(): Promise<void> {
     await q`alter table marketplace.users add constraint users_role_check check (role in ('buyer', 'provider', 'admin'))`;
     const [{ n }] = (await q`select count(*)::int as n from marketplace.records`) as { n: number }[];
     if (n === 0) await insertSeed();
-    else {
-      // databases seeded before the members collection existed: add the demo members once
-      const [{ m }] = (await q`select count(*)::int as m from marketplace.records where collection = 'members'`) as { m: number }[];
-      if (m === 0) await insertSeed(["members"]);
-    }
   })().catch((e) => {
     ready = null; // let the next request retry
     throw e;
@@ -131,9 +126,3 @@ export function deleteQuery(dels: { c: Collection; id: string }[]) {
       where r.collection = o->>'c' and r.id = o->>'id'`;
 }
 
-/** Wipe and reload the starting dataset (admin "Reset demo data"). */
-export async function resetAll() {
-  await ensureReady();
-  await sql()`delete from marketplace.records`;
-  await insertSeed();
-}

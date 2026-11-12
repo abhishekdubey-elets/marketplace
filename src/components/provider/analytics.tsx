@@ -9,6 +9,7 @@ import { Segmented } from "@/components/ui/controls";
 import { EmptyState, PageHeader, StatCard } from "@/components/ui/misc";
 import { AreaTrend, Bars, Donut, Funnel, Legend, SERIES } from "@/components/ui/charts";
 import { MONTHS_12, useCurrentProvider, useProviderOpportunities } from "./common";
+import { SAMPLE_DATA } from "@/lib/seed";
 
 export function ProviderAnalytics() {
   const provider = useCurrentProvider();
@@ -64,11 +65,11 @@ export function ProviderAnalytics() {
     <div className="space-y-6">
       <PageHeader
         title="Performance analytics"
-        description="How buyers discover your profile and how your matched opportunities progress. Values are illustrative demo data."
+        description={SAMPLE_DATA ? "How buyers discover your profile and how your matched opportunities progress. Values are illustrative demo data." : "How your matched opportunities progress. Profile-view tracking isn't switched on yet, so view figures stay at zero for now."}
         actions={<Segmented value={range} onChange={setRange} options={[{ value: "6", label: "6 months" }, { value: "12", label: "12 months" }]} />}
       />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label={`Profile views · ${months} months`} value={totalViews.toLocaleString("en-IN")} icon={<Eye />} hint="Demo data" />
+        <StatCard label={`Profile views · ${months} months`} value={totalViews.toLocaleString("en-IN")} icon={<Eye />} hint={SAMPLE_DATA ? "Demo data" : undefined} />
         <StatCard label="Response rate" value={`${responseRate}%`} icon={<MessageSquareReply />} accent="accent" hint={`${responded} of ${opps.length} opportunities answered`} />
         <StatCard label="Average match score" value={`${avgScore}%`} icon={<Gauge />} accent="violet" hint="Across Elets-approved matches" />
         <StatCard label="Introductions" value={leads.length} icon={<Handshake />} accent="amber" hint={`${leads.filter((o) => o.stage === "won").length} won`} />
@@ -76,13 +77,13 @@ export function ProviderAnalytics() {
 
       <div className="grid gap-6 xl:grid-cols-3">
         <Card className="xl:col-span-2">
-          <CardHeader title="Profile views & search appearances" description="Monthly · demo data" action={<Legend items={[{ label: "Profile views", color: SERIES[0] }, { label: "Search appearances", color: SERIES[1] }]} />} />
+          <CardHeader title="Profile views & search appearances" description={SAMPLE_DATA ? "Monthly · demo data" : "Monthly · tracking not yet enabled"} action={<Legend items={[{ label: "Profile views", color: SERIES[0] }, { label: "Search appearances", color: SERIES[1] }]} />} />
           <CardContent>
             <AreaTrend data={trend} x="month" series={[{ key: "views", label: "Profile views" }, { key: "searches", label: "Search appearances" }]} height={250} />
           </CardContent>
         </Card>
         <Card>
-          <CardHeader title="Views by buyer sector" description="Estimated distribution · demo data" />
+          <CardHeader title="Views by buyer sector" description={SAMPLE_DATA ? "Estimated distribution · demo data" : "Tracking not yet enabled"} />
           <CardContent>
             <Donut data={bySector} centerValue={totalViews.toLocaleString("en-IN")} centerLabel="views" height={180} />
             <Legend className="mt-4" items={bySector.map((s) => ({ label: s.name, color: s.color, value: s.value }))} />
