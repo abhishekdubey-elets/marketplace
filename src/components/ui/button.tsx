@@ -9,7 +9,8 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-brand-600 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.15),0_1px_2px_rgb(33_73_232/0.4)] hover:bg-brand-700",
+        primary: "bg-navy-900 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.12),0_1px_2px_rgb(11_31_77/0.45)] hover:bg-navy-800",
+        flame: "bg-flame-600 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2),0_6px_18px_-6px_rgb(229_32_46/0.6)] hover:bg-flame-700",
         navy: "bg-navy-900 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.1)] hover:bg-navy-800",
         secondary: "border border-line bg-white text-ink shadow-xs hover:bg-subtle hover:border-line-strong",
         ghost: "text-ink-2 hover:bg-navy-50 hover:text-ink",

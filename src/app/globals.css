@@ -2,36 +2,49 @@
 
 /* ------------------------------------------------------------------
    Elets Solution Marketplace — design tokens
-   Navy (primary) · Electric blue (secondary) · Teal (accent)
+   Matched to the logo: Elets navy (primary) · royal blue (interactive)
+   · Elets red "flame" (brand accent) · teal (positive / integrity)
    ------------------------------------------------------------------ */
 @theme {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
   /* Primary — deep navy */
-  --color-navy-50: #f2f5fb;
-  --color-navy-100: #e1e7f4;
-  --color-navy-200: #c3cee6;
-  --color-navy-300: #94a6cc;
-  --color-navy-400: #6078a8;
-  --color-navy-500: #3f5687;
-  --color-navy-600: #2b3f6c;
-  --color-navy-700: #1d2d55;
-  --color-navy-800: #132042;
-  --color-navy-900: #0c1631;
-  --color-navy-950: #070d20;
+  --color-navy-50: #f1f4fa;
+  --color-navy-100: #e2e8f4;
+  --color-navy-200: #c5d0e8;
+  --color-navy-300: #98aad3;
+  --color-navy-400: #6880b8;
+  --color-navy-500: #45609e;
+  --color-navy-600: #2f4a87;
+  --color-navy-700: #203a72;
+  --color-navy-800: #142b5f;
+  --color-navy-900: #0b1f4d;
+  --color-navy-950: #061330;
 
-  /* Secondary — electric blue */
-  --color-brand-50: #eef4ff;
-  --color-brand-100: #dbe6ff;
-  --color-brand-200: #bdd1ff;
-  --color-brand-300: #8eb0ff;
-  --color-brand-400: #5b86ff;
-  --color-brand-500: #3565fb;
-  --color-brand-600: #2149e8;
-  --color-brand-700: #1c3ac4;
-  --color-brand-800: #1d339c;
-  --color-brand-900: #1d307b;
+  /* Interactive — royal blue, from the navy family */
+  --color-brand-50: #eef3ff;
+  --color-brand-100: #dde6ff;
+  --color-brand-200: #c1d0fe;
+  --color-brand-300: #95aefa;
+  --color-brand-400: #6585f1;
+  --color-brand-500: #4063e2;
+  --color-brand-600: #2b4bc8;
+  --color-brand-700: #243ca3;
+  --color-brand-800: #213582;
+  --color-brand-900: #1f2f66;
+
+  /* Brand accent — Elets red (logo) */
+  --color-flame-50: #fff1f1;
+  --color-flame-100: #ffe1e2;
+  --color-flame-200: #ffc7c9;
+  --color-flame-300: #ff9ea2;
+  --color-flame-400: #fb646b;
+  --color-flame-500: #f13a43;
+  --color-flame-600: #e5202e;
+  --color-flame-700: #c01522;
+  --color-flame-800: #9f1520;
+  --color-flame-900: #841821;
 
   /* Accent — teal / cyan */
   --color-accent-50: #ecfdfa;
@@ -49,7 +62,7 @@
   --color-subtle: #f9fafb;
   --color-line: #e6e8ee;
   --color-line-strong: #d5d9e2;
-  --color-ink: #0b1224;
+  --color-ink: #0a1633;
   --color-ink-2: #344054;
   --color-ink-3: #667085;
   --color-ink-4: #98a2b3;
@@ -64,13 +77,17 @@
   --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.06);
   --shadow-raised: 0 2px 4px -2px rgb(16 24 40 / 0.06), 0 6px 16px -4px rgb(16 24 40 / 0.1);
   --shadow-overlay: 0 24px 48px -12px rgb(16 24 40 / 0.18), 0 8px 16px -8px rgb(16 24 40 / 0.08);
-  --shadow-glow: 0 0 0 1px rgb(53 101 251 / 0.12), 0 8px 24px -6px rgb(53 101 251 / 0.35);
+  --shadow-glow: 0 0 0 1px rgb(11 31 77 / 0.10), 0 10px 28px -8px rgb(11 31 77 / 0.45);
+  --shadow-flame: 0 0 0 1px rgb(229 32 46 / 0.15), 0 10px 28px -8px rgb(229 32 46 / 0.55);
 
   --animate-fade-in: fade-in 0.25s ease-out both;
   --animate-slide-up: slide-up 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-shimmer: shimmer 1.6s linear infinite;
   --animate-float: float 6s ease-in-out infinite;
   --animate-pulse-ring: pulse-ring 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-aurora: aurora 18s ease-in-out infinite alternate;
+  --animate-shine: shine 3.5s ease-in-out infinite;
 
   @keyframes fade-in {
     from { opacity: 0; }
@@ -87,6 +104,19 @@
   @keyframes float {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes aurora {
+    0% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(4%, -3%, 0) scale(1.08); }
+    100% { transform: translate3d(-3%, 2%, 0) scale(0.96); }
+  }
+  @keyframes shine {
+    0%, 60% { transform: translateX(-120%) skewX(-20deg); }
+    100% { transform: translateX(220%) skewX(-20deg); }
   }
   @keyframes pulse-ring {
     0% { transform: scale(0.9); opacity: 0.6; }
@@ -149,6 +179,30 @@
       linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
       linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
     background-size: 40px 40px;
+  }
+  /* brand gradient text: navy → red, like the logo */
+  .text-brand-gradient {
+    background-image: linear-gradient(100deg, var(--color-navy-900) 0%, var(--color-brand-600) 45%, var(--color-flame-600) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-brand-gradient-dark {
+    background-image: linear-gradient(100deg, #ffffff 0%, var(--color-navy-200) 40%, var(--color-flame-400) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* soft noise-free dotted surface for dark bands */
+  .dot-bg-dark {
+    background-image: radial-gradient(rgb(255 255 255 / 0.09) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .mask-fade-x {
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-marquee, .animate-aurora, .animate-shine, .animate-float { animation: none !important; }
   }
   .scrollbar-thin {
     scrollbar-width: thin;

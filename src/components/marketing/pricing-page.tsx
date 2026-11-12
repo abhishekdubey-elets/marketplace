@@ -8,6 +8,7 @@ import type { PricingPlan } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "./reveal";
+import { Aurora, Spotlight, WordReveal } from "./motion-kit";
 
 const CONTAINER = "mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8";
 
@@ -20,12 +21,19 @@ export function PricingPage() {
 
   return (
     <div>
-      <section className="relative overflow-hidden border-b border-line bg-canvas">
-        <div className="grid-bg pointer-events-none absolute inset-0 opacity-60" />
-        <div className={cn(CONTAINER, "relative py-16 text-center sm:py-20")}>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-600">Pricing</p>
-          <h1 className="mx-auto mt-3 max-w-3xl text-balance text-4xl font-semibold tracking-tight text-ink sm:text-5xl">{pricing.headline}</h1>
-          <p className="mx-auto mt-4 max-w-2xl text-pretty text-[15px] leading-relaxed text-ink-3 sm:text-base">{pricing.subtext}</p>
+      <section className="relative -mt-16 overflow-hidden border-b border-line pt-16">
+        <Aurora />
+        <div className="grid-bg pointer-events-none absolute inset-0 [mask-image:radial-gradient(70%_70%_at_50%_0%,black,transparent)]" />
+        <div className={cn(CONTAINER, "relative py-16 text-center sm:py-24")}>
+          <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-flame-600">
+            <span className="h-px w-5 bg-flame-500/70" /> Pricing <span className="h-px w-5 bg-flame-500/70" />
+          </p>
+          <h1 className="mx-auto mt-4 max-w-3xl text-balance text-[40px] font-semibold leading-[1.05] tracking-[-0.035em] text-ink sm:text-[56px]">
+            <WordReveal text={pricing.headline} wordClassName="text-brand-gradient" />
+          </h1>
+          <Reveal delay={0.2}>
+            <p className="mx-auto mt-5 max-w-2xl text-pretty text-[15px] leading-relaxed text-ink-3 sm:text-[17px]">{pricing.subtext}</p>
+          </Reveal>
         </div>
       </section>
 
@@ -56,7 +64,7 @@ export function PricingPage() {
               ))}
             </div>
             {pricing.note && (
-              <p className="mt-6 flex items-start gap-2.5 rounded-xl border border-accent-200 bg-accent-50 px-4 py-3 text-[13px] leading-relaxed text-accent-700">
+              <p className="mt-6 flex items-start gap-2.5 rounded-xl border border-navy-100 bg-white px-4 py-3 text-[13px] leading-relaxed text-navy-700 shadow-xs">
                 <Scale className="mt-0.5 size-4 shrink-0" /> {pricing.note}
               </p>
             )}
@@ -65,12 +73,13 @@ export function PricingPage() {
       )}
 
       <section className={cn(CONTAINER, "py-14 sm:py-16")}>
-        <div className="flex flex-col gap-6 rounded-2xl bg-navy-950 p-6 text-white sm:p-8 md:flex-row md:items-center md:justify-between">
-          <div>
+        <div className="relative flex flex-col gap-6 overflow-hidden rounded-3xl bg-navy-950 p-6 text-white sm:p-10 md:flex-row md:items-center md:justify-between">
+          <Aurora dark className="opacity-70" />
+          <div className="relative">
             <h2 className="text-xl font-semibold tracking-tight">Questions about pricing?</h2>
             <p className="mt-1.5 text-sm text-navy-300">Talk to the Elets team about listings, Elets Pro or anything else.</p>
           </div>
-          <div className="flex flex-col gap-2 text-sm sm:flex-row sm:gap-3">
+          <div className="relative flex flex-col gap-2 text-sm sm:flex-row sm:gap-3">
             <Button variant="white" asChild>
               <a href="mailto:info@elets.in">
                 <Mail /> info@elets.in
@@ -92,27 +101,34 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
   const href = safeHref(plan.ctaHref);
   const external = !href.startsWith("/");
   return (
-    <div
+    <Spotlight
       className={cn(
-        "flex h-full flex-col rounded-2xl border bg-white p-6 shadow-card",
-        plan.highlight ? "border-brand-300 ring-4 ring-brand-50" : "border-line",
+        "flex h-full flex-col rounded-3xl border bg-white p-7 shadow-card transition duration-300 hover:-translate-y-1 hover:shadow-raised",
+        plan.highlight ? "border-navy-900/80 shadow-raised ring-4 ring-navy-50" : "border-line",
       )}
     >
-      <h3 className="text-base font-semibold text-ink">{plan.name}</h3>
+      {plan.highlight && <span className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-navy-900 via-brand-600 to-flame-600" />}
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-base font-semibold text-ink">{plan.name}</h3>
+        {plan.highlight && <span className="rounded-full bg-flame-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-flame-700">Recommended</span>}
+      </div>
       <p className="mt-1.5 min-h-10 text-[13px] leading-relaxed text-ink-3">{plan.description}</p>
       <p className="mt-5 flex items-baseline gap-1.5">
-        <span className="text-3xl font-semibold tracking-tight text-ink">{priceLabel(plan)}</span>
+        <span className="text-[34px] font-semibold tracking-[-0.03em] text-navy-900">{priceLabel(plan)}</span>
         {plan.price.trim() && plan.period.trim() && <span className="text-sm text-ink-3">{plan.period}</span>}
       </p>
       <ul className="mt-5 flex-1 space-y-2.5">
         {plan.features.filter(Boolean).map((f) => (
           <li key={f} className="flex items-start gap-2.5 text-[13px] leading-snug text-ink-2">
-            <Check className="mt-0.5 size-4 shrink-0 text-accent-600" /> {f}
+            <span className="mt-0.5 grid size-4 shrink-0 place-items-center rounded-full bg-navy-900 text-white">
+              <Check className="size-2.5" strokeWidth={3} />
+            </span>{" "}
+            {f}
           </li>
         ))}
       </ul>
       {plan.ctaLabel.trim() && (
-        <Button className="mt-6 w-full" variant={plan.highlight ? "primary" : "secondary"} asChild>
+        <Button className="mt-7 w-full" variant={plan.highlight ? "flame" : "secondary"} asChild>
           {external ? (
             <a href={href}>
               {plan.ctaLabel} <ArrowRight />
@@ -124,6 +140,6 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
           )}
         </Button>
       )}
-    </div>
+    </Spotlight>
   );
 }

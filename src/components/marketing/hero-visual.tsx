@@ -35,7 +35,7 @@ export function HeroVisual() {
   return (
     <div className="relative mx-auto w-full max-w-[560px] lg:max-w-none">
       {/* glow */}
-      <div className="pointer-events-none absolute -inset-6 rounded-[32px] bg-[radial-gradient(60%_60%_at_60%_40%,rgb(53_101_251/0.18),transparent_70%)]" />
+      <div className="pointer-events-none absolute -inset-6 rounded-[32px] bg-[radial-gradient(55%_55%_at_65%_35%,rgb(229_32_46/0.14),transparent_70%),radial-gradient(60%_60%_at_35%_65%,rgb(43_75_200/0.16),transparent_70%)]" />
 
       {/* main console */}
       <div className="relative rounded-2xl border border-line bg-white/95 shadow-overlay backdrop-blur">
@@ -51,7 +51,7 @@ export function HeroVisual() {
 
         <div className="p-4 sm:p-5">
           <div className="flex items-start gap-3">
-            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-600">
+            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-navy-900 text-white">
               <ClipboardList className="size-4" />
             </span>
             <div className="min-w-0">
@@ -78,7 +78,7 @@ export function HeroVisual() {
                       onFocus={() => setActive(i)}
                       className={cn(
                         "flex w-full items-center gap-3 rounded-xl border p-2.5 text-left transition",
-                        i === active ? "border-brand-200 bg-brand-50/50 shadow-xs" : "border-line bg-white hover:border-line-strong",
+                        i === active ? "border-navy-200 bg-navy-50/70 shadow-xs ring-1 ring-navy-100" : "border-line bg-white hover:border-line-strong",
                       )}
                     >
                       <ProviderLogo provider={p} size="sm" />
@@ -102,7 +102,7 @@ export function HeroVisual() {
                   <div key={d} className="grid grid-cols-[1fr_44px] items-center gap-2">
                     <span className="truncate text-[10px] text-ink-3">{DIMENSION_META[d].label.split(" ")[0]}</span>
                     <span className="h-1 overflow-hidden rounded-full bg-navy-100">
-                      <span className="block h-full rounded-full bg-brand-500 transition-all duration-700" style={{ width: `${top.dimensions[d]}%` }} />
+                      <span className="block h-full rounded-full bg-gradient-to-r from-navy-900 to-flame-500 transition-all duration-700" style={{ width: `${top.dimensions[d]}%` }} />
                     </span>
                   </div>
                 ))}
@@ -118,12 +118,12 @@ export function HeroVisual() {
       {/* floating: Pro journey */}
       <div className="relative mt-3 rounded-2xl border border-white/10 bg-navy-950 p-3.5 text-white shadow-overlay animate-float sm:absolute sm:-bottom-10 sm:-left-8 sm:mt-0 sm:w-[340px]">
         <div className="flex items-center gap-1.5 text-[11px] font-semibold">
-          <Sparkles className="size-3.5 text-accent-300" /> Elets Pro engagement
+          <Sparkles className="size-3.5 text-flame-400" /> Elets Pro engagement
           <span className="ml-auto font-normal text-navy-300">Stage 4 of 8</span>
         </div>
         <div className="mt-2.5 flex gap-1">
           {PRO_MODULES.map((m, i) => (
-            <span key={m.key} title={m.name} className={cn("h-1.5 flex-1 rounded-full", i < 3 ? "bg-accent-400" : i === 3 ? "bg-brand-400" : "bg-white/15")} />
+            <span key={m.key} title={m.name} className={cn("h-1.5 flex-1 rounded-full", i < 3 ? "bg-brand-400" : i === 3 ? "bg-flame-500" : "bg-white/15")} />
           ))}
         </div>
         <p className="mt-2 text-[11px] text-navy-300">Due diligence in progress · relationship manager assigned</p>
@@ -132,7 +132,7 @@ export function HeroVisual() {
       {/* floating: integrity */}
       <div className="absolute -right-6 -top-8 hidden w-[220px] rounded-2xl border border-line bg-white p-3 shadow-raised animate-float [animation-delay:-3s] sm:block">
         <div className="flex items-center gap-2">
-          <span className="grid size-7 place-items-center rounded-lg bg-accent-50 text-accent-600">
+          <span className="grid size-7 place-items-center rounded-lg bg-flame-50 text-flame-600">
             <ShieldCheck className="size-4" />
           </span>
           <p className="text-[12px] font-semibold text-ink">Ranking integrity</p>

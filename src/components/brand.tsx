@@ -43,6 +43,30 @@ export function LogoMark({ className, size = 28, variant = "tile", inverted }: {
   );
 }
 
+/** Handshake glyph (Lucide "handshake", ISC licence) in a 24-unit box. */
+const HANDSHAKE = [
+  "m11 17 2 2a1 1 0 1 0 3-3",
+  "m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4",
+  "m21 3 1 11h-2",
+  "M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3",
+  "M3 4h8",
+];
+
+/** Alternate mark: the red E holding a handshake, with the pixel trail of the original logo. */
+export function LogoMarkHandshake({ className, size = 28, inverted }: { className?: string; size?: number; inverted?: boolean }) {
+  const ink = inverted ? "#fff" : BRAND.navy;
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" className={className} aria-hidden>
+      <path d={E_PATH} fill={BRAND.red} />
+      <g transform="translate(25.5 18.5) scale(1.12)" fill="none" stroke={ink} strokeWidth={2.3} strokeLinecap="round" strokeLinejoin="round">
+        {HANDSHAKE.map((d) => (
+          <path key={d} d={d} />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
 /** Wordmark: "elets" with the brand red "e", over "Solution Marketplace". */
 export function Wordmark({ dark, className, size = "md" }: { dark?: boolean; className?: string; size?: "md" | "lg" }) {
   const lg = size === "lg";

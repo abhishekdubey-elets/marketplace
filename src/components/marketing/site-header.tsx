@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion, useScroll, useSpring } from "framer-motion";
 import { ArrowRight, LayoutDashboard, Menu, Search, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/brand";
@@ -26,6 +27,9 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = React.useState(false);
   const [menu, setMenu] = React.useState(false);
   const [search, setSearch] = React.useState(false);
+  const [hover, setHover] = React.useState<string | null>(null);
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 200, damping: 40 });
 
   React.useEffect(() => {
     const on = () => setScrolled(window.scrollY > 8);
@@ -43,25 +47,35 @@ export function SiteHeader() {
   return (
     <>
       <header
-        className={cn(
-          "sticky top-0 z-40 w-full border-b transition-colors duration-200",
-          scrolled ? "border-line bg-white/80 shadow-[0_1px_0_rgb(16_24_40/0.02)] backdrop-blur-xl" : "border-transparent bg-white/0",
-        )}
+        className="sticky top-0 z-40 w-full transition-[padding] duration-300"
+        style={{ paddingTop: scrolled ? 8 : 0 }}
       >
-        <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
+        <div
+          className={cn(
+            "mx-auto flex max-w-7xl items-center gap-6 border px-4 transition-all duration-300 sm:px-6 lg:px-8",
+            scrolled
+              ? "h-14 w-[calc(100%-1rem)] rounded-2xl border-line/80 bg-white/75 shadow-[0_8px_30px_-12px_rgb(11_31_77/0.25)] backdrop-blur-xl lg:px-5"
+              : "h-16 border-transparent bg-transparent",
+          )}
+        >
           <Logo dark={dark} />
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Main">
+          <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Main" onMouseLeave={() => setHover(null)}>
             {LINKS.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
+                onMouseEnter={() => setHover(l.href)}
                 className={cn(
-                  "inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-[13.5px] font-medium transition",
+                  "relative isolate inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-[13.5px] font-medium transition",
                   dark ? (active(l.href) ? "text-white" : "text-navy-300 hover:text-white") : active(l.href) ? "text-ink" : "text-ink-3 hover:text-ink",
                 )}
               >
-                {l.pro && <Sparkles className={cn("size-3.5", dark ? "text-accent-300" : "text-accent-500")} />}
+                {hover === l.href && (
+                  <motion.span layoutId="nav-hover" className={cn("absolute inset-0 -z-10 rounded-lg", dark ? "bg-white/10" : "bg-navy-50")} transition={{ type: "spring", stiffness: 400, damping: 32 }} />
+                )}
+                {l.pro && <Sparkles className={cn("size-3.5", dark ? "text-flame-300" : "text-flame-600")} />}
                 {l.label}
+                {active(l.href) && <span className={cn("absolute inset-x-3 -bottom-0.5 h-0.5 rounded-full", dark ? "bg-white" : "bg-flame-600")} />}
               </Link>
             ))}
           </nav>
@@ -92,7 +106,7 @@ export function SiteHeader() {
                 <Button variant="ghost" size="sm" asChild className={cn("hidden sm:inline-flex", dark && "text-white hover:bg-white/10 hover:text-white")}>
                   <Link href="/login">Sign in</Link>
                 </Button>
-                <Button size="sm" variant={dark ? "white" : "primary"} asChild className="hidden sm:inline-flex">
+                <Button size="sm" variant={dark ? "white" : "flame"} asChild className="hidden sm:inline-flex">
                   <Link href="/login?role=buyer&next=/buyer/requirements/new">
                     Post a requirement <ArrowRight />
                   </Link>
@@ -104,6 +118,7 @@ export function SiteHeader() {
             </Button>
           </div>
         </div>
+        <motion.div aria-hidden style={{ scaleX: progress }} className={cn("absolute inset-x-0 top-0 h-0.5 origin-left bg-gradient-to-r from-navy-900 via-brand-600 to-flame-600 transition-opacity", scrolled ? "opacity-100" : "opacity-0")} />
       </header>
 
       <Sheet open={menu} onOpenChange={setMenu} title="Menu" width="sm">
@@ -115,7 +130,7 @@ export function SiteHeader() {
               onClick={() => setMenu(false)}
               className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[15px] font-medium text-ink-2 transition hover:bg-navy-50 hover:text-ink"
             >
-              {l.pro && <Sparkles className="size-4 text-accent-500" />}
+              {l.pro && <Sparkles className="size-4 text-flame-600" />}
               {l.label}
             </Link>
           ))}
@@ -129,11 +144,11 @@ export function SiteHeader() {
             </Button>
           ) : (
             <>
-              <Button className="w-full" asChild>
+              <Button className="w-full" variant="flame" asChild>
                 <Link href="/login?role=buyer&next=/buyer/requirements/new">Post a requirement</Link>
               </Button>
               <Button variant="secondary" className="w-full" asChild>
-                <Link href="/login?role=provider">List your company</Link>
+                <Link href="/signup?role=provider">List your company</Link>
               </Button>
               <Button variant="ghost" className="w-full" asChild>
                 <Link href="/login">Sign in</Link>

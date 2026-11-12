@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ProviderLogo } from "@/components/ui/misc";
 import { Reveal, SectionHeading } from "./reveal";
+import { Aurora, WordReveal } from "./motion-kit";
 import { PRO_MODULE_COPY, PRO_MODULE_ICONS } from "./pro-modules";
 import { PRO_ENGAGEMENTS } from "@/lib/data/pro";
 import { PROVIDERS } from "@/lib/data/providers";
@@ -51,24 +52,23 @@ function ProHero() {
   return (
     <section className="relative -mt-16 overflow-hidden bg-navy-950 pt-16 text-white">
       <div className="grid-bg-dark pointer-events-none absolute inset-0" />
-      <div className="pointer-events-none absolute -right-32 -top-32 size-[560px] rounded-full bg-brand-600/30 blur-[140px]" />
-      <div className="pointer-events-none absolute -bottom-40 left-0 size-[460px] rounded-full bg-accent-500/15 blur-[140px]" />
+      <Aurora dark />
       <div className={cn(CONTAINER, "relative grid items-center gap-14 pb-24 pt-16 sm:pt-20 lg:grid-cols-[1fr_1.05fr] lg:pb-28")}>
         <div>
           <Reveal>
-            <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-accent-300">
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-flame-300">
               <Sparkles className="size-3.5" /> Elets Pro · Managed Solutions
             </p>
           </Reveal>
           <Reveal delay={0.05}>
-            <h1 className="mt-6 text-[38px] font-semibold leading-[1.06] tracking-[-0.03em] text-balance sm:text-[50px]">{content.proHeadline}</h1>
+            <h1 className="mt-6 text-[40px] font-semibold leading-[1.04] tracking-[-0.035em] text-balance sm:text-[56px]"><WordReveal text={content.proHeadline} /></h1>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="mt-5 max-w-xl text-[17px] leading-relaxed text-navy-300">{content.proSubtext}</p>
           </Reveal>
           <Reveal delay={0.15}>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button size="lg" variant="white" asChild>
+              <Button size="lg" variant="flame" asChild>
                 <Link href={REQUEST_HREF}>
                   Request Elets Pro assistance <ArrowRight />
                 </Link>
@@ -119,7 +119,7 @@ function WorkspacePreview() {
     <div className="relative">
       <div className="rounded-2xl border border-white/10 bg-white text-ink shadow-[0_40px_80px_-20px_rgb(0_0_0/0.5)]">
         <div className="flex items-center gap-3 border-b border-line px-4 py-3">
-          <span className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-brand-600 to-accent-500 text-white">
+          <span className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-navy-800 to-flame-600 text-white">
             <Sparkles className="size-4" />
           </span>
           <div className="min-w-0 flex-1">
@@ -130,7 +130,7 @@ function WorkspacePreview() {
         </div>
         <div className="flex gap-4 overflow-hidden border-b border-line px-4 text-[11px] font-medium text-ink-3">
           {["Overview", "Vendor shortlist", "Evaluation", "Documents", "Milestones"].map((t, i) => (
-            <span key={t} className={cn("shrink-0 border-b-2 py-2", i === 2 ? "border-brand-600 text-ink" : "border-transparent")}>
+            <span key={t} className={cn("shrink-0 border-b-2 py-2", i === 2 ? "border-flame-600 text-ink" : "border-transparent")}>
               {t}
             </span>
           ))}
@@ -143,7 +143,7 @@ function WorkspacePreview() {
             </div>
             <div className="flex gap-1">
               {states.map((s, i) => (
-                <span key={i} className={cn("h-1.5 flex-1 rounded-full", s === "done" ? "bg-accent-500" : s === "active" ? "bg-brand-500" : "bg-navy-100")} />
+                <span key={i} className={cn("h-1.5 flex-1 rounded-full", s === "done" ? "bg-navy-900" : s === "active" ? "bg-flame-500" : "bg-navy-100")} />
               ))}
             </div>
           </div>
@@ -158,7 +158,7 @@ function WorkspacePreview() {
                   <ProviderLogo provider={p!} size="sm" className="size-7 rounded-md" />
                   <span className="min-w-0 flex-1 truncate text-[12px] font-medium">{p!.name}</span>
                   <span className="hidden h-1.5 w-24 overflow-hidden rounded-full bg-navy-100 sm:block">
-                    <span className={cn("block h-full rounded-full", i === 0 ? "bg-accent-500" : "bg-brand-400")} style={{ width: `${total}%` }} />
+                    <span className={cn("block h-full rounded-full", i === 0 ? "bg-flame-500" : "bg-brand-500")} style={{ width: `${total}%` }} />
                   </span>
                   <span className="w-8 text-right text-[12px] font-semibold tabular-nums">{total}</span>
                 </li>
@@ -220,7 +220,7 @@ function Comparison() {
             <span className="text-center text-ink-2">Marketplace</span>
             <span className="text-center">
               <span className="inline-flex items-center gap-1 rounded-full bg-navy-900 px-2 py-0.5 text-white">
-                <Sparkles className="size-3 text-accent-300" /> Pro
+                <Sparkles className="size-3 text-flame-300" /> Pro
               </span>
             </span>
           </div>
@@ -238,7 +238,7 @@ function Comparison() {
                   )}
                 </span>
                 <span className="grid place-items-center">
-                  <span className="grid size-5 place-items-center rounded-full bg-accent-500 text-white" aria-label="Included">
+                  <span className="grid size-5 place-items-center rounded-full bg-flame-600 text-white" aria-label="Included">
                     <Check className="size-3" strokeWidth={3} />
                   </span>
                 </span>
@@ -280,10 +280,10 @@ function Modules() {
                   onClick={() => setActive(m.key)}
                   className={cn(
                     "flex shrink-0 items-center gap-3 rounded-xl border px-3 py-2.5 text-left transition lg:w-full",
-                    on ? "border-brand-200 bg-white shadow-raised" : "border-transparent hover:border-line hover:bg-white/70",
+                    on ? "border-navy-200 bg-white shadow-raised" : "border-transparent hover:border-line hover:bg-white/70",
                   )}
                 >
-                  <span className={cn("grid size-8 shrink-0 place-items-center rounded-lg transition", on ? "bg-brand-600 text-white" : "bg-white text-ink-3 ring-1 ring-line")}>
+                  <span className={cn("grid size-8 shrink-0 place-items-center rounded-lg transition", on ? "bg-navy-900 text-white" : "bg-white text-ink-3 ring-1 ring-line")}>
                     <MI className="size-4" />
                   </span>
                   <span className="whitespace-nowrap text-[13px] font-medium text-ink lg:whitespace-normal">
@@ -297,11 +297,11 @@ function Modules() {
 
           <div key={active} className="animate-fade-in rounded-2xl border border-line bg-white p-6 shadow-card sm:p-8">
             <div className="flex items-start gap-4">
-              <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-brand-600 to-accent-500 text-white shadow-glow">
+              <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-navy-800 to-flame-600 text-white shadow-glow">
                 <I className="size-5" />
               </span>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wider text-brand-600">Stage {idx + 1} of 8</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-flame-600">Stage {idx + 1} of 8</p>
                 <h3 className="mt-1 text-xl font-semibold tracking-tight text-ink sm:text-2xl">{mod.name}</h3>
                 <p className="mt-1.5 text-[15px] text-ink-3">{copy.summary}</p>
               </div>
@@ -335,7 +335,7 @@ function Modules() {
             <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5">
               <div className="flex gap-1">
                 {PRO_MODULES.map((m, i) => (
-                  <span key={m.key} className={cn("h-1.5 w-6 rounded-full transition", i <= idx ? "bg-brand-500" : "bg-navy-100")} />
+                  <span key={m.key} className={cn("h-1.5 w-6 rounded-full transition", i <= idx ? "bg-flame-500" : "bg-navy-100")} />
                 ))}
               </div>
               <div className="flex gap-2">
@@ -374,7 +374,7 @@ function HowItRuns() {
           {RUNS.map((r, i) => (
             <Reveal key={r.title} delay={(i % 3) * 0.05}>
               <div className="h-full rounded-2xl border border-line bg-white p-6 shadow-card">
-                <span className="grid size-10 place-items-center rounded-xl bg-navy-900 text-accent-300">
+                <span className="grid size-10 place-items-center rounded-xl bg-navy-900 text-flame-300">
                   <r.icon className="size-[18px]" />
                 </span>
                 <p className="mt-4 text-[15px] font-semibold text-ink">{r.title}</p>
@@ -432,7 +432,7 @@ function Models() {
                 )}
               >
                 {m.featured && (
-                  <span className="absolute right-5 top-5 rounded-full bg-accent-400/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent-300">Most common</span>
+                  <span className="absolute right-5 top-5 rounded-full bg-flame-400/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-flame-300">Most common</span>
                 )}
                 <p className={cn("text-lg font-semibold tracking-tight", m.featured ? "text-white" : "text-ink")}>{m.name}</p>
                 <p className={cn("mt-1 text-sm", m.featured ? "text-navy-300" : "text-ink-3")}>{m.tagline}</p>
@@ -443,7 +443,7 @@ function Models() {
                     return (
                       <li key={pm.key} className={cn("flex items-center gap-2.5 text-[13px]", inc ? (m.featured ? "text-white" : "text-ink-2") : m.featured ? "text-navy-500" : "text-ink-4")}>
                         {inc ? (
-                          <span className={cn("grid size-4 place-items-center rounded-full", m.featured ? "bg-accent-400 text-navy-950" : "bg-brand-600 text-white")}>
+                          <span className={cn("grid size-4 place-items-center rounded-full", m.featured ? "bg-flame-500 text-white" : "bg-navy-900 text-white")}>
                             <Check className="size-2.5" strokeWidth={3} />
                           </span>
                         ) : (
@@ -545,7 +545,7 @@ function ProCta() {
             <div className="grid-bg-dark pointer-events-none absolute inset-0" />
             <div className="pointer-events-none absolute left-1/2 top-0 h-64 w-[640px] max-w-full -translate-x-1/2 bg-[radial-gradient(50%_50%_at_50%_0%,rgb(53_101_251/0.45),transparent)]" />
             <div className="relative mx-auto max-w-2xl">
-              <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-gradient-to-br from-brand-600 to-accent-500 shadow-glow">
+              <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-gradient-to-br from-navy-800 to-flame-600 shadow-glow">
                 <Sparkles className="size-5" />
               </span>
               <h2 className="mt-6 text-[28px] font-semibold tracking-tight text-balance sm:text-[36px]">Planning a complex technology selection?</h2>
