@@ -169,7 +169,7 @@ export function RequirementWorkspace() {
                 <dl className="mt-4 space-y-2 text-[13px]">
                   <Row label="Contact" value={buyer.contactName} />
                   <Row label="Email" value={buyer.contactEmail} />
-                  <Row label="Location" value={`${buyer.city}, ${buyer.state}`} />
+                  <Row label="Location" value={[buyer.city, buyer.state].filter(Boolean).join(", ") || "—"} />
                   <Row label="Sector" value={L.industryName(buyer.industryId)} />
                 </dl>
               </CardContent>

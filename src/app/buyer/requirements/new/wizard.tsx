@@ -113,7 +113,7 @@ export function RequirementWizard() {
       budget: "undisclosed",
       timeline: "",
       scale: "",
-      location: buyer ? `${buyer.city}, ${buyer.state}` : "",
+      location: buyer ? [buyer.city, buyer.state].filter(Boolean).join(", ") : "",
       regions: [],
       deployment: [],
       compliance: [],

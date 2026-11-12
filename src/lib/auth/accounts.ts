@@ -146,7 +146,7 @@ export async function createAccount(input: SignupInput): Promise<User> {
       status: "active",
       initials: initialsOf(orgName),
     };
-    ups.push({ c: "buyers", id: orgId, d: org, pos: "end" });
+    ups.push({ c: "buyers", id: orgId, d: org, pos: "start" });
   } else {
     orgId = `p-${rid()}`;
     const [from, to] = LOGO_PAIRS[Math.floor(Math.random() * LOGO_PAIRS.length)]!;
@@ -186,7 +186,7 @@ export async function createAccount(input: SignupInput): Promise<User> {
       profileViews: 0,
       profileViewsTrend: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     };
-    ups.push({ c: "providers", id: orgId, d: provider, pos: "end" });
+    ups.push({ c: "providers", id: orgId, d: provider, pos: "start" });
   }
 
   const what = input.role === "buyer" ? "buyer organisation" : "solution provider";

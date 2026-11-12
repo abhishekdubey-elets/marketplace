@@ -294,7 +294,7 @@ export function ProviderOpportunityDetail() {
                   <div className="min-w-0">
                     <p className="truncate text-[13px] font-semibold text-ink">{o.buyer.name}</p>
                     <p className="text-xs text-ink-3">
-                      {o.buyer.type} · {o.buyer.city}, {o.buyer.state}
+                      {[o.buyer.type, o.buyer.city, o.buyer.state].filter(Boolean).join(" · ")}
                     </p>
                     <p className="mt-0.5 text-xs text-ink-3">Contact: {o.buyer.contactName}</p>
                   </div>

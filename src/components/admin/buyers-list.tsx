@@ -53,9 +53,10 @@ export function BuyersList() {
     },
     { key: "type", header: "Type", sortValue: (b) => b.type, cell: (b) => <span className="text-xs">{b.type}</span>, hideOnMobile: true },
     { key: "sector", header: "Sector", sortValue: (b) => L.industryName(b.industryId), cell: (b) => <Badge tone="neutral">{L.industryName(b.industryId)}</Badge> },
-    { key: "loc", header: "Location", sortValue: (b) => b.city, cell: (b) => <span className="whitespace-nowrap text-xs">{b.city}, {b.state}</span>, hideOnMobile: true },
+    { key: "loc", header: "Location", sortValue: (b) => b.city, cell: (b) => <span className="whitespace-nowrap text-xs">{[b.city, b.state].filter(Boolean).join(", ") || "—"}</span>, hideOnMobile: true },
     { key: "reqs", header: "Requirements", align: "right", sortValue: (b) => reqCount(b.id), cell: (b) => <span className="tabular-nums font-medium text-ink">{reqCount(b.id)}</span> },
     { key: "opps", header: "Active opps", align: "right", sortValue: (b) => oppCount(b.id), cell: (b) => <span className="tabular-nums">{oppCount(b.id)}</span>, hideOnMobile: true },
+    { key: "joined", header: "Joined", align: "right", sortValue: (b) => b.joinedAt, cell: (b) => <span className="whitespace-nowrap text-xs text-ink-3">{formatDate(b.joinedAt)}</span>, hideOnMobile: true },
     {
       key: "status",
       header: "Status",
@@ -83,6 +84,7 @@ export function BuyersList() {
         searchText={(b) => `${b.name} ${b.city} ${b.state} ${b.contactName} ${b.type}`}
         searchPlaceholder="Search organisations…"
         onRowClick={(b) => setOpenId(b.id)}
+        initialSort={{ key: "joined", dir: "desc" }}
         toolbar={
           <>
             <FilterSelect label="Sectors" value={sector} onChange={setSector} options={industries.map((i) => ({ value: i.id, label: i.name }))} />

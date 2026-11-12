@@ -263,7 +263,7 @@ function LeadSheet({ o, onClose }: { o: Opportunity; onClose: () => void }) {
               <div className="min-w-0 flex-1">
                 <p className="text-[13px] font-semibold text-ink">{b.name}</p>
                 <p className="text-xs text-ink-3">
-                  {b.type} · {b.city}, {b.state}
+                  {[b.type, b.city, b.state].filter(Boolean).join(" · ")}
                 </p>
               </div>
               {score && <ScoreRing score={score.score} size={44} stroke={4} />}
