@@ -294,7 +294,7 @@ export function ContentManager() {
               )}
               {d.sections.pro !== false && (
                 <div className="rounded-lg bg-navy-900 p-3">
-                  <p className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-accent-300">
+                  <p className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-flame-300">
                     <Sparkles className="size-3" /> Elets Pro
                   </p>
                   <p className="mt-1 text-xs font-medium leading-snug text-white">{d.proHeadline}</p>

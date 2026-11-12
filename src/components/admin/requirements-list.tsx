@@ -65,7 +65,7 @@ export function RequirementsList() {
             <span className="font-mono text-[11px] text-ink-4">{r.code}</span>
             {r.proRequested && (
               <Tooltip content="Buyer requested Elets Pro managed support">
-                <span className="inline-flex items-center gap-0.5 rounded bg-gradient-to-r from-brand-600 to-accent-500 px-1.5 text-[9px] font-bold uppercase tracking-wider text-white">
+                <span className="inline-flex items-center gap-0.5 rounded bg-gradient-to-r from-navy-900 to-flame-600 px-1.5 text-[9px] font-bold uppercase tracking-wider text-white">
                   <Sparkles className="size-2.5" /> Pro
                 </span>
               </Tooltip>

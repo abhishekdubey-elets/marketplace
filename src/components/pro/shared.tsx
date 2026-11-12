@@ -154,8 +154,8 @@ export function StageRail({
               <span
                 className={cn(
                   "h-1.5 flex-1 rounded-full",
-                  st === "done" && "bg-accent-500",
-                  st === "active" && "bg-brand-600",
+                  st === "done" && "bg-navy-900",
+                  st === "active" && "bg-flame-600",
                   st === "upcoming" && "bg-navy-100",
                   st === "skipped" && "bg-[repeating-linear-gradient(45deg,#e1e7f4_0,#e1e7f4_2px,transparent_2px,transparent_4px)]",
                 )}
@@ -186,20 +186,20 @@ export function StageRail({
               <span
                 className={cn(
                   "relative grid size-11 place-items-center rounded-2xl border transition",
-                  st === "done" && "border-accent-500 bg-accent-500 text-white shadow-[0_6px_16px_-6px_rgb(20_174_159/0.6)]",
-                  st === "active" && "border-navy-900 bg-navy-900 text-white shadow-[0_8px_20px_-8px_rgb(12_22_49/0.7)] ring-4 ring-brand-100",
+                  st === "done" && "border-navy-900 bg-navy-900 text-white shadow-[0_6px_16px_-6px_rgb(11_31_77/0.6)]",
+                  st === "active" && "border-flame-600 bg-gradient-to-br from-flame-500 to-flame-700 text-white shadow-flame ring-4 ring-flame-100",
                   st === "upcoming" && "border-line-strong bg-white text-ink-4",
                   st === "skipped" && "border-dashed border-line-strong bg-subtle text-ink-4 opacity-70",
                   editable && "group-hover:scale-105",
                 )}
               >
                 {st === "done" ? <Check className="size-5" strokeWidth={2.5} /> : st === "skipped" ? <SkipForward className="size-4" /> : <Icon className="size-[18px]" />}
-                {st === "active" && <span className="absolute inset-0 -z-10 rounded-2xl bg-brand-400 animate-pulse-ring" />}
+                {st === "active" && <span className="absolute inset-0 -z-10 rounded-2xl bg-flame-400 animate-pulse-ring" />}
               </span>
               <span className={cn("mt-2.5 px-1 text-[12px] font-semibold leading-tight", st === "active" ? "text-ink" : st === "done" ? "text-ink-2" : "text-ink-4", st === "skipped" && "line-through decoration-ink-4/50")}>
                 {m.short}
               </span>
-              <span className={cn("mt-0.5 text-[10px] font-medium uppercase tracking-wider", st === "active" ? "text-brand-600" : st === "done" ? "text-accent-600" : "text-ink-4")}>
+              <span className={cn("mt-0.5 text-[10px] font-medium uppercase tracking-wider", st === "active" ? "text-flame-600" : st === "done" ? "text-navy-700" : "text-ink-4")}>
                 {st === "active" ? "In progress" : st === "done" ? "Done" : st === "skipped" ? "Skipped" : `Stage ${i + 1}`}
               </span>
             </button>
@@ -210,7 +210,7 @@ export function StageRail({
                 <span
                   className={cn(
                     "absolute right-1/2 top-[22px] h-[2px] w-full -translate-y-1/2",
-                    prevDone || st === "done" ? "bg-accent-400" : st === "active" ? "bg-gradient-to-r from-accent-400 to-brand-500" : "bg-line",
+                    prevDone || st === "done" ? "bg-navy-900" : st === "active" ? "bg-gradient-to-r from-navy-900 to-flame-500" : "bg-line",
                   )}
                 />
               )}
@@ -252,7 +252,7 @@ export function RMCard({ rmId, className, dark }: { rmId: string; className?: st
   if (!rm) return null;
   return (
     <div className={cn("flex items-center gap-3", className)}>
-      <span className={cn("relative grid size-11 shrink-0 place-items-center rounded-full text-sm font-semibold", dark ? "bg-accent-400/20 text-accent-200 ring-1 ring-accent-300/30" : "bg-accent-100 text-accent-700")}>
+      <span className={cn("relative grid size-11 shrink-0 place-items-center rounded-full text-sm font-semibold", dark ? "bg-flame-500/20 text-flame-200 ring-1 ring-flame-300/30" : "bg-navy-900 text-white")}>
         {rm.initials}
         <span className="absolute bottom-0 right-0 size-3 rounded-full bg-emerald-500 ring-2 ring-white" />
       </span>

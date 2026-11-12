@@ -448,7 +448,7 @@ function MatchingConsole({ req }: { req: Requirement }) {
                       <td key={d} className="px-1.5 py-2 text-center">
                         <span
                           className="inline-block w-9 rounded py-0.5 tabular-nums"
-                          style={{ background: `rgb(33 73 232 / ${(r.dimensions[d] / 100) * 0.22})`, color: r.dimensions[d] >= 70 ? "#1c3ac4" : "#667085" }}
+                          style={{ background: `rgb(43 75 200 / ${(r.dimensions[d] / 100) * 0.2})`, color: r.dimensions[d] >= 70 ? "#0b1f4d" : "#667085" }}
                         >
                           {r.dimensions[d]}
                         </span>

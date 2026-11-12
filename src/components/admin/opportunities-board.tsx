@@ -24,9 +24,9 @@ import { FilterSelect, useTeamOptions } from "./common";
 
 const DOT: Record<OpportunityStage, string> = {
   introduction: "bg-ink-4",
-  discovery: "bg-brand-500",
-  evaluation: "bg-violet-500",
-  proposal: "bg-accent-500",
+  discovery: "bg-brand-400",
+  evaluation: "bg-brand-600",
+  proposal: "bg-navy-800",
   negotiation: "bg-amber-500",
   won: "bg-emerald-500",
   lost: "bg-red-400",

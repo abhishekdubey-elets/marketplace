@@ -152,7 +152,7 @@ export function ProWorkspace({ engagementId, mode }: { engagementId: string; mod
       {/* header */}
       <Card className="overflow-hidden">
         <div className="relative">
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-navy-900 via-brand-600 to-accent-500" />
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-navy-900 via-brand-600 to-flame-600" />
           <div className="flex flex-col gap-6 p-5 pt-6 sm:p-6 sm:pt-7 xl:flex-row xl:items-start">
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">

@@ -327,7 +327,7 @@ export function MessagesPanel({ engagement: e, actorId }: PanelProps) {
                 <div className={cn("max-w-[78%]", me && "text-right")}>
                   <p className="mb-1 text-[11px] text-ink-4">
                     <span className="font-medium text-ink-3">{me ? "You" : p.name}</span>
-                    {p.kind === "team" && !me && <span className="ml-1 rounded bg-accent-50 px-1 text-[10px] font-semibold text-accent-700">Elets</span>} · {formatDateTime(m.at)}
+                    {p.kind === "team" && !me && <span className="ml-1 rounded bg-flame-50 px-1 text-[10px] font-semibold text-flame-700">Elets</span>} · {formatDateTime(m.at)}
                   </p>
                   <div className={cn("inline-block rounded-2xl px-3.5 py-2.5 text-left text-[13px] leading-relaxed", me ? "rounded-tr-md bg-navy-900 text-white" : "rounded-tl-md border border-line bg-white text-ink-2 shadow-xs")}>{m.text}</div>
                 </div>
@@ -736,7 +736,7 @@ export function RecommendationPanel({ engagement: e, mode, actorId }: PanelProps
           <div className="absolute -right-16 -top-20 size-72 rounded-full bg-flame-600/20 blur-3xl" />
           <div className="relative flex flex-col gap-6 md:flex-row md:items-center">
             <div className="min-w-0 flex-1">
-              <p className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-accent-300">
+              <p className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-flame-300">
                 <Sparkles className="size-3" /> Elets Pro recommendation · {e.code}
               </p>
               <div className="mt-4 flex items-center gap-4">

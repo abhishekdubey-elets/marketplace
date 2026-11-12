@@ -35,7 +35,7 @@ import { Dropdown, DropdownContent, DropdownItem, DropdownLabel, DropdownTrigger
 import { DEMO_TAG, monthKey, monthLabel, monthRange } from "./common";
 import { useTeam } from "@/lib/team";
 
-const VERIF_COLORS = { verified: "#14ae9f", pending: "#e8a33d", docs_requested: "#f0c27a", unverified: "#94a6cc", rejected: "#e5484d" } as const;
+const VERIF_COLORS = { verified: "#2b4bc8", pending: "#e8a33d", docs_requested: "#f0c27a", unverified: "#c5d0e8", rejected: "#e5202e" } as const;
 
 export function AdminDashboard() {
   const user = useUser();
@@ -340,11 +340,11 @@ function greeting() {
 }
 
 const TONE_BG: Record<string, string> = {
-  blue: "bg-brand-50 text-brand-600",
-  violet: "bg-violet-50 text-violet-600",
-  amber: "bg-amber-50 text-amber-600",
-  teal: "bg-accent-50 text-accent-600",
-  red: "bg-red-50 text-red-600",
+  blue: "bg-navy-900 text-white",
+  violet: "bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100",
+  amber: "bg-amber-50 text-amber-600 ring-1 ring-inset ring-amber-100",
+  teal: "bg-flame-50 text-flame-600 ring-1 ring-inset ring-flame-100",
+  red: "bg-red-50 text-red-600 ring-1 ring-inset ring-red-100",
 };
 
 function AttentionRow({ icon, tone, title, meta, href, action }: { icon: React.ReactNode; tone: string; title: string; meta: string; href: string; action?: React.ReactNode }) {

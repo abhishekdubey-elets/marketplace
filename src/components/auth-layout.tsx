@@ -30,7 +30,7 @@ export function AuthLayout({ children, wide = false }: { children: React.ReactNo
                 { icon: ShieldCheck, t: "Managed with Elets Pro", d: "A relationship manager from requirement discovery to post-award review." },
               ].map((x) => (
                 <li key={x.t} className="flex gap-3">
-                  <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/5 text-accent-300">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/5 text-flame-300">
                     <x.icon className="size-4" />
                   </span>
                   <span>

@@ -80,7 +80,7 @@ export function AuditLog() {
         }
       />
       <div className="mb-4 flex items-start gap-2.5 rounded-xl border border-line bg-white p-3 text-xs leading-relaxed text-ink-3 shadow-xs">
-        <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent-600" />
+        <ShieldCheck className="mt-0.5 size-4 shrink-0 text-navy-900" />
         <p>
           Entries are append-only in the application. Listing-package changes are logged with an explicit note that they have no effect on matching. In this demo the log is stored in your browser; production
           storage is the <code className="rounded bg-subtle px-1 font-mono text-[11px]">audit_log</code> table described in the Supabase schema.

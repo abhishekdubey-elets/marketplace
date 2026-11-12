@@ -22,7 +22,8 @@ import { cn } from "@/lib/utils";
  * series stay distinguishable. Identity is never colour-alone: every multi-series
  * chart ships with a legend and a hover tooltip.
  */
-export const SERIES = ["#0b1f4d", "#e5202e", "#2b4bc8", "#95aefa", "#ff9ea2", "#6880b8"];
+/** Navy, royal (positive / second series), Elets red (highlight), light royal, neutral, slate. */
+export const SERIES = ["#0b1f4d", "#2b4bc8", "#e5202e", "#95aefa", "#c5d0e8", "#6880b8"];
 
 const AXIS = { fontSize: 11, fill: "#667085" };
 

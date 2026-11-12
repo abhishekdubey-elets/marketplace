@@ -233,7 +233,7 @@ export function ProviderDetail() {
                   ))}
                   {p.caseStudies.map((c) => (
                     <div key={c.id} className="rounded-xl border border-dashed border-line-strong bg-subtle/50 p-3.5">
-                      <p className="text-[11px] font-semibold uppercase tracking-wider text-accent-700">Case study · {c.year}</p>
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-flame-600">Case study · {c.year}</p>
                       <p className="mt-1 text-[13px] font-semibold text-ink">{c.title}</p>
                       <p className="mt-1 text-xs leading-relaxed text-ink-3">{c.outcome}</p>
                     </div>
@@ -399,7 +399,7 @@ export function ProviderDetail() {
                 }}
                 options={(["standard", "featured", "premium"] as const).map((v) => ({ value: v, label: LISTING_LABEL[v] }))}
               />
-              <p className="flex items-start gap-2 rounded-lg bg-accent-50 px-3 py-2 text-xs text-accent-700">
+              <p className="flex items-start gap-2 rounded-lg bg-navy-50 px-3 py-2 text-xs text-navy-700 ring-1 ring-inset ring-navy-100">
                 <Info className="mt-px size-3.5 shrink-0" />
                 Listing package has no effect on match scores. The matching engine never receives this field.
               </p>

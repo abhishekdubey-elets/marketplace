@@ -359,8 +359,8 @@ export function BriefPanel({ engagement: e, mode, actorId }: PanelProps) {
             <div className="grid gap-5 md:grid-cols-3">
               {(
                 [
-                  ["Objectives", e.brief.objectives, "bg-brand-600"],
-                  ["Scope", e.brief.scope, "bg-accent-500"],
+                  ["Objectives", e.brief.objectives, "bg-navy-900"],
+                  ["Scope", e.brief.scope, "bg-flame-500"],
                   ["Constraints", e.brief.constraints, "bg-amber-500"],
                 ] as const
               ).map(([title, items, dot]) => (

@@ -38,7 +38,7 @@ export function FilterSelect({
 
 export function ListingBadge({ listing }: { listing: ListingPackage }) {
   return (
-    <Badge tone={listing === "premium" ? "violet" : listing === "featured" ? "blue" : "neutral"}>
+    <Badge tone={listing === "premium" ? "flame" : listing === "featured" ? "blue" : "neutral"}>
       {LISTING_LABEL[listing].replace(" listing", "")}
     </Badge>
   );

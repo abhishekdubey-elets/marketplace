@@ -56,7 +56,7 @@ export function Reports() {
   const avgVerify = verifiedP.length ? Math.round(verifiedP.reduce((s, p) => s + (new Date(p.verifiedAt!).getTime() - new Date(p.joinedAt).getTime()) / 86400000, 0) / verifiedP.length) : 0;
   const verifMix = [
     { name: "Verified", value: P.filter((p) => p.verification === "verified").length, color: SERIES[1] },
-    { name: "Pending", value: P.filter((p) => p.verification === "pending" || p.verification === "docs_requested").length, color: SERIES[2] },
+    { name: "Pending", value: P.filter((p) => p.verification === "pending" || p.verification === "docs_requested").length, color: "#e8a33d" },
     { name: "Not verified", value: P.filter((p) => p.verification === "unverified" || p.verification === "rejected").length, color: SERIES[4] },
   ].filter((d) => d.value > 0);
 
