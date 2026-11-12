@@ -25,6 +25,7 @@ import {
 import { toast } from "sonner";
 import { cn, timeAgo } from "@/lib/utils";
 import { useStore } from "@/lib/store";
+import { isDbMode, resetDemoData } from "@/lib/sync";
 import type { NotificationType, Role, User } from "@/lib/types";
 import { useLookups } from "@/lib/hooks";
 import { Avatar, Kbd } from "@/components/ui/misc";
@@ -170,7 +171,6 @@ function NotificationBell({ role, user }: { role: Role; user: User }) {
 
 function UserMenu({ role, user }: { role: Role; user: User }) {
   const router = useRouter();
-  const reset = useStore((s) => s.resetDemo);
   const signOut = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     toast.success("Signed out");
@@ -222,15 +222,19 @@ function UserMenu({ role, user }: { role: Role; user: User }) {
               View as {r === "admin" ? "Elets operations" : r}
             </DropdownItem>
           ))}
-        <DropdownItem
-          icon={<RotateCcw />}
-          onSelect={() => {
-            reset();
-            toast.success("Demo data reset", { description: "All changes in this browser were cleared." });
-          }}
-        >
-          Reset demo data
-        </DropdownItem>
+        {(role === "admin" || !isDbMode()) && (
+          <DropdownItem
+            icon={<RotateCcw />}
+            onSelect={async () => {
+              if (isDbMode() && !window.confirm("Reset all marketplace data for everyone to the starting demo dataset? This can't be undone.")) return;
+              const r = await resetDemoData();
+              if (!r.ok) return toast.error(r.error ?? "Reset failed");
+              toast.success("Demo data reset", { description: r.scope === "everyone" ? "Shared data was restored for all users." : "All changes in this browser were cleared." });
+            }}
+          >
+            Reset demo data
+          </DropdownItem>
+        )}
         <DropdownSeparator />
         <DropdownItem icon={<LogOut />} danger onSelect={signOut}>
           Sign out

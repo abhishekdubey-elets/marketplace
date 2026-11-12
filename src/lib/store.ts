@@ -29,99 +29,29 @@ import type {
   Thread,
   VerificationStatus,
 } from "./types";
-import { CATEGORIES, INDUSTRIES, REGIONS, SERVICE_CATEGORIES } from "./data/taxonomy";
-import { PROVIDERS } from "./data/providers";
-import { BUYERS, REQUIREMENTS } from "./data/buyers";
-import { PRO_ENGAGEMENTS } from "./data/pro";
-import {
-  ANNOUNCEMENTS,
-  AUDIT_LOG,
-  MATCHES,
-  MEETINGS,
-  NOTIFICATIONS,
-  OPPORTUNITIES,
-  SAVED_SEARCHES,
-  SITE_CONTENT,
-  THREADS,
-} from "./data/activity";
 import { rankProviders } from "./matching";
 import { STAGE_LABEL } from "./labels";
 
 /**
- * MOCK DATA LAYER
- * ---------------
- * All marketplace data lives in this Zustand store and is persisted to the
- * browser's localStorage, so the demo behaves like a live system for a single
- * browser. It is NOT shared between users or devices.
- *
- * Integration boundary: each action below maps 1:1 to a table write described
- * in /supabase/schema.sql. Replacing the body of an action with a Supabase call
- * (and the seed state with queries) is the path to real persistence.
+ * DATA LAYER
+ * ----------
+ * All marketplace data lives in this Zustand store and actions update it
+ * synchronously. When DATABASE_URL is configured, src/lib/sync.ts loads the
+ * shared data from Neon Postgres and saves every change back, so all users see
+ * the same marketplace; only personal lists (favourites, compare, recently
+ * viewed, saved searches) stay in this browser's localStorage. Without a
+ * database the whole store is kept in localStorage, as in the original demo.
  */
 
-export interface ProRequest {
-  id: string;
-  buyerId: string;
-  requirementId: string | null;
-  services: string[];
-  note: string;
-  at: string;
-  status: "new" | "contacted" | "converted";
-}
-
-export interface DataState {
-  providers: Provider[];
-  buyers: BuyerOrg[];
-  requirements: Requirement[];
-  matches: Match[];
-  opportunities: Opportunity[];
-  meetings: Meeting[];
-  engagements: ProEngagement[];
-  proRequests: ProRequest[];
-  notifications: Notification[];
-  threads: Thread[];
-  audit: AuditEntry[];
-  categories: TechCategory[];
-  industries: Industry[];
-  regions: Region[];
-  serviceCategories: ServiceCategory[];
-  content: SiteContent;
-  announcements: Announcement[];
-  // buyer personalisation
-  favourites: string[];
-  compare: string[];
-  recentlyViewed: string[];
-  savedSearches: SavedSearch[];
-}
-
-const seed = (): DataState => ({
-  providers: PROVIDERS,
-  buyers: BUYERS,
-  requirements: REQUIREMENTS,
-  matches: MATCHES,
-  opportunities: OPPORTUNITIES,
-  meetings: MEETINGS,
-  engagements: PRO_ENGAGEMENTS,
-  proRequests: [
-    { id: "pr-1", buyerId: "b-lakeview", requirementId: "r-163", services: ["Requirement Discovery", "RFP & Tender Support"], note: "Need help structuring evaluation criteria for AI-assisted marking.", at: "2026-10-26T12:00:00+05:30", status: "new" },
-  ],
-  notifications: NOTIFICATIONS,
-  threads: THREADS,
-  audit: AUDIT_LOG,
-  categories: CATEGORIES,
-  industries: INDUSTRIES,
-  regions: REGIONS,
-  serviceCategories: SERVICE_CATEGORIES,
-  content: SITE_CONTENT,
-  announcements: ANNOUNCEMENTS,
-  favourites: ["p-medisphere", "p-kavach"],
-  compare: [],
-  recentlyViewed: ["p-medisphere", "p-helix", "p-kavach"],
-  savedSearches: SAVED_SEARCHES,
-});
+import { PERSONAL_KEYS, seed, type DataState, type ProRequest } from "./seed";
+export type { DataState, ProRequest } from "./seed";
 
 let seq = 0;
-export const uid = (prefix: string) => `${prefix}-${Date.now().toString(36)}${(seq++).toString(36)}`;
+// time + counter + random so ids created by different users at once don't collide
+export const uid = (prefix: string) => `${prefix}-${Date.now().toString(36)}${(seq++).toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+
+/** Set by src/lib/sync.ts once shared data comes from the database: then only personal keys are kept locally. */
+export const persistMode = { personalOnly: false };
 const now = () => new Date().toISOString();
 
 export interface Actions {
@@ -533,8 +463,8 @@ export const useStore = create<Store>()(
       storage: createJSONStorage(() => localStorage),
       skipHydration: true,
       partialize: (s) => {
-        const { ...data } = s;
-        return Object.fromEntries(Object.entries(data).filter(([, v]) => typeof v !== "function")) as unknown as DataState;
+        const entries = Object.entries(s).filter(([k, v]) => typeof v !== "function" && (!persistMode.personalOnly || (PERSONAL_KEYS as readonly string[]).includes(k)));
+        return Object.fromEntries(entries) as unknown as DataState;
       },
     },
   ),
