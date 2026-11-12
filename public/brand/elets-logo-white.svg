@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 140">
+  <title>Elets Solution Marketplace</title>
+  <!-- For dark backgrounds. Wordmark set in Geist; outline the text before sending to print. -->
+  <g transform="translate(14 22) scale(1.5)">
+    <path d="M57 6H32a26 26 0 0 0 0 52h25l-4-10H32a16 16 0 0 1 0-32h21Z" fill="#e5202e"/>
+    <path d="M27 27h18v10H27a5 5 0 0 1 0-10Z" fill="#fff"/>
+    <rect x="47" y="27" width="4.5" height="4.5" rx=".6" fill="#fff"/>
+    <rect x="47" y="32.5" width="4.5" height="4.5" rx=".6" fill="#fff"/>
+    <rect x="53" y="27" width="4.5" height="4.5" rx=".6" fill="#e5202e"/>
+  </g>
+  <rect x="131" y="28" width="2" height="84" fill="#2a3555"/>
+  <g font-family="Geist, 'Segoe UI', Helvetica, Arial, sans-serif" fill="#fff">
+    <text x="152" y="72" font-size="58" font-weight="800" letter-spacing="-2"><tspan fill="#e5202e">e</tspan>lets</text>
+    <text x="154" y="98" font-size="17" font-weight="600" letter-spacing="3.6">SOLUTION MARKETPLACE</text>
+    <text x="154" y="120" font-size="13" font-weight="500" letter-spacing="1" fill="#9aa6c4">Connect <tspan fill="#e5202e">•</tspan> Collaborate <tspan fill="#e5202e">•</tspan> Grow</text>
+  </g>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Elets Solution Marketplace</title>
+  <path d="M57 6H32a26 26 0 0 0 0 52h25l-4-10H32a16 16 0 0 1 0-32h21Z" fill="#e5202e"/>
+  <path d="M27 27h18v10H27a5 5 0 0 1 0-10Z" fill="#0b1f4d"/>
+  <rect x="47" y="27" width="4.5" height="4.5" rx=".6" fill="#0b1f4d"/>
+  <rect x="47" y="32.5" width="4.5" height="4.5" rx=".6" fill="#0b1f4d"/>
+  <rect x="53" y="27" width="4.5" height="4.5" rx=".6" fill="#e5202e"/>
+</svg>

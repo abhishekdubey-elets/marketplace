@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { LogoMark } from "@/components/brand";
+import { Logo } from "@/components/brand";
 import { SAMPLE_DATA } from "@/lib/seed";
 
 const COLUMNS = [
@@ -39,13 +39,7 @@ export function SiteFooter() {
       <div className="relative mx-auto max-w-7xl px-4 pb-10 pt-16 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-[1.3fr_2fr]">
           <div className="max-w-sm">
-            <Link href="/" className="inline-flex items-center gap-2.5" aria-label="Elets Solution Marketplace home">
-              <LogoMark />
-              <span className="leading-none">
-                <span className="block text-[15px] font-semibold tracking-tight text-white">Elets</span>
-                <span className="block text-[10px] font-medium uppercase tracking-[0.14em] text-navy-400">Solution Marketplace</span>
-              </span>
-            </Link>
+            <Logo dark />
             <p className="mt-5 text-sm leading-relaxed">
               From relationships to opportunities. From opportunities to outcomes. A structured platform connecting public institutions and enterprises with verified technology
               providers.

@@ -257,7 +257,7 @@ export function ContentManager() {
               <div className="grid-bg-dark absolute inset-0" />
               <div className="absolute -right-10 -top-10 size-40 rounded-full bg-brand-600/40 blur-3xl" />
               <div className="relative">
-                <LogoMark size={22} />
+                <LogoMark size={26} variant="plain" inverted />
                 <p className="mt-4 text-lg font-semibold leading-snug tracking-tight text-white text-balance">{d.heroHeadline || "Headline"}</p>
                 <p className="mt-2 text-xs leading-relaxed text-navy-200">{d.heroSubtext}</p>
                 <div className="mt-4 flex gap-2">

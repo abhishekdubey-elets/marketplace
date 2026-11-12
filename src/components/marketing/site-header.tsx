@@ -56,7 +56,7 @@ export function SiteHeader() {
                 key={l.href}
                 href={l.href}
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13.5px] font-medium transition",
+                  "inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-1.5 text-[13.5px] font-medium transition",
                   dark ? (active(l.href) ? "text-white" : "text-navy-300 hover:text-white") : active(l.href) ? "text-ink" : "text-ink-3 hover:text-ink",
                 )}
               >
@@ -69,14 +69,14 @@ export function SiteHeader() {
             <button
               onClick={() => setSearch(true)}
               className={cn(
-                "hidden h-9 items-center gap-2 rounded-lg border px-3 text-[13px] transition md:flex md:w-56",
+                "hidden h-9 items-center gap-2 rounded-lg border px-3 text-[13px] transition md:flex md:w-56 lg:w-9 lg:justify-center lg:px-0 xl:w-56 xl:justify-start xl:px-3",
                 dark ? "border-white/15 bg-white/5 text-navy-300 hover:bg-white/10" : "border-line bg-white/70 text-ink-4 hover:border-line-strong hover:bg-white",
               )}
               aria-label="Search the marketplace"
             >
               <Search className="size-4" />
-              <span className="flex-1 text-left">Search solutions…</span>
-              <Kbd className={dark ? "border-white/15 bg-white/10 text-navy-200" : undefined}>/</Kbd>
+              <span className="flex-1 text-left lg:hidden xl:inline">Search solutions…</span>
+              <Kbd className={cn("lg:hidden xl:inline-flex", dark && "border-white/15 bg-white/10 text-navy-200")}>/</Kbd>
             </button>
             <Button variant="ghost" size="icon-sm" className={cn("md:hidden", dark && "text-white hover:bg-white/10 hover:text-white")} onClick={() => setSearch(true)} aria-label="Search the marketplace">
               <Search />
