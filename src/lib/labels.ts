@@ -93,4 +93,4 @@ export const MATCH_STATUS_TONE: Record<MatchStatus, Tone> = {
   introduced: "green",
 };
 
-export type Tone = "neutral" | "blue" | "green" | "amber" | "red" | "violet" | "teal" | "navy";
+export type Tone = "neutral" | "blue" | "green" | "amber" | "red" | "violet" | "teal" | "navy" | "flame";

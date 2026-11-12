@@ -106,7 +106,7 @@ export function VendorsPanel({ engagement: e, mode, actorId }: PanelProps) {
           {mode === "admin" && suggestions.length > 0 && (
             <div className="border-t border-line px-5 py-4">
               <p className="mb-3 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-ink-4">
-                <Sparkles className="size-3.5 text-accent-600" /> Suggested by the matching engine for {req?.code}
+                <Sparkles className="size-3.5 text-flame-600" /> Suggested by the matching engine for {req?.code}
               </p>
               <div className="grid gap-2 sm:grid-cols-2">
                 {suggestions.map((m) => {

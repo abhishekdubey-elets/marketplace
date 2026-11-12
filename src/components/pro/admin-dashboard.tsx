@@ -149,7 +149,7 @@ export function AdminProDashboard() {
       <PageHeader
         eyebrow={
           <span className="inline-flex items-center gap-1 rounded-md bg-navy-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
-            <Sparkles className="size-3 text-accent-300" /> Elets Pro
+            <Sparkles className="size-3 text-flame-300" /> Elets Pro
           </span>
         }
         title="Managed engagements"

@@ -11,6 +11,7 @@ const TONES: Record<Tone, string> = {
   violet: "bg-violet-50 text-violet-700 ring-violet-100",
   teal: "bg-accent-50 text-accent-700 ring-accent-100",
   navy: "bg-navy-900 text-white ring-navy-900",
+  flame: "bg-flame-50 text-flame-700 ring-flame-100",
 };
 
 const DOTS: Record<Tone, string> = {
@@ -21,7 +22,8 @@ const DOTS: Record<Tone, string> = {
   red: "bg-red-500",
   violet: "bg-violet-500",
   teal: "bg-accent-500",
-  navy: "bg-accent-300",
+  navy: "bg-flame-400",
+  flame: "bg-flame-500",
 };
 
 export function Badge({

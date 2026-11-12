@@ -222,7 +222,7 @@ export function RequirementWorkspace() {
           <Card className={cn(req.proRequested && "border-transparent bg-navy-900 text-white")}>
             <CardContent className="pt-5">
               <div className="flex items-center gap-2">
-                <Sparkles className={cn("size-4", req.proRequested ? "text-accent-300" : "text-accent-600")} />
+                <Sparkles className={cn("size-4", req.proRequested ? "text-flame-300" : "text-flame-600")} />
                 <p className={cn("text-sm font-semibold", req.proRequested ? "text-white" : "text-ink")}>Elets Pro</p>
               </div>
               {engagement ? (

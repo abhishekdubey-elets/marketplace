@@ -733,7 +733,7 @@ export function RecommendationPanel({ engagement: e, mode, actorId }: PanelProps
       <Card className="overflow-hidden">
         <div className="relative overflow-hidden bg-navy-950 p-6 text-white sm:p-8">
           <div className="grid-bg-dark absolute inset-0 opacity-60" />
-          <div className="absolute -right-16 -top-20 size-72 rounded-full bg-accent-500/20 blur-3xl" />
+          <div className="absolute -right-16 -top-20 size-72 rounded-full bg-flame-600/20 blur-3xl" />
           <div className="relative flex flex-col gap-6 md:flex-row md:items-center">
             <div className="min-w-0 flex-1">
               <p className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-accent-300">

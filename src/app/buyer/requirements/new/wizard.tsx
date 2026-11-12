@@ -819,7 +819,7 @@ function SuccessScreen({ id, code, pro, onAnother }: { id: string; code: string;
       <Card className="overflow-hidden">
         <div className="relative overflow-hidden bg-navy-950 px-8 py-10 text-center text-white">
           <div className="grid-bg-dark absolute inset-0" />
-          <div className="absolute left-1/2 top-0 size-72 -translate-x-1/2 rounded-full bg-accent-500/25 blur-3xl" />
+          <div className="absolute left-1/2 top-0 size-72 -translate-x-1/2 rounded-full bg-flame-600/25 blur-3xl" />
           <div className="relative">
             <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-accent-500 text-white shadow-glow">
               <Check className="size-7" strokeWidth={3} />

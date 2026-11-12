@@ -37,14 +37,14 @@ import { NOTIF_ICON } from "@/components/shell/topbar";
 import { useBuyerPlan } from "@/lib/use-plan";
 
 const STAGE_COLORS: Record<string, string> = {
-  submitted: "#94a6cc",
-  under_review: "#e8a33d",
-  matching: "#2149e8",
-  shortlisted: "#7c5cf0",
-  introduced: "#14ae9f",
-  evaluation: "#5b86ff",
-  negotiation: "#c97a1a",
-  completed: "#0c1631",
+  submitted: "#c5d0e8",
+  under_review: "#95aefa",
+  matching: "#2b4bc8",
+  shortlisted: "#6880b8",
+  introduced: "#ff9ea2",
+  evaluation: "#f13a43",
+  negotiation: "#c01522",
+  completed: "#0b1f4d",
 };
 
 export default function BuyerDashboard() {
@@ -103,7 +103,7 @@ export default function BuyerDashboard() {
       <div className="relative overflow-hidden rounded-2xl border border-navy-800 bg-navy-950 px-6 py-6 text-white shadow-raised sm:px-8">
         <div className="grid-bg-dark absolute inset-0" />
         <div className="absolute -right-20 -top-24 size-72 rounded-full bg-brand-600/30 blur-3xl" />
-        <div className="absolute -bottom-24 left-1/3 size-64 rounded-full bg-accent-500/20 blur-3xl" />
+        <div className="absolute -bottom-24 left-1/3 size-64 rounded-full bg-flame-600/20 blur-3xl" />
         <div className="relative flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs font-medium text-navy-300">
@@ -167,7 +167,7 @@ export default function BuyerDashboard() {
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                     <span className="font-mono text-[11px] text-ink-4">{r.code}</span>
                     <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-ink group-hover:text-brand-700">{r.title}</span>
-                    {r.proRequested && <Badge tone="teal"><Sparkles /> Pro</Badge>}
+                    {r.proRequested && <Badge tone="flame"><Sparkles /> Pro</Badge>}
                     <StageBadge stage={r.stage} />
                   </div>
                   <div className="mt-2.5 flex items-center gap-3">
@@ -207,7 +207,7 @@ export default function BuyerDashboard() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* recommendations */}
         <Card className="lg:col-span-2">
-          <CardHeader title="New provider recommendations" description="Approved by Elets after review. Scores use the 8-dimension framework." icon={<Sparkles />} />
+          <CardHeader title="New provider recommendations" description={premium ? "Approved by Elets after review. Scores use the 8-dimension framework." : "Matched automatically. Scores use the 8-dimension framework."} icon={<Sparkles />} />
           <CardContent>
             {recs.length === 0 ? (
               <EmptyState compact icon={<Sparkles />} title="No new recommendations" description="When Elets approves new matches for your requirements, they will appear here." />
@@ -319,7 +319,7 @@ export default function BuyerDashboard() {
         <div className="space-y-6">
           {eng ? (
             <Link href={`/buyer/pro/${eng.id}`} className="group relative block overflow-hidden rounded-2xl border border-navy-800 bg-navy-900 p-5 text-white shadow-raised">
-              <div className="absolute -right-10 -top-10 size-40 rounded-full bg-accent-500/25 blur-2xl" />
+              <div className="absolute -right-10 -top-10 size-40 rounded-full bg-flame-600/25 blur-2xl" />
               <div className="relative">
                 <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-accent-300">
                   <Sparkles className="size-3.5" /> Elets Pro engagement

@@ -49,11 +49,11 @@ export function BuyerProDashboard() {
       <section className="relative overflow-hidden rounded-3xl bg-navy-950 text-white shadow-raised">
         <div className="grid-bg-dark absolute inset-0 opacity-70" />
         <div className="absolute -right-20 -top-24 size-80 rounded-full bg-brand-600/30 blur-[100px]" />
-        <div className="absolute -bottom-28 left-1/3 size-72 rounded-full bg-accent-500/20 blur-[100px]" />
+        <div className="absolute -bottom-28 left-1/3 size-72 rounded-full bg-flame-600/20 blur-[100px]" />
         <div className="relative grid gap-8 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div className="max-w-2xl">
             <p className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-accent-200">
-              <Sparkles className="size-3.5 text-accent-300" /> Elets Pro · Managed Solutions
+              <Sparkles className="size-3.5 text-flame-300" /> Elets Pro · Managed Solutions
             </p>
             <h1 className="mt-4 text-2xl font-semibold leading-tight tracking-tight text-balance sm:text-[28px]">Your technology procurement, managed end to end.</h1>
             <p className="mt-3 text-[15px] leading-relaxed text-navy-200">

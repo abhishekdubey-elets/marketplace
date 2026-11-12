@@ -12,6 +12,7 @@ import { Tooltip } from "@/components/ui/overlay";
 import { NAV, PORTAL_LABEL, type NavItem } from "./nav";
 import { isForUser } from "@/lib/people";
 import { suggestRm, useTeam } from "@/lib/team";
+import { useBuyerPlan } from "@/lib/use-plan";
 
 function useBadgeCounts(role: Role, user: User) {
   const notifications = useStore((s) => s.notifications);
@@ -66,12 +67,12 @@ export function SidebarNav({ role, user, collapsed, onNavigate }: { role: Role; 
                     collapsed && "justify-center px-0",
                   )}
                 >
-                  {active && <span className="absolute -left-3 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-brand-600" />}
-                  <item.icon className={cn("size-[17px] shrink-0", active ? "text-brand-600" : item.pro ? "text-accent-600" : "text-ink-4 group-hover:text-ink-2")} />
+                  {active && <span className="absolute -left-3 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-flame-600" />}
+                  <item.icon className={cn("size-[17px] shrink-0", active ? "text-navy-900" : item.pro ? "text-flame-600" : "text-ink-4 group-hover:text-ink-2")} />
                   {!collapsed && <span className="truncate">{item.label}</span>}
-                  {!collapsed && item.pro && <span className="rounded bg-gradient-to-r from-brand-600 to-accent-500 px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-white">Pro</span>}
-                  {count > 0 && !collapsed && <span className="ml-auto rounded-full bg-brand-600 px-1.5 py-px text-[10px] font-semibold tabular-nums text-white">{count}</span>}
-                  {count > 0 && collapsed && <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-brand-600 ring-2 ring-canvas" />}
+                  {!collapsed && item.pro && <span className="rounded bg-gradient-to-r from-navy-900 to-flame-600 px-1.5 py-px text-[9px] font-bold uppercase tracking-wider text-white">Pro</span>}
+                  {count > 0 && !collapsed && <span className="ml-auto rounded-full bg-flame-600 px-1.5 py-px text-[10px] font-semibold tabular-nums text-white">{count}</span>}
+                  {count > 0 && collapsed && <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-flame-600 ring-2 ring-canvas" />}
                 </Link>
               );
               return (
@@ -112,6 +113,7 @@ function useMyEletsContact(role: Role, user: User) {
 
 function SidebarFooter({ role, user, collapsed }: { role: Role; user: User; collapsed: boolean }) {
   const rm = useMyEletsContact(role, user);
+  const premium = useBuyerPlan() === "premium";
   if (collapsed) return null;
   if (role === "admin")
     return (
@@ -123,18 +125,18 @@ function SidebarFooter({ role, user, collapsed }: { role: Role; user: User; coll
   return (
     <div className="space-y-2">
       {role === "buyer" && (
-        <Link href="/buyer/pro" className="group block overflow-hidden rounded-xl bg-navy-900 p-3 text-xs text-white shadow-raised">
-          <div className="pointer-events-none absolute" />
-          <div className="flex items-center gap-1.5 font-semibold">
-            <Sparkles className="size-3.5 text-accent-300" /> Elets Pro
+        <Link href={premium ? "/buyer/pro" : "/buyer/upgrade"} className="group relative block overflow-hidden rounded-xl bg-navy-900 p-3 text-xs text-white shadow-raised">
+          <div className="pointer-events-none absolute -right-8 -top-10 size-24 rounded-full bg-flame-600/40 blur-2xl transition duration-500 group-hover:bg-flame-500/60" />
+          <div className="relative flex items-center gap-1.5 font-semibold">
+            <Sparkles className="size-3.5 text-flame-300" /> {premium ? "Elets Pro" : "Premium"}
           </div>
-          <p className="mt-1 leading-relaxed text-navy-200">Managed support from brief to award.</p>
-          <span className="mt-2 inline-block font-medium text-accent-300 group-hover:underline">Explore engagements →</span>
+          <p className="relative mt-1 leading-relaxed text-navy-200">{premium ? "Managed support from brief to award." : "Talk to suppliers and let Elets run matching for you."}</p>
+          <span className="relative mt-2 inline-block font-medium text-flame-300 group-hover:underline">{premium ? "Explore engagements →" : "Upgrade to Premium →"}</span>
         </Link>
       )}
       {rm && (
         <div className="flex items-center gap-2.5 rounded-xl border border-line bg-white p-2.5 shadow-xs">
-          <span className="grid size-8 place-items-center rounded-full bg-accent-100 text-[11px] font-semibold text-accent-700">{rm.initials}</span>
+          <span className="grid size-8 place-items-center rounded-full bg-navy-900 text-[11px] font-semibold text-white">{rm.initials}</span>
           <div className="min-w-0 text-xs">
             <p className="truncate font-medium text-ink">{rm.name}</p>
             <p className="truncate text-ink-3">Your Elets contact</p>

@@ -88,7 +88,7 @@ export default function RequirementsPage() {
     {
       key: "pro",
       header: "",
-      cell: (r) => (r.proRequested ? <Badge tone="teal"><Sparkles /> Pro</Badge> : null),
+      cell: (r) => (r.proRequested ? <Badge tone="flame"><Sparkles /> Pro</Badge> : null),
     },
     { key: "updated", header: "Updated", align: "right", sortValue: (r) => r.updatedAt, cell: (r) => <span className="whitespace-nowrap text-ink-3">{timeAgo(r.updatedAt)}</span> },
   ];

@@ -99,7 +99,7 @@ function NotificationBell({ role, user }: { role: Role; user: User }) {
         <button className="relative grid size-9 place-items-center rounded-lg text-ink-3 transition hover:bg-navy-50 hover:text-ink" aria-label={`Notifications${unread ? `, ${unread} unread` : ""}`}>
           <Bell className="size-[18px]" />
           {unread > 0 && (
-            <span className="absolute right-1.5 top-1.5 grid min-w-4 place-items-center rounded-full bg-brand-600 px-1 text-[9px] font-bold leading-4 text-white ring-2 ring-white">{unread}</span>
+            <span className="absolute right-1.5 top-1.5 grid min-w-4 place-items-center rounded-full bg-flame-600 px-1 text-[9px] font-bold leading-4 text-white ring-2 ring-white">{unread}</span>
           )}
         </button>
       </PopoverTrigger>
@@ -135,7 +135,7 @@ function NotificationBell({ role, user }: { role: Role; user: User }) {
                   }}
                   className={cn("flex w-full gap-3 border-b border-line/60 px-4 py-3 text-left transition last:border-0 hover:bg-subtle", !n.read && "bg-brand-50/40")}
                 >
-                  <span className={cn("mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg", n.read ? "bg-navy-50 text-ink-3" : "bg-brand-100 text-brand-700")}>
+                  <span className={cn("mt-0.5 grid size-8 shrink-0 place-items-center rounded-lg", n.read ? "bg-navy-50 text-ink-3" : "bg-navy-900 text-white")}>
                     <I className="size-4" />
                   </span>
                   <span className="min-w-0 flex-1">
@@ -145,7 +145,7 @@ function NotificationBell({ role, user }: { role: Role; user: User }) {
                     </span>
                     <span className="mt-0.5 line-clamp-2 block text-xs leading-relaxed text-ink-3">{n.body}</span>
                   </span>
-                  {!n.read && <span className="mt-2 size-2 shrink-0 rounded-full bg-brand-600" />}
+                  {!n.read && <span className="mt-2 size-2 shrink-0 rounded-full bg-flame-600" />}
                 </button>
               );
             })

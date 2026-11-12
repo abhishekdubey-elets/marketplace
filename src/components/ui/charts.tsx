@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
  * series stay distinguishable. Identity is never colour-alone: every multi-series
  * chart ships with a legend and a hover tooltip.
  */
-export const SERIES = ["#2149e8", "#14ae9f", "#e8a33d", "#7c5cf0", "#94a6cc", "#0c1631"];
+export const SERIES = ["#0b1f4d", "#e5202e", "#2b4bc8", "#95aefa", "#ff9ea2", "#6880b8"];
 
 const AXIS = { fontSize: 11, fill: "#667085" };
 

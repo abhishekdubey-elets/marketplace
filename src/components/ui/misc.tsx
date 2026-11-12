@@ -110,19 +110,20 @@ export function StatCard({
   className?: string;
 }) {
   const a = {
-    brand: "bg-brand-50 text-brand-600",
-    accent: "bg-accent-50 text-accent-600",
-    violet: "bg-violet-50 text-violet-600",
-    amber: "bg-amber-50 text-amber-600",
-    navy: "bg-navy-50 text-navy-600",
+    brand: "bg-navy-900 text-white",
+    accent: "bg-flame-50 text-flame-600 ring-1 ring-inset ring-flame-100",
+    violet: "bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100",
+    amber: "bg-navy-50 text-navy-900 ring-1 ring-inset ring-navy-100",
+    navy: "bg-navy-50 text-navy-700 ring-1 ring-inset ring-navy-100",
   }[accent];
   const body = (
-    <div className={cn("group relative h-full rounded-2xl border border-line bg-white p-4 shadow-card transition", href && "hover:-translate-y-0.5 hover:border-line-strong hover:shadow-raised", className)}>
+    <div className={cn("group relative h-full overflow-hidden rounded-2xl border border-line bg-white p-4 shadow-card transition duration-300", href && "hover:-translate-y-0.5 hover:border-line-strong hover:shadow-raised", className)}>
+      <span aria-hidden className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-navy-900 via-brand-600 to-flame-600 transition-transform duration-500 group-hover:scale-x-100" />
       <div className="flex items-start justify-between gap-3">
         <p className="text-[13px] font-medium text-ink-3">{label}</p>
         {icon && <span className={cn("grid size-8 place-items-center rounded-lg [&_svg]:size-4", a)}>{icon}</span>}
       </div>
-      <p className="mt-2 text-[26px] font-semibold leading-none tracking-tight text-ink tabular-nums">{value}</p>
+      <p className="mt-2 text-[28px] font-semibold leading-none tracking-[-0.03em] text-navy-900 tabular-nums">{value}</p>
       <div className="mt-2 flex items-center gap-2 text-xs">
         {trend && <span className={cn("font-medium", trend.positive === false ? "text-red-600" : "text-emerald-600")}>{trend.value}</span>}
         {hint && <span className="truncate text-ink-3">{hint}</span>}

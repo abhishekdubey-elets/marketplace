@@ -14,10 +14,10 @@ export function AuthLayout({ children, wide = false }: { children: React.ReactNo
       <div className="relative hidden overflow-hidden bg-navy-950 lg:block">
         <div className="grid-bg-dark absolute inset-0" />
         <div className="absolute -right-24 -top-24 size-[480px] rounded-full bg-brand-600/30 blur-[120px]" />
-        <div className="absolute -bottom-32 -left-16 size-[420px] rounded-full bg-accent-500/20 blur-[120px]" />
+        <div className="absolute -bottom-32 -left-16 size-[420px] rounded-full bg-flame-600/20 blur-[120px]" />
         <div className="relative flex h-full flex-col justify-between p-12">
           <p className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-navy-200">
-            <Sparkles className="size-3.5 text-accent-300" /> From relationships to opportunities
+            <Sparkles className="size-3.5 text-flame-300" /> From relationships to opportunities
           </p>
           <div>
             <h2 className="max-w-md text-3xl font-semibold leading-tight tracking-tight text-white text-balance">

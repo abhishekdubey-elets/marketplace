@@ -180,7 +180,7 @@ export function CommandPalette({ role, orgId, open, onOpenChange }: { role: Role
                   ))}
                   {role !== "admin" && (
                     <Command.Item value="page elets pro managed" onSelect={() => go("/pro")} className={ITEM}>
-                      <Sparkles className="text-accent-600" />
+                      <Sparkles className="text-flame-600" />
                       <span className="flex-1">About Elets Pro</span>
                     </Command.Item>
                   )}
@@ -192,7 +192,7 @@ export function CommandPalette({ role, orgId, open, onOpenChange }: { role: Role
                     <Layers className="text-ink-4" /> Explore solutions
                   </Command.Item>
                   <Command.Item value="page elets pro" onSelect={() => go("/pro")} className={ITEM}>
-                    <Sparkles className="text-accent-600" /> Elets Pro
+                    <Sparkles className="text-flame-600" /> Elets Pro
                   </Command.Item>
                 </Command.Group>
               )}
