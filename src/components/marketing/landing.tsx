@@ -122,11 +122,17 @@ function Hero() {
             </div>
           </Reveal>
           <Reveal delay={0.55}>
-            <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-[13px] text-ink-3">
-              {["Verified providers", "Explainable 8-dimension matching", "Introductions curated by Elets"].map((t) => (
-                <li key={t} className="inline-flex items-center gap-1.5">
-                  <span className="grid size-4 place-items-center rounded-full bg-navy-900 text-white">
-                    <Check className="size-2.5" strokeWidth={3} />
+            <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-3 text-[13px] font-medium text-ink-2">
+              {[
+                { t: "Verified providers", icon: BadgeCheck },
+                { t: "Explainable 8-dimension matching", icon: Gauge },
+                { t: "Introductions curated by Elets", icon: Handshake },
+              ].map(({ t, icon: I }) => (
+                <li key={t} className="inline-flex items-center gap-2">
+                  <span className="relative grid size-7 place-items-center overflow-hidden rounded-lg bg-gradient-to-br from-navy-800 to-navy-950 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2),0_4px_10px_-4px_rgb(11_31_77/0.6)]">
+                    <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent" />
+                    <I className="relative size-3.5" />
+                    <span className="absolute bottom-0 right-0 size-1.5 rounded-tl bg-flame-500" />
                   </span>
                   {t}
                 </li>
@@ -220,11 +226,12 @@ function IconTile({ icon: Icon, dark, className }: { icon: React.ElementType; da
         "grid size-11 place-items-center rounded-xl transition duration-300",
         dark
           ? "border border-white/10 bg-white/[0.06] text-flame-300 group-hover/spot:border-flame-400/40 group-hover/spot:text-flame-200"
-          : "border border-line bg-gradient-to-b from-white to-navy-50 text-navy-900 shadow-xs group-hover/spot:border-flame-200 group-hover/spot:text-flame-600",
+          : "relative overflow-hidden bg-gradient-to-br from-navy-800 to-navy-950 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2),0_8px_18px_-8px_rgb(11_31_77/0.7)] group-hover/spot:from-flame-500 group-hover/spot:to-flame-700 group-hover/spot:shadow-[inset_0_1px_0_rgb(255_255_255/0.25),0_8px_18px_-8px_rgb(229_32_46/0.7)]",
         className,
       )}
     >
-      <Icon className="size-5" />
+      {!dark && <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent" />}
+      <Icon className="relative size-5 transition-transform duration-300 group-hover/spot:scale-110" />
     </span>
   );
 }
@@ -350,8 +357,9 @@ function Categories() {
               <Link href={`/solutions?category=${c.id}`} className="block h-full">
                 <Spotlight className="flex h-full flex-col rounded-2xl border border-line bg-white p-5 shadow-card transition duration-300 hover:-translate-y-1 hover:border-navy-200 hover:shadow-raised">
                   <div className="flex items-center justify-between">
-                    <span className="grid size-11 place-items-center rounded-xl bg-navy-900 text-white transition duration-300 group-hover/spot:bg-flame-600 group-hover/spot:shadow-flame">
-                      <DynIcon name={c.icon} className="size-5" />
+                    <span className="relative grid size-11 place-items-center overflow-hidden rounded-xl bg-gradient-to-br from-navy-800 to-navy-950 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2),0_8px_18px_-8px_rgb(11_31_77/0.7)] transition duration-300 group-hover/spot:from-flame-500 group-hover/spot:to-flame-700">
+                      <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent" />
+                      <DynIcon name={c.icon} className="relative size-5 transition-transform duration-300 group-hover/spot:scale-110" />
                     </span>
                     <ArrowUpRight className="size-4 -translate-x-1 text-ink-4 opacity-0 transition group-hover/spot:translate-x-0 group-hover/spot:opacity-100" />
                   </div>
