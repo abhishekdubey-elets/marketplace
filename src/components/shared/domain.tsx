@@ -17,6 +17,7 @@ import { DimensionBar, ProviderLogo, ScoreRing, VerificationBadge } from "@/comp
 import { Tooltip } from "@/components/ui/overlay";
 import { SIZE_LABELS } from "@/lib/data/taxonomy";
 import { SAMPLE_DATA } from "@/lib/seed";
+import { Spotlight } from "@/components/marketing/motion-kit";
 
 // ------------------------------------------------------------------ requirement stages
 
@@ -173,11 +174,12 @@ export function ProviderCard({
   const inCompare = compare.includes(provider.id);
 
   return (
-    <div className={cn("group relative flex flex-col rounded-2xl border border-line bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:border-line-strong hover:shadow-raised", className)}>
+    <Spotlight className={cn("group flex flex-col rounded-2xl border border-line bg-white p-5 shadow-card transition duration-300 hover:-translate-y-1 hover:border-navy-200 hover:shadow-raised", className)}>
+      <span aria-hidden className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-navy-900 via-brand-600 to-flame-600 transition-transform duration-500 group-hover:scale-x-100" />
       <div className="flex items-start gap-3.5">
-        <ProviderLogo provider={provider} size="lg" />
+        <ProviderLogo provider={provider} size="lg" className="shadow-[inset_0_1px_0_rgb(255_255_255/0.25),0_8px_18px_-8px_rgb(11_31_77/0.55)] transition-transform duration-300 group-hover:scale-105" />
         <div className="min-w-0 flex-1">
-          <Link href={href} className="block truncate text-[15px] font-semibold tracking-tight text-ink after:absolute after:inset-0 hover:text-brand-700">
+          <Link href={href} className="block truncate text-[15px] font-semibold tracking-tight text-ink after:absolute after:inset-0 group-hover:text-navy-900">
             {provider.name}
           </Link>
           <p className="mt-0.5 line-clamp-2 text-[13px] leading-snug text-ink-3">{provider.tagline}</p>
@@ -188,7 +190,7 @@ export function ProviderCard({
         <VerificationBadge status={provider.verification} compact />
         {provider.listing !== "standard" && (
           <Tooltip content="Paid listing package — display only. Does not affect match scores or ranking.">
-            <span className="relative z-10 inline-flex items-center gap-1 rounded-full bg-navy-50 px-2 py-0.5 text-[11px] font-medium text-ink-3 ring-1 ring-inset ring-navy-100">
+            <span className="relative z-10 inline-flex items-center gap-1 rounded-full bg-flame-50 px-2 py-0.5 text-[11px] font-medium text-flame-700 ring-1 ring-inset ring-flame-100">
               <Sparkles className="size-3" /> {provider.listing === "premium" ? "Premium" : "Featured"} listing
             </span>
           </Tooltip>
@@ -196,7 +198,7 @@ export function ProviderCard({
       </div>
       <div className="mt-3 flex flex-wrap gap-1.5">
         {provider.categories.slice(0, 3).map((c) => (
-          <span key={c} className="rounded-md bg-subtle px-2 py-0.5 text-[11px] font-medium text-ink-2 ring-1 ring-inset ring-line">
+          <span key={c} className="rounded-full bg-navy-50 px-2.5 py-0.5 text-[11px] font-medium text-navy-700 ring-1 ring-inset ring-navy-100">
             {L.categoryName(c)}
           </span>
         ))}
@@ -213,7 +215,7 @@ export function ProviderCard({
         <span>{provider.caseStudies.length} case studies</span>
       </div>
       {match && match.reasons[0] && (
-        <p className="mt-3 flex items-start gap-1.5 rounded-lg bg-accent-50/70 px-2.5 py-1.5 text-xs text-accent-700">
+        <p className="mt-3 flex items-start gap-1.5 rounded-lg bg-navy-50 px-2.5 py-1.5 text-xs text-navy-700 ring-1 ring-inset ring-navy-100">
           <Info className="mt-px size-3.5 shrink-0" />
           {match.reasons[0]}
         </p>
@@ -236,16 +238,16 @@ export function ProviderCard({
               if (!ok) toast.error("You can compare up to 4 providers");
               else toast.success(inCompare ? "Removed from comparison" : "Added to comparison", { description: provider.name });
             }}
-            className={cn("inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-medium transition", inCompare ? "text-brand-700 hover:bg-brand-50" : "text-ink-3 hover:bg-navy-50 hover:text-ink")}
+            className={cn("inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-xs font-medium transition", inCompare ? "bg-navy-900 text-white hover:bg-navy-800" : "text-ink-3 hover:bg-navy-50 hover:text-ink")}
             aria-pressed={inCompare}
           >
             <GitCompareArrows className="size-3.5" /> {inCompare ? "Comparing" : "Compare"}
           </button>
-          <Link href={href} className="ml-auto text-xs font-medium text-brand-600 hover:underline">
-            View profile →
+          <Link href={href} className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-navy-900 transition hover:text-flame-600">
+            View profile <span className="transition group-hover:translate-x-0.5">→</span>
           </Link>
         </div>
       )}
-    </div>
+    </Spotlight>
   );
 }

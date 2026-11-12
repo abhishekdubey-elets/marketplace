@@ -37,6 +37,7 @@ import { Modal, Popover, PopoverContent, PopoverTrigger, Sheet, Tooltip } from "
 import { EmptyState, ProviderLogo, VerificationBadge } from "@/components/ui/misc";
 import { DynIcon } from "@/components/ui/icon";
 import { ProviderCard } from "./domain";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 
 type Sort = "relevance" | "name" | "newest" | "cases";
 
@@ -229,17 +230,20 @@ export function DiscoveryView({ basePath, profileHref }: { basePath: string; pro
   );
 
   return (
-    <div className="pb-24">
+    <MotionConfig reducedMotion="user">
+    <div className="pb-16">
       {/* category strip */}
-      <div className="scrollbar-thin -mx-1 mb-5 flex gap-2 overflow-x-auto px-1 pb-1">
+      <div className="scrollbar-thin -mx-1 mb-5 flex gap-2 overflow-x-auto px-1 pb-2 pt-1">
         <button
           onClick={() => {
             setFilters((f) => ({ ...f, categories: [] }));
             syncUrl(q);
           }}
           className={cn(
-            "inline-flex shrink-0 items-center gap-2 rounded-xl border px-3.5 py-2 text-[13px] font-medium transition",
-            filters.categories.length === 0 ? "border-navy-900 bg-navy-900 text-white shadow-raised" : "border-line bg-white text-ink-2 hover:border-line-strong",
+            "inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-[13px] font-medium transition duration-200",
+            filters.categories.length === 0
+              ? "border-navy-900 bg-gradient-to-br from-navy-800 to-navy-950 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.15),0_8px_18px_-8px_rgb(11_31_77/0.7)]"
+              : "border-line bg-white text-ink-2 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-raised",
           )}
         >
           <LayoutGrid className="size-4" /> All categories
@@ -256,11 +260,13 @@ export function DiscoveryView({ basePath, profileHref }: { basePath: string; pro
                   syncUrl(q, on ? undefined : c.id);
                 }}
                 className={cn(
-                  "inline-flex shrink-0 items-center gap-2 rounded-xl border px-3.5 py-2 text-[13px] font-medium transition",
-                  on ? "border-brand-500 bg-brand-50 text-brand-700 ring-4 ring-brand-100" : "border-line bg-white text-ink-2 hover:border-line-strong hover:bg-subtle",
+                  "inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-[13px] font-medium transition duration-200",
+                  on
+                    ? "border-navy-900 bg-gradient-to-br from-navy-800 to-navy-950 text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.15),0_8px_18px_-8px_rgb(11_31_77/0.7)]"
+                    : "border-line bg-white text-ink-2 hover:-translate-y-0.5 hover:border-line-strong hover:shadow-raised",
                 )}
               >
-                <DynIcon name={c.icon} className={cn("size-4", on ? "text-brand-600" : "text-ink-4")} />
+                <DynIcon name={c.icon} className={cn("size-4", on ? "text-flame-400" : "text-ink-4")} />
                 {c.name}
               </button>
             );
@@ -284,7 +290,7 @@ export function DiscoveryView({ basePath, profileHref }: { basePath: string; pro
               if (e.key === "Escape") setFocused(false);
             }}
             placeholder="Search companies, solutions, capabilities, industries…"
-            className="h-11 rounded-xl pr-10 text-[15px]"
+            className="h-12 rounded-2xl border-line bg-white pr-10 text-[15px] shadow-card transition focus:border-navy-300 focus:shadow-raised focus:ring-4 focus:ring-navy-100"
             aria-label="Search providers"
           />
           {q && (
@@ -327,7 +333,7 @@ export function DiscoveryView({ basePath, profileHref }: { basePath: string; pro
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="secondary" className="lg:hidden" onClick={() => setSheetOpen(true)}>
-            <SlidersHorizontal /> Filters {activeCount > 0 && <span className="rounded-full bg-brand-600 px-1.5 text-[10px] text-white">{activeCount}</span>}
+            <SlidersHorizontal /> Filters {activeCount > 0 && <span className="rounded-full bg-flame-600 px-1.5 text-[10px] text-white">{activeCount}</span>}
           </Button>
           <div className="w-44">
             {!mounted ? (
@@ -399,9 +405,9 @@ export function DiscoveryView({ basePath, profileHref }: { basePath: string; pro
       {pills.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-2 animate-fade-in">
           {pills.map((p) => (
-            <span key={p.key} className="inline-flex items-center gap-1 rounded-full border border-brand-200 bg-brand-50 py-0.5 pl-2.5 pr-1 text-xs font-medium text-brand-700">
+            <span key={p.key} className="inline-flex items-center gap-1 rounded-full bg-navy-900 py-1 pl-3 pr-1 text-xs font-medium text-white shadow-xs">
               {p.label}
-              <button onClick={p.remove} className="grid size-5 place-items-center rounded-full hover:bg-brand-100" aria-label={`Remove ${p.label}`}>
+              <button onClick={p.remove} className="grid size-5 place-items-center rounded-full text-navy-300 transition hover:bg-white/15 hover:text-white" aria-label={`Remove ${p.label}`}>
                 <X className="size-3" />
               </button>
             </span>
@@ -414,7 +420,20 @@ export function DiscoveryView({ basePath, profileHref }: { basePath: string; pro
 
       <div className="grid gap-6 lg:grid-cols-[256px_1fr]">
         <aside className="hidden lg:block">
-          <div className="sticky top-20 rounded-2xl border border-line bg-white p-4 shadow-card">{filterPanel}</div>
+          <div className="sticky top-20 overflow-hidden rounded-2xl border border-line bg-white shadow-card">
+            <div className="flex items-center justify-between border-b border-line bg-gradient-to-r from-navy-50 to-white px-4 py-3">
+              <p className="flex items-center gap-2 text-[13px] font-semibold text-ink">
+                <SlidersHorizontal className="size-4 text-navy-900" /> Filters
+                {activeCount > 0 && <span className="rounded-full bg-flame-600 px-1.5 text-[10px] font-semibold text-white">{activeCount}</span>}
+              </p>
+              {activeCount > 0 && (
+                <button onClick={() => setFilters(EMPTY)} className="text-xs font-medium text-ink-3 hover:text-flame-600">
+                  Reset
+                </button>
+              )}
+            </div>
+            <div className="p-4">{filterPanel}</div>
+          </div>
         </aside>
 
         <div className="min-w-0">
@@ -462,15 +481,26 @@ export function DiscoveryView({ basePath, profileHref }: { basePath: string; pro
               />
             </div>
           ) : view === "grid" ? (
-            <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
-              {results.map((p) => (
-                <ProviderCard key={p.id} provider={p} href={href(p)} />
-              ))}
-            </div>
+            <motion.div layout className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+              <AnimatePresence mode="popLayout" initial={false}>
+                {results.map((p, i) => (
+                  <motion.div
+                    key={p.id}
+                    layout
+                    initial={{ opacity: 0, y: 16, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.96 }}
+                    transition={{ duration: 0.35, delay: Math.min(i, 8) * 0.03, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    <ProviderCard provider={p} href={href(p)} className="h-full" />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
           ) : (
             <div className="overflow-hidden rounded-2xl border border-line bg-white shadow-card">
               {results.map((p) => (
-                <Link key={p.id} href={href(p)} className="flex items-center gap-4 border-b border-line/70 px-4 py-3.5 transition last:border-0 hover:bg-brand-50/30">
+                <Link key={p.id} href={href(p)} className="group flex items-center gap-4 border-b border-line/70 px-4 py-3.5 transition last:border-0 hover:bg-navy-50/60">
                   <ProviderLogo provider={p} />
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -490,7 +520,7 @@ export function DiscoveryView({ basePath, profileHref }: { basePath: string; pro
                   <span className="hidden w-24 items-center gap-1 text-xs text-ink-3 xl:inline-flex">
                     <Building2 className="size-3.5" /> {p.size}
                   </span>
-                  <ArrowRight className="size-4 text-ink-4" />
+                  <ArrowRight className="size-4 text-ink-4 transition group-hover:translate-x-0.5 group-hover:text-flame-600" />
                 </Link>
               ))}
             </div>
@@ -532,7 +562,7 @@ export function DiscoveryView({ basePath, profileHref }: { basePath: string; pro
       {compareProviders.length > 0 && (
         <div className="fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 animate-slide-up">
           <div className="flex w-full max-w-xl items-center gap-3 rounded-2xl border border-navy-800 bg-navy-900 p-2.5 pl-4 text-white shadow-overlay">
-            <GitCompareArrows className="size-4 shrink-0 text-accent-300" />
+            <GitCompareArrows className="size-4 shrink-0 text-flame-300" />
             <div className="flex -space-x-2">
               {compareProviders.map((p) => (
                 <ProviderLogo key={p.id} provider={p} size="sm" className="ring-2 ring-navy-900" />
@@ -549,6 +579,7 @@ export function DiscoveryView({ basePath, profileHref }: { basePath: string; pro
         </div>
       )}
     </div>
+    </MotionConfig>
   );
 }
 

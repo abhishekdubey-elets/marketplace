@@ -40,8 +40,8 @@ export function OrgAvatar({ initials, size = "md", className }: { initials: stri
 export function VerificationBadge({ status, compact }: { status: VerificationStatus; compact?: boolean }) {
   if (status === "verified")
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-100">
-        <BadgeCheck className="size-3.5" />
+      <span className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-xs font-medium text-brand-700 ring-1 ring-inset ring-brand-100">
+        <BadgeCheck className="size-3.5 fill-brand-600 text-white" />
         {compact ? "Verified" : "Elets Verified"}
       </span>
     );
