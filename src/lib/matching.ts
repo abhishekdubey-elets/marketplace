@@ -1,5 +1,6 @@
 import type { BudgetBand, CompanySize, MatchDimension, MatchResult, Provider, Requirement, TechCategory } from "./types";
 import { CATEGORIES, INDUSTRIES, REGIONS } from "./data/taxonomy";
+import { matchCapabilities } from "./fuzzy";
 
 /**
  * Explainable eight-dimension matching framework.
@@ -31,7 +32,7 @@ export function toMatchable(p: Provider): MatchableProfile {
 export const DIMENSION_META: Record<MatchDimension, { label: string; weight: number; description: string }> = {
   technology: { label: "Technology alignment", weight: 20, description: "Provider works in the requested technology category or a closely related one." },
   industry: { label: "Industry experience", weight: 15, description: "Provider serves the buyer's sector, with sector case studies weighted higher." },
-  functional: { label: "Functional capability", weight: 15, description: "Overlap between the capabilities the buyer needs and those the provider offers." },
+  functional: { label: "Functional capability", weight: 15, description: "Overlap between the capabilities the buyer needs and those the provider offers, allowing for synonyms, acronyms and spelling differences. Related capabilities count for half." },
   implementation: { label: "Implementation experience", weight: 12, description: "Documented implementations in the same category or sector." },
   capacity: { label: "Organisation size & capacity", weight: 10, description: "Provider scale relative to the size and scope of the engagement." },
   geography: { label: "Geographic suitability", weight: 10, description: "Provider coverage of the buyer's delivery locations." },
@@ -82,13 +83,18 @@ export function scoreMatch(req: Requirement, p: MatchableProfile, categories: Te
     gaps.push(`No stated experience in ${indName(req.industryId)}`);
   }
 
-  // 3. Functional capability
-  const need = req.capabilities.map((c) => c.toLowerCase());
-  const have = new Set(p.capabilities.map((c) => c.toLowerCase()));
-  const covered = need.filter((c) => have.has(c));
-  const functional = need.length ? clamp(25 + (covered.length / need.length) * 75) : 70;
-  if (covered.length) reasons.push(`Covers ${covered.length} of ${need.length} required capabilities`);
-  const missing = req.capabilities.filter((c) => !have.has(c.toLowerCase()));
+  // 3. Functional capability: fuzzy, so "Telehealth" covers "Telemedicine" and "EMR"
+  // covers "Electronic health records". Related capabilities earn half credit.
+  const caps = matchCapabilities(req.capabilities, p.capabilities);
+  const full = caps.filter((c) => c.kind === "exact" || c.kind === "match");
+  const related = caps.filter((c) => c.kind === "related");
+  const missing = caps.filter((c) => c.kind === "none").map((c) => c.need);
+  const functional = caps.length ? clamp(25 + ((full.length + related.length * 0.5) / caps.length) * 75) : 70;
+  if (full.length) {
+    const alias = full.find((c) => c.kind === "match");
+    reasons.push(`Covers ${full.length} of ${caps.length} required capabilities${alias ? ` (${alias.need} ≈ ${alias.match})` : ""}`);
+  }
+  if (related.length) gaps.push(`Related, not exact: ${related.slice(0, 2).map((c) => `${c.need} (has ${c.match})`).join(", ")}`);
   if (missing.length && missing.length <= 2) gaps.push(`Not listed: ${missing.join(", ")}`);
   else if (missing.length > 2) gaps.push(`${missing.length} required capabilities not listed`);
 

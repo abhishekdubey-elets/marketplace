@@ -100,6 +100,7 @@ src/
     sync.ts             saves store changes to /api/data and pulls others' changes
     db/records.ts       Neon access: schema setup, seeding, batched upserts/deletes
     matching.ts         8-dimension explainable matching engine
+    fuzzy.ts            fuzzy capability matching (synonyms, acronyms, typos)
     auth/               signed-cookie session + server-only demo accounts
     supabase/           Supabase client helpers (integration boundary)
 supabase/schema.sql     tables, enums, RLS policies, audit triggers, storage buckets
@@ -109,9 +110,11 @@ supabase/schema.sql     tables, enums, RLS policies, audit triggers, storage buc
 
 `src/lib/matching.ts` scores each eligible provider on eight weighted dimensions: technology alignment (20), industry experience (15), functional capability (15), implementation experience (12), size & capacity (10), geography (10), certifications & compliance (10) and budget fit (8). Each score comes with plain-language reasons and gaps.
 
+**Capabilities are matched fuzzily** (`src/lib/fuzzy.ts`). Tags are normalised (case, "&", hyphens, British/American spelling, plurals) and known acronyms and synonyms are mapped to one concept, for example EMR = EHR = electronic medical records, VAPT = penetration testing, and telemedicine = telehealth. Words are then compared with typo tolerance, and generic words such as "data" or "management" carry less weight. A similarity of 0.9 or more counts as covered. A similarity of 0.6 to 0.9 counts as related and earns half credit, shown to the buyer as "Related, not exact". To teach the matcher a new synonym, add it to `CONCEPTS` in that file.
+
 - The engine receives a `MatchableProfile` built by `toMatchable()`, which **omits the paid listing package**, so paid listings cannot affect scores. The database mirrors this with the `match_inputs` view.
 - **Verification**, **matching eligibility** and **listing package** are three separate provider fields. Only staff can change them, and the database enforces this with the `providers_protect` trigger.
-- Engine suggestions start as `suggested`. Buyers see a match only after Elets reviews and approves it.
+- For Premium buyers, engine suggestions start as `suggested`, and buyers see a match only after Elets reviews and approves it. For Free buyers, the top matches are shared automatically (see Buyer plans).
 - Every admin action writes to the audit log (`/admin/audit`, and the `audit_log` table with triggers).
 
 ## What is functional vs simulated
