@@ -44,6 +44,7 @@ import { Modal, Tabs, TabsContent, TabsList, TabsTrigger, Tooltip } from "@/comp
 import { Avatar, EmptyState, ProviderLogo, ScorePill, VerificationBadge } from "@/components/ui/misc";
 import { DynIcon } from "@/components/ui/icon";
 import { suggestRm, useTeam } from "@/lib/team";
+import { usePremiumGate } from "@/lib/use-plan";
 
 export function ProviderProfileView({ provider, mode }: { provider: Provider; mode: "public" | "buyer" }) {
   const session = useSession();
@@ -61,6 +62,8 @@ export function ProviderProfileView({ provider, mode }: { provider: Provider; mo
   const serviceCategories = useStore((s) => s.serviceCategories);
   const industries = useStore((s) => s.industries);
   const [introOpen, setIntroOpen] = React.useState(false);
+  const { gate } = usePremiumGate();
+  const openIntro = () => gate("contact") && setIntroOpen(true);
 
   React.useEffect(() => {
     if (buyer) addRecentlyViewed(provider.id);
@@ -134,7 +137,7 @@ export function ProviderProfileView({ provider, mode }: { provider: Provider; mo
                   >
                     <GitCompareArrows /> {inCompare ? "In comparison" : "Compare"}
                   </Button>
-                  <Button onClick={() => setIntroOpen(true)}>
+                  <Button onClick={openIntro}>
                     <Handshake /> Request introduction
                   </Button>
                 </>
@@ -402,7 +405,7 @@ export function ProviderProfileView({ provider, mode }: { provider: Provider; mo
                       Introduction {existingIntros.some((m) => m.status === "introduced") ? "made" : "requested"} for {existingIntros.map((m) => L.requirement(m.requirementId)?.code).join(", ")}.
                     </p>
                   )}
-                  <Button className="mt-4 w-full" onClick={() => setIntroOpen(true)}>
+                  <Button className="mt-4 w-full" onClick={openIntro}>
                     Request introduction <ArrowRight />
                   </Button>
                 </>
@@ -539,7 +542,7 @@ function PublicContactActions({ slug, role }: { slug: string; role: "buyer" | "p
     <>
       <div className="flex items-start gap-3 rounded-xl bg-subtle p-3 ring-1 ring-inset ring-line">
         <Lock className="mt-0.5 size-4 shrink-0 text-ink-4" />
-        <p className="text-[13px] leading-relaxed text-ink-3">Contact details are shared through an Elets-facilitated introduction. Sign in or create a free buyer account to request one.</p>
+        <p className="text-[13px] leading-relaxed text-ink-3">Create a free buyer account to post a requirement and see your matches. Introductions to suppliers are arranged by Elets on the Premium plan.</p>
       </div>
       <Button className="mt-4 w-full" asChild>
         <Link href={`/login?role=buyer&next=${next}`}>Sign in to connect</Link>

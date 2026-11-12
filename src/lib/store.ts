@@ -6,6 +6,7 @@ import type {
   Announcement,
   AuditEntry,
   BuyerOrg,
+  BuyerPlan,
   CaseStudy,
   Industry,
   Match,
@@ -32,6 +33,7 @@ import type {
 } from "./types";
 import { rankProviders } from "./matching";
 import { STAGE_LABEL } from "./labels";
+import { AUTO_MATCH_LIMIT, AUTO_MATCH_MIN_SCORE, PLAN_LABEL, isPremium } from "./plans";
 
 /**
  * DATA LAYER
@@ -103,6 +105,9 @@ export interface Actions {
   updateRequirement: (id: string, patch: Partial<Requirement>, actorId: string, auditDetail?: string) => void;
   addRequirementNote: (id: string, actorId: string, text: string) => void;
   runMatching: (requirementId: string, actorId: string, topN?: number) => number;
+  /** Free plan: match and share results with the buyer straight away, without Elets review. */
+  autoMatch: (requirementId: string, actorId: string) => number;
+  setBuyerPlan: (buyerId: string, plan: BuyerPlan, actorId: string) => void;
   reviewMatch: (matchId: string, decision: "approved" | "rejected", actorId: string) => void;
   addMatch: (requirementId: string, providerId: string, actorId: string) => void;
   makeIntroduction: (matchId: string, actorId: string) => void;
@@ -204,11 +209,17 @@ export const useStore = create<Store>()(
           };
           set((s) => ({ requirements: [r, ...s.requirements] }));
           const buyer = get().buyers.find((b) => b.id === input.buyerId);
-          notify({ audience: "admin", userId: null, type: "requirement_submitted", title: "New requirement submitted", body: `${buyer?.name ?? "A buyer"} submitted ${code} — ${input.title}.`, href: `/admin/requirements/${id}` });
-          notify({ audience: "buyer", userId: `org:${input.buyerId}`, type: "requirement_submitted", title: "Requirement received", body: `${code} was submitted. Elets will review it shortly.`, href: `/buyer/requirements/${id}` });
+          const premium = isPremium(buyer);
           log(actor("u-buyer"), "Submitted requirement", "requirement", id, `${code} — ${input.title}`);
           if (input.proRequested) {
             set((s) => ({ proRequests: [{ id: uid("pr"), buyerId: input.buyerId, requirementId: id, services: ["Full Elets Pro engagement"], note: "Requested with requirement submission.", at, status: "new" }, ...s.proRequests] }));
+          }
+          if (premium) {
+            notify({ audience: "admin", userId: null, type: "requirement_submitted", title: "New requirement submitted", body: `${buyer?.name ?? "A buyer"} (Premium) submitted ${code} — ${input.title}. Matching is run by the Elets team.`, href: `/admin/requirements/${id}` });
+            notify({ audience: "buyer", userId: `org:${input.buyerId}`, type: "requirement_submitted", title: "Requirement received", body: `${code} was submitted. Your Elets team will review it and run matching for you.`, href: `/buyer/requirements/${id}` });
+          } else {
+            const n = get().autoMatch(id, actor("buyer"));
+            notify({ audience: "admin", userId: null, type: "requirement_submitted", title: "New requirement submitted", body: `${buyer?.name ?? "A buyer"} (Free) submitted ${code} — ${input.title}. Matched automatically with ${n} provider${n === 1 ? "" : "s"}.`, href: `/admin/requirements/${id}` });
           }
           return id;
         },
@@ -305,6 +316,42 @@ export const useStore = create<Store>()(
           log(actorId, "Ran matching engine", "requirement", requirementId, `${fresh.length} new provider suggestions`);
           return fresh.length;
         },
+        autoMatch: (requirementId, actorId) => {
+          const r = req(requirementId);
+          if (!r) return 0;
+          const mine = get().matches.filter((m) => m.requirementId === requirementId);
+          const existing = new Set(mine.map((m) => m.providerId));
+          const room = Math.max(0, AUTO_MATCH_LIMIT - mine.filter((m) => m.status !== "rejected").length);
+          const ranked = rankProviders(r, get().providers, get().categories)
+            .filter((m) => m.score >= AUTO_MATCH_MIN_SCORE && !existing.has(m.providerId))
+            .slice(0, room);
+          const at = now();
+          const fresh: Match[] = ranked.map((m) => ({ id: uid("m"), requirementId, providerId: m.providerId, status: "approved", providerInterest: "none", reviewedBy: null, createdAt: at, updatedAt: at }));
+          set((s) => ({
+            matches: [...s.matches, ...fresh],
+            requirements: s.requirements.map((x) => (x.id === requirementId ? { ...x, autoMatchedAt: at } : x)),
+          }));
+          for (const m of fresh)
+            notify({ audience: "provider", userId: `org:${m.providerId}`, type: "new_opportunity", title: "New matched opportunity", body: `You were matched to ${r.code} — ${r.title}.`, href: `/provider/opportunities/${requirementId}` });
+          const summary = fresh.length
+            ? `Matched automatically with ${fresh.length} provider${fresh.length === 1 ? "" : "s"}.`
+            : "Matching ran automatically. No suitable providers yet; new matches appear as providers join.";
+          if (r.stage === "submitted" || r.stage === "under_review") get().setRequirementStage(requirementId, "matching", actorId, summary);
+          else if (fresh.length) notify({ audience: "buyer", userId: `org:${r.buyerId}`, type: "requirement_reviewed", title: `New matches for ${r.code}`, body: summary, href: `/buyer/requirements/${requirementId}?tab=matches` });
+          if (fresh.length || !r.autoMatchedAt) log(actorId, "Matched automatically", "requirement", requirementId, `${fresh.length} provider suggestions shared with the buyer (Free plan)`);
+          return fresh.length;
+        },
+        setBuyerPlan: (buyerId, plan, actorId) => {
+          const b = get().buyers.find((x) => x.id === buyerId);
+          if (!b || (b.plan ?? "free") === plan) return;
+          set((s) => ({ buyers: s.buyers.map((x) => (x.id === buyerId ? { ...x, plan } : x)) }));
+          log(actorId, `Changed plan to ${PLAN_LABEL[plan]}`, "buyer", buyerId, `${b.name}: ${PLAN_LABEL[b.plan ?? "free"]} → ${PLAN_LABEL[plan]}`);
+          notify(
+            plan === "premium"
+              ? { audience: "buyer", userId: `org:${buyerId}`, type: "pro_updated", title: "You're on Premium", body: "The Elets team now runs matching for your requirements, and you can request introductions and meetings with suppliers.", href: "/buyer/requirements" }
+              : { audience: "buyer", userId: `org:${buyerId}`, type: "pro_updated", title: "Your plan changed to Free", body: "Matching now runs automatically. Talking to suppliers and meetings need Premium.", href: "/buyer/upgrade" },
+          );
+        },
         reviewMatch: (matchId, decision, actorId) => {
           const m = get().matches.find((x) => x.id === matchId);
           set((s) => ({ matches: s.matches.map((x) => (x.id === matchId ? { ...x, status: decision, reviewedBy: actorId, updatedAt: now() } : x)) }));
@@ -380,8 +427,12 @@ export const useStore = create<Store>()(
           log(actorId, status === "suspended" ? "Suspended account" : "Reactivated account", "provider", pid, prov(pid)?.name ?? "");
         },
         updateBuyer: (id, patch, actorId) => {
-          set((s) => ({ buyers: s.buyers.map((b) => (b.id === id ? { ...b, ...patch } : b)) }));
-          log(actorId, "Updated buyer organisation", "buyer", id, Object.keys(patch).join(", "));
+          const { plan, ...rest } = patch;
+          if (Object.keys(rest).length) {
+            set((s) => ({ buyers: s.buyers.map((b) => (b.id === id ? { ...b, ...rest } : b)) }));
+            log(actorId, "Updated buyer organisation", "buyer", id, Object.keys(rest).join(", "));
+          }
+          if (plan) get().setBuyerPlan(id, plan, actorId);
         },
         setOpportunityStage: (id, stage, actorId) => {
           const o = get().opportunities.find((x) => x.id === id);
@@ -423,6 +474,7 @@ export const useStore = create<Store>()(
           };
           set((s) => ({ engagements: [eng, ...s.engagements] }));
           log(actorId, "Created Pro engagement", "engagement", id, `${code} — ${e.title}`);
+          get().setBuyerPlan(e.buyerId, "premium", actorId);
           notify({ audience: "buyer", userId: `org:${e.buyerId}`, type: "pro_updated", title: "Elets Pro engagement created", body: `${code} — ${e.title}. Your relationship manager will be in touch.`, href: `/buyer/pro/${id}` });
           return id;
         },

@@ -160,6 +160,7 @@ export const SEGMENT_LABEL: Record<string, string> = {
   opportunities: "Opportunities",
   meetings: "Meetings",
   pro: "Elets Pro",
+  upgrade: "Upgrade",
   messages: "Messages",
   notifications: "Notifications",
   leads: "Leads & introductions",

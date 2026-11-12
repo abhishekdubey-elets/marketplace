@@ -16,7 +16,9 @@ import {
   Handshake,
   Mail,
   MessagesSquare,
+  Lock,
   Phone,
+  RefreshCw,
   Send,
   Sparkles,
   Star,
@@ -45,6 +47,8 @@ import { DynIcon } from "@/components/ui/icon";
 import { IntegrityNote, MatchExplanation, StageBadge, StageHistory, StageTracker } from "@/components/shared/domain";
 import { ScheduleMeetingModal } from "@/components/buyer/schedule-meeting";
 import { defaultContactId, teamMember } from "@/lib/team";
+import { usePremiumGate } from "@/lib/use-plan";
+import type { GateReason } from "@/lib/plans";
 
 export default function Page() {
   return (
@@ -69,6 +73,15 @@ function RequirementDetail() {
   const [proOpen, setProOpen] = React.useState(false);
   const [meetOpen, setMeetOpen] = React.useState(false);
   const [meetProvider, setMeetProvider] = React.useState<string | undefined>();
+  const { premium, gate } = usePremiumGate();
+  const autoMatch = useStore((s) => s.autoMatch);
+  const hasAnyMatch = matches.some((m) => m.requirementId === id);
+
+  // Free plan: matching runs automatically. Covers requirements posted before
+  // automatic matching existed, or while the buyer was on another plan.
+  React.useEffect(() => {
+    if (req && !premium && !req.autoMatchedAt && !hasAnyMatch && req.stage !== "completed") autoMatch(req.id, user.id);
+  }, [req, premium, hasAnyMatch, autoMatch, user.id]);
 
   const visible = React.useMemo(() => {
     if (!req) return [];
@@ -124,10 +137,16 @@ function RequirementDetail() {
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button variant="secondary" onClick={() => { setMeetProvider(undefined); setMeetOpen(true); }}>
+            <Button variant="secondary" onClick={() => { if (!gate("meeting", req.id)) return; setMeetProvider(undefined); setMeetOpen(true); }}>
               <CalendarDays /> Schedule meeting
             </Button>
-            {eng ? (
+            {!premium && !eng && !proPending ? (
+              <Button variant="navy" asChild>
+                <Link href={`/buyer/upgrade?requirement=${req.id}`}>
+                  <Sparkles /> Upgrade to Premium
+                </Link>
+              </Button>
+            ) : eng ? (
               <Button variant="navy" asChild>
                 <Link href={`/buyer/pro/${eng.id}`}>
                   <Sparkles /> Open Pro workspace
@@ -136,7 +155,7 @@ function RequirementDetail() {
             ) : req.proRequested || proPending ? (
               <Tooltip content="Your Elets relationship manager will contact you to scope the engagement.">
                 <span className="inline-flex h-9 items-center gap-2 rounded-lg bg-accent-50 px-3 text-[13px] font-medium text-accent-700 ring-1 ring-inset ring-accent-100">
-                  <Sparkles className="size-4" /> Elets Pro requested
+                  <Sparkles className="size-4" /> {premium ? "Elets Pro requested" : "Premium requested"}
                 </span>
               </Tooltip>
             ) : (
@@ -284,7 +303,9 @@ function RequirementDetail() {
               <Card className="p-5">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-4">Matching status</p>
                 <p className="mt-2 text-2xl font-semibold tracking-tight text-ink">{visible.length}</p>
-                <p className="text-xs text-ink-3">providers recommended{pending > 0 && ` · ${pending} under Elets review`}</p>
+                <p className="text-xs text-ink-3">
+                  {premium ? <>providers recommended{pending > 0 && ` · ${pending} under Elets review`}</> : "providers matched automatically"}
+                </p>
                 <Button size="sm" className="mt-4 w-full" onClick={() => setTab("matches")} disabled={!visible.length}>
                   View matches <ArrowRight />
                 </Button>
@@ -295,7 +316,16 @@ function RequirementDetail() {
 
         <TabsContent value="matches" className="mt-5 space-y-4">
           <IntegrityNote />
-          {visible.length === 0 ? (
+          {!premium && <AutoMatchBar requirementId={req.id} count={visible.length} />}
+          {!premium && visible.length === 0 ? (
+            <Card>
+              <EmptyState
+                icon={<Target />}
+                title="No matching providers yet"
+                description="We compared your requirement with every eligible provider and none is a close enough fit yet. New providers join regularly. Check again later, or upgrade to Premium and the Elets team will search for you."
+              />
+            </Card>
+          ) : visible.length === 0 ? (
             <Card>
               <EmptyState
                 icon={<Target />}
@@ -308,7 +338,20 @@ function RequirementDetail() {
               />
             </Card>
           ) : (
-            visible.map(({ m, p, res }, i) => <MatchRow key={m.id} match={m} provider={p} result={res} rank={i + 1} onMeet={() => { setMeetProvider(p.id); setMeetOpen(true); }} />)
+            visible.map(({ m, p, res }, i) => (
+              <MatchRow
+                key={m.id}
+                match={m}
+                provider={p}
+                result={res}
+                rank={i + 1}
+                gate={(r) => gate(r, req.id)}
+                onMeet={() => {
+                  setMeetProvider(p.id);
+                  setMeetOpen(true);
+                }}
+              />
+            ))
           )}
         </TabsContent>
 
@@ -332,7 +375,42 @@ function RequirementDetail() {
   );
 }
 
-function MatchRow({ match, provider, result, rank, onMeet }: { match: Match; provider: Provider; result: MatchResult; rank: number; onMeet: () => void }) {
+/** Free plan: matches are shared straight away; the buyer can re-run matching to pick up new providers. */
+function AutoMatchBar({ requirementId, count }: { requirementId: string; count: number }) {
+  const user = useUser();
+  const autoMatch = useStore((s) => s.autoMatch);
+  return (
+    <Card className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+      <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-600">
+        <Sparkles className="size-4" />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-[13px] font-semibold text-ink">Matched automatically</p>
+        <p className="text-xs leading-relaxed text-ink-3">
+          {count > 0 ? "These providers were matched to your requirement automatically and haven't been reviewed by Elets." : "Matching runs automatically on the Free plan."}{" "}
+          <Lock className="inline size-3 -translate-y-px" /> Talking to suppliers and meetings are part of{" "}
+          <Link href={`/buyer/upgrade?requirement=${requirementId}`} className="font-medium text-brand-600 hover:underline">
+            Premium
+          </Link>
+          .
+        </p>
+      </div>
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={() => {
+          const n = autoMatch(requirementId, user.id);
+          if (n) toast.success(`${n} new match${n === 1 ? "" : "es"} found`);
+          else toast.info("No new matches yet", { description: "New providers join regularly. Check again later." });
+        }}
+      >
+        <RefreshCw /> Check for new matches
+      </Button>
+    </Card>
+  );
+}
+
+function MatchRow({ match, provider, result, rank, onMeet, gate }: { match: Match; provider: Provider; result: MatchResult; rank: number; onMeet: () => void; gate: (reason: GateReason) => boolean }) {
   const [open, setOpen] = React.useState(rank === 1);
   const shortlist = useStore((s) => s.shortlistMatch);
   const requestIntro = useStore((s) => s.requestIntroduction);
@@ -415,6 +493,7 @@ function MatchRow({ match, provider, result, rank, onMeet }: { match: Match; pro
             <Button
               size="sm"
               onClick={() => {
+                if (!gate("contact")) return;
                 requestIntro(match.id);
                 toast.success("Introduction requested", { description: `Elets will introduce you to ${provider.name}.` });
               }}
@@ -422,7 +501,7 @@ function MatchRow({ match, provider, result, rank, onMeet }: { match: Match; pro
               <Handshake /> Request introduction
             </Button>
           ) : match.status === "introduced" ? (
-            <Button size="sm" variant="secondary" onClick={onMeet}>
+            <Button size="sm" variant="secondary" onClick={() => gate("meeting") && onMeet()}>
               <CalendarDays /> Schedule meeting
             </Button>
           ) : (

@@ -39,6 +39,7 @@ import { Field, Input, Textarea } from "@/components/ui/input";
 import { Chip, Progress, RadioCards, Switch } from "@/components/ui/controls";
 import { DynIcon } from "@/components/ui/icon";
 import { Badge } from "@/components/ui/badge";
+import { useBuyerPlan } from "@/lib/use-plan";
 
 interface Form {
   orgName: string;
@@ -800,11 +801,19 @@ function Review({ form, go, L, set }: { form: Form; go: (i: number) => void; L: 
 }
 
 function SuccessScreen({ id, code, pro, onAnother }: { id: string; code: string; pro: boolean; onAnother: () => void }) {
-  const steps = [
-    { t: "Review & structuring", d: "An Elets relationship manager reviews your requirement and may contact you to clarify scope." },
-    { t: "Matching", d: "Eligible providers are scored across eight explainable dimensions, then reviewed by Elets." },
-    { t: "Recommendations & introductions", d: "You'll see recommended providers, shortlist them and request introductions." },
-  ];
+  const premium = useBuyerPlan() === "premium";
+  const matched = useStore((s) => s.matches.filter((m) => m.requirementId === id && m.status === "approved").length);
+  const steps = premium
+    ? [
+        { t: "Review & structuring", d: "An Elets relationship manager reviews your requirement and may contact you to clarify scope." },
+        { t: "Matching", d: "The Elets team scores eligible providers across eight explainable dimensions and reviews every match." },
+        { t: "Recommendations & introductions", d: "You'll see recommended providers, shortlist them and request introductions and meetings." },
+      ]
+    : [
+        { t: "Matched automatically", d: matched ? `We found ${matched} matching provider${matched === 1 ? "" : "s"}. They are ready to view now.` : "No provider is a close enough fit yet. New matches appear as providers join." },
+        { t: "Compare and shortlist", d: "Read why each provider matched, compare them side by side and save your favourites." },
+        { t: "Talk to suppliers with Premium", d: "Upgrade to Premium and the Elets team introduces you to suppliers and arranges meetings." },
+      ];
   return (
     <div className="mx-auto max-w-2xl animate-slide-up">
       <Card className="overflow-hidden">
@@ -837,8 +846,8 @@ function SuccessScreen({ id, code, pro, onAnother }: { id: string; code: string;
           </ol>
           <div className="mt-6 flex flex-wrap gap-2">
             <Button asChild>
-              <Link href={`/buyer/requirements/${id}`}>
-                View requirement <ArrowRight />
+              <Link href={premium || !matched ? `/buyer/requirements/${id}` : `/buyer/requirements/${id}?tab=matches`}>
+                {premium || !matched ? "View requirement" : "View matches"} <ArrowRight />
               </Link>
             </Button>
             <Button variant="secondary" onClick={onAnother}>

@@ -180,7 +180,7 @@ const STEPS = [
   { icon: ClipboardList, who: "Buyer", title: "Share a requirement", body: "Describe the problem, sector, budget range and timeline through a guided brief." },
   { icon: Workflow, who: "Elets", title: "Elets structures it", body: "A relationship manager reviews and structures the brief into a clear technology requirement." },
   { icon: Gauge, who: "Platform", title: "Explainable matching", body: "Providers are scored across eight transparent dimensions — and reviewed by Elets before you see them." },
-  { icon: Handshake, who: "Elets", title: "Curated introductions", body: "Shortlist providers, request introductions and schedule meetings — coordinated by Elets." },
+  { icon: Handshake, who: "Elets", title: "Curated introductions", body: "Shortlist providers, then let Elets introduce you and schedule meetings on the Premium plan." },
   { icon: Trophy, who: "Outcome", title: "Move to an outcome", body: "Track evaluation and negotiation through to a completed engagement and post-award review." },
 ];
 
@@ -492,7 +492,7 @@ const WHY = [
   { icon: BadgeCheck, title: "Verified, not just listed", body: "Providers carry a verified badge only after Elets reviews documents, certifications and references." },
   { icon: Scale, title: "Rankings that can't be bought", body: "Paid listing packages are kept separate from the matching engine. Scores reflect fit — nothing else.", highlight: true },
   { icon: Gauge, title: "Explainable recommendations", body: "Every match shows its eight-dimension breakdown, the reasons it was recommended and the points to verify." },
-  { icon: Users, title: "A human in the loop", body: "Elets reviews every match before buyers see it, and coordinates every introduction personally." },
+  { icon: Users, title: "A human in the loop", body: "On Premium, Elets reviews every match before it is shared and coordinates every introduction personally." },
   { icon: Network, title: "An existing, trusted network", body: "Built on relationships Elets has developed across government, healthcare, education and BFSI." },
   { icon: ShieldCheck, title: "Managed when it matters", body: "Elets Pro adds structured support for complex procurement — from RFP drafting to negotiation." },
 ];

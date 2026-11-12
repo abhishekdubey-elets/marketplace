@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useStore } from "@/lib/store";
 import { useUser } from "@/components/providers";
 import { useLookups } from "@/lib/hooks";
-import type { BuyerOrg, BuyerType } from "@/lib/types";
+import type { BuyerOrg, BuyerType, BuyerPlan } from "@/lib/types";
 import { formatDate, timeAgo } from "@/lib/utils";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { EmptyState, OrgAvatar, PageHeader, SectionLabel, StatCard } from "@/components/ui/misc";
@@ -19,6 +19,7 @@ import { Sheet } from "@/components/ui/overlay";
 import { StageBadge } from "@/components/shared/domain";
 import { person } from "@/lib/people";
 import { FilterSelect } from "./common";
+import { PLAN_LABEL, isPremium, planOf } from "@/lib/plans";
 
 const TYPES: BuyerType[] = ["Government Department", "Public Sector Undertaking", "Hospital / Health System", "University / Institute", "School Network", "Bank / NBFC", "Insurance", "Urban Local Body"];
 
@@ -30,9 +31,10 @@ export function BuyersList() {
   const industries = useStore((s) => s.industries);
   const [sector, setSector] = React.useState("all");
   const [status, setStatus] = React.useState("all");
+  const [plan, setPlan] = React.useState("all");
   const [openId, setOpenId] = React.useState<string | null>(null);
 
-  const rows = buyers.filter((b) => (sector === "all" || b.industryId === sector) && (status === "all" || b.status === status));
+  const rows = buyers.filter((b) => (sector === "all" || b.industryId === sector) && (status === "all" || b.status === status) && (plan === "all" || planOf(b) === plan));
   const reqCount = (id: string) => requirements.filter((r) => r.buyerId === id).length;
   const oppCount = (id: string) => opportunities.filter((o) => o.buyerId === id && o.stage !== "won" && o.stage !== "lost").length;
 
@@ -54,6 +56,12 @@ export function BuyersList() {
     { key: "type", header: "Type", sortValue: (b) => b.type, cell: (b) => <span className="text-xs">{b.type}</span>, hideOnMobile: true },
     { key: "sector", header: "Sector", sortValue: (b) => L.industryName(b.industryId), cell: (b) => <Badge tone="neutral">{L.industryName(b.industryId)}</Badge> },
     { key: "loc", header: "Location", sortValue: (b) => b.city, cell: (b) => <span className="whitespace-nowrap text-xs">{[b.city, b.state].filter(Boolean).join(", ") || "—"}</span>, hideOnMobile: true },
+    {
+      key: "plan",
+      header: "Plan",
+      sortValue: (b) => planOf(b),
+      cell: (b) => <Badge tone={isPremium(b) ? "violet" : "neutral"}>{PLAN_LABEL[planOf(b)]}</Badge>,
+    },
     { key: "reqs", header: "Requirements", align: "right", sortValue: (b) => reqCount(b.id), cell: (b) => <span className="tabular-nums font-medium text-ink">{reqCount(b.id)}</span> },
     { key: "opps", header: "Active opps", align: "right", sortValue: (b) => oppCount(b.id), cell: (b) => <span className="tabular-nums">{oppCount(b.id)}</span>, hideOnMobile: true },
     { key: "joined", header: "Joined", align: "right", sortValue: (b) => b.joinedAt, cell: (b) => <span className="whitespace-nowrap text-xs text-ink-3">{formatDate(b.joinedAt)}</span>, hideOnMobile: true },
@@ -74,7 +82,7 @@ export function BuyersList() {
       <PageHeader title="Buyers" description="Registered buyer organisations, their requirements and activity across the marketplace." />
       <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard label="Organisations" value={buyers.length} icon={<Building2 />} />
-        <StatCard label="Active" value={buyers.filter((b) => b.status === "active").length} icon={<Users />} accent="accent" />
+        <StatCard label="Premium" value={buyers.filter(isPremium).length} icon={<Users />} accent="accent" />
         <StatCard label="Requirements posted" value={requirements.length} icon={<ClipboardList />} accent="navy" />
         <StatCard label="Active opportunities" value={opportunities.filter((o) => o.stage !== "won" && o.stage !== "lost").length} icon={<Target />} accent="violet" />
       </div>
@@ -88,6 +96,7 @@ export function BuyersList() {
         toolbar={
           <>
             <FilterSelect label="Sectors" value={sector} onChange={setSector} options={industries.map((i) => ({ value: i.id, label: i.name }))} />
+            <FilterSelect label="Plans" value={plan} onChange={setPlan} options={[{ value: "free", label: "Free" }, { value: "premium", label: "Premium" }]} />
             <FilterSelect label="Statuses" value={status} onChange={setStatus} options={[{ value: "active", label: "Active" }, { value: "invited", label: "Invited" }, { value: "inactive", label: "Inactive" }]} />
           </>
         }
@@ -165,6 +174,9 @@ function BuyerSheet({ id, onClose }: { id: string | null; onClose: () => void })
               </Field>
               <Field label="Contact email">
                 <Input type="email" value={draft.contactEmail} onChange={(e) => setDraft({ ...draft, contactEmail: e.target.value })} />
+              </Field>
+              <Field label="Plan" hint={draft.plan === "premium" ? "Elets runs matching; introductions and meetings are open." : "Matching runs automatically; contacting suppliers needs Premium."}>
+                <Select value={planOf(draft)} onValueChange={(v) => setDraft({ ...draft, plan: v as BuyerPlan })} options={[{ value: "free", label: "Free" }, { value: "premium", label: "Premium" }]} />
               </Field>
               <Field label="Status">
                 <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v as BuyerOrg["status"] })} options={[{ value: "active", label: "Active" }, { value: "invited", label: "Invited" }, { value: "inactive", label: "Inactive" }]} />

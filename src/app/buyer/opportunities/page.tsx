@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/input";
 import { Sheet } from "@/components/ui/overlay";
 import { Avatar, EmptyState, PageHeader, ProviderLogo, ScorePill, StatCard } from "@/components/ui/misc";
 import { ScheduleMeetingModal } from "@/components/buyer/schedule-meeting";
+import { usePremiumGate } from "@/lib/use-plan";
 
 const STEPS = ["introduction", "discovery", "evaluation", "proposal", "negotiation", "won"] as const;
 
@@ -126,6 +127,7 @@ function OpportunitySheet({ opp, onClose }: { opp: Opportunity | null; onClose: 
   const addNote = useStore((s) => s.addOpportunityNote);
   const [text, setText] = React.useState("");
   const [meetOpen, setMeetOpen] = React.useState(false);
+  const { gate } = usePremiumGate();
   const p = opp ? L.provider(opp.providerId) : undefined;
   const r = opp ? L.requirement(opp.requirementId) : undefined;
   React.useEffect(() => setText(""), [opp?.id]);
@@ -146,7 +148,7 @@ function OpportunitySheet({ opp, onClose }: { opp: Opportunity | null; onClose: 
                 <Link href={`/buyer/requirements/${opp.requirementId}`}>Open requirement</Link>
               </Button>
               {opp.stage !== "won" && opp.stage !== "lost" && (
-                <Button onClick={() => setMeetOpen(true)}>
+                <Button onClick={() => opp && gate("meeting", opp.requirementId) && setMeetOpen(true)}>
                   <CalendarDays /> Schedule meeting
                 </Button>
               )}

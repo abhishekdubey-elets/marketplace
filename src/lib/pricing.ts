@@ -1,4 +1,4 @@
-import { PRO_MODULES, type PricingContent, type PricingPlan } from "./types";
+import type { PricingContent, PricingPlan } from "./types";
 
 /**
  * Starting content for the pricing page. Everything here, prices included, is
@@ -8,22 +8,22 @@ import { PRO_MODULES, type PricingContent, type PricingPlan } from "./types";
 export const DEFAULT_PRICING: PricingContent = {
   headline: "Simple, transparent pricing",
   subtext:
-    "Organisations sourcing technology use the marketplace free of charge. Technology providers choose how visible they want to be — and no plan ever changes who gets matched.",
+    "Organisations sourcing technology can start free with automatic matching, or go Premium and let the Elets team run it for them. Technology providers choose how visible they want to be — and no plan ever changes match scores.",
   note: "Listing packages affect visibility only. They are never an input to the matching engine and never change match scores or rankings.",
   plans: [
     {
       id: "buyers",
       group: "buyers",
-      name: "Buyers",
+      name: "Free",
       price: "Free",
       period: "",
-      description: "For government departments, PSUs, hospitals, universities, banks and enterprises sourcing technology.",
+      description: "Self-serve matching for government departments, PSUs, hospitals, universities, banks and enterprises sourcing technology.",
       features: [
         "Post and track technology requirements",
-        "Explainable matching across eight dimensions",
-        "Browse and compare verified providers",
-        "Elets-facilitated introductions",
-        "Shortlists, meetings and messages in one place",
+        "Matching runs automatically, with results straight away",
+        "Match explanations across eight dimensions",
+        "Browse, save and compare providers",
+        "Upgrade to Premium to talk to suppliers and schedule meetings",
       ],
       ctaLabel: "Post a requirement",
       ctaHref: "/signup?role=buyer&next=/buyer/requirements/new",
@@ -31,13 +31,19 @@ export const DEFAULT_PRICING: PricingContent = {
     {
       id: "pro",
       group: "pro",
-      name: "Elets Pro",
+      name: "Premium",
       price: "",
       period: "",
-      description: "Managed technology procurement with a dedicated Elets relationship manager, from first brief to final award.",
-      features: PRO_MODULES.map((m) => m.name),
-      ctaLabel: "Explore Elets Pro",
-      ctaHref: "/pro",
+      description: "The Elets team runs your matching and procurement with a dedicated relationship manager, from first brief to final award.",
+      features: [
+        "Everything in Free",
+        "The Elets team runs and reviews matching for you",
+        "Introductions to the suppliers you choose",
+        "Meetings with suppliers, arranged by Elets",
+        "Elets Pro managed procurement, from requirement discovery to post-award review",
+      ],
+      ctaLabel: "Upgrade to Premium",
+      ctaHref: "/buyer/upgrade",
       highlight: true,
     },
     {

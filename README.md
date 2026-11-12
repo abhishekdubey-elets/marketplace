@@ -62,6 +62,15 @@ When `DATABASE_URL` is set, buyers and solution providers can create their own a
 - **Notifications**: these are addressed to an organisation (`userId: "org:<orgId>"`), so every account in that organisation sees updates about its requirements and profile.
 - **Not built yet**: email verification, password reset and rate limiting.
 
+### Buyer plans: Free and Premium
+
+Each buyer organisation is on **Free** (the default) or **Premium**.
+
+- **Free:** when a requirement is posted, matching runs automatically. The best matches (up to 5, scoring at least 50%) are shared with the buyer straight away, without review by Elets. The buyer can re-run it with **Check for new matches**. Requesting an introduction or scheduling a meeting with a supplier sends the buyer to `/buyer/upgrade`, where they can ask for Premium.
+- **Premium:** requirements go to the Elets team, who run and review matching, make introductions and arrange meetings, as before. Elets Pro engagements are part of Premium.
+
+Elets operations sets the plan on **Buyers → (organisation) → Plan**, or with **Activate Premium** on a request in **Elets Pro**. Creating an Elets Pro engagement also moves the buyer to Premium. Buyers are notified when their plan changes. The checks run in the browser, like the rest of the data layer (see the production-readiness notes).
+
 ## Routes
 
 **Public:** `/` landing · `/solutions` provider discovery · `/providers/[slug]` public company profile · `/pro` Elets Pro · `/login`

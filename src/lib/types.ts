@@ -162,6 +162,9 @@ export type BuyerType =
   | "Insurance"
   | "Urban Local Body";
 
+/** Free: matching runs automatically, contacting suppliers needs Premium. Premium: the Elets team runs matching, introductions and meetings. */
+export type BuyerPlan = "free" | "premium";
+
 export interface BuyerOrg {
   id: string;
   name: string;
@@ -175,6 +178,8 @@ export interface BuyerOrg {
   joinedAt: string;
   status: "active" | "invited" | "inactive";
   initials: string;
+  /** Missing means free. */
+  plan?: BuyerPlan;
 }
 
 // ---------------------------------------------------------------- requirements
@@ -236,6 +241,8 @@ export interface Requirement {
   createdAt: string;
   updatedAt: string;
   internalNotes: Note[];
+  /** When matching last ran automatically (free plan). */
+  autoMatchedAt?: string;
 }
 
 // ---------------------------------------------------------------- matching

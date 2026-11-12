@@ -19,6 +19,7 @@ import { Field, Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/overlay";
 import { Avatar, EmptyState, PageHeader, ProviderLogo } from "@/components/ui/misc";
 import { ScheduleMeetingModal, toIstInputs } from "@/components/buyer/schedule-meeting";
+import { usePremiumGate } from "@/lib/use-plan";
 
 const MODE_ICON = { video: Video, "in-person": MapPin, phone: Phone } as const;
 const STATUS: Record<Meeting["status"], { label: string; tone: "green" | "amber" | "neutral" | "red" }> = {
@@ -34,6 +35,8 @@ export default function MeetingsPage() {
   const meetings = useStore((s) => s.meetings);
   const [tab, setTab] = React.useState<"upcoming" | "past">("upcoming");
   const [scheduleOpen, setScheduleOpen] = React.useState(false);
+  const { gate } = usePremiumGate();
+  const openSchedule = () => gate("meeting") && setScheduleOpen(true);
   const [cancelId, setCancelId] = React.useState<string | null>(null);
   const [resched, setResched] = React.useState<Meeting | null>(null);
 
@@ -58,7 +61,7 @@ export default function MeetingsPage() {
         title="Meetings"
         description="Demos, discovery calls and Elets Pro syncs. Elets coordinates invitations with providers and confirms each slot."
         actions={
-          <Button onClick={() => setScheduleOpen(true)}>
+          <Button onClick={openSchedule}>
             <CalendarPlus /> Schedule meeting
           </Button>
         }
@@ -81,7 +84,7 @@ export default function MeetingsPage() {
             icon={<CalendarDays />}
             title={tab === "upcoming" ? "No upcoming meetings" : "No past meetings"}
             description="Schedule a discovery call or demo with a matched provider — Elets will coordinate it."
-            action={tab === "upcoming" && <Button size="sm" onClick={() => setScheduleOpen(true)}>Schedule meeting</Button>}
+            action={tab === "upcoming" && <Button size="sm" onClick={openSchedule}>Schedule meeting</Button>}
           />
         </Card>
       ) : (

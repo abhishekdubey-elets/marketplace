@@ -22,6 +22,7 @@ import { Bars } from "@/components/ui/charts";
 import { AssigneeAvatar, EngagementStatusBadge, MODULE_DESCRIPTION, MODULE_ICON, MODULE_NAME, WorkflowConfigSheet, currentModule, engagementProgress, teamMember } from "./shared";
 import { suggestRm, useTeam } from "@/lib/team";
 import { person } from "@/lib/people";
+import { isPremium } from "@/lib/plans";
 
 export function AdminProDashboard() {
   const team = useTeam();
@@ -30,6 +31,8 @@ export function AdminProDashboard() {
   const engagements = useStore((s) => s.engagements);
   const proRequests = useStore((s) => s.proRequests);
   const updateReq = useStore((s) => s.updateProRequest);
+  const setBuyerPlan = useStore((s) => s.setBuyerPlan);
+  const buyersAll = useStore((s) => s.buyers);
   const L = useLookups();
   const [status, setStatus] = React.useState<"all" | ProEngagement["status"]>("all");
   const [createOpen, setCreateOpen] = React.useState(false);
@@ -223,6 +226,19 @@ export function AdminProDashboard() {
                             }}
                           >
                             <Phone /> Mark contacted
+                          </Button>
+                        )}
+                        {!isPremium(buyersAll.find((x) => x.id === r.buyerId)) && (
+                          <Button
+                            size="xs"
+                            variant="secondary"
+                            onClick={() => {
+                              setBuyerPlan(r.buyerId, "premium", user.id);
+                              if (r.services.length === 1 && r.services[0] === "Premium plan") updateReq(r.id, "converted");
+                              toast.success("Premium activated", { description: `${b?.name} can now talk to suppliers and schedule meetings.` });
+                            }}
+                          >
+                            <Sparkles /> Activate Premium
                           </Button>
                         )}
                         <Button size="xs" onClick={() => convert(r)}>

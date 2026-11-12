@@ -43,6 +43,7 @@ import { Field, Input, Textarea } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger, Tooltip } from "@/components/ui/overlay";
 import { IntegrityNote, MatchExplanation, StageBadge, StageHistory, StageTracker } from "@/components/shared/domain";
 import { useTeamOptions } from "./common";
+import { PLAN_LABEL, isPremium, planOf } from "@/lib/plans";
 
 export function RequirementWorkspace() {
   const teamOptions = useTeamOptions();
@@ -80,6 +81,9 @@ export function RequirementWorkspace() {
             <span className="font-mono text-xs text-ink-3">{req.code}</span>
             <StageBadge stage={req.stage} />
             {req.proRequested && <Badge tone="navy"><Sparkles /> Pro requested</Badge>}
+            <Tooltip content={isPremium(buyer) ? "Premium buyer: the Elets team runs and reviews matching." : "Free buyer: matching runs automatically and matches are shared without review. Introductions and meetings need Premium."}>
+              <span><Badge tone={isPremium(buyer) ? "violet" : "neutral"}>{PLAN_LABEL[planOf(buyer)]} plan</Badge></span>
+            </Tooltip>
           </div>
         }
         title={req.title}
